@@ -70,7 +70,7 @@ Esta versión sirve para probar el producto; para un lanzamiento público faltan
 
 ## Repositorios
 
-GitHub principal: `https://github.com/webr0m/rigthnder`. GitLab previsto: `https://gitlab.com/ridrogo/rigthnder`. Para publicar el mismo historial en ambos, configura remotos `origin` y `gitlab` y usa `git push origin main` / `git push gitlab main`; evita force-push y los espejos destructivos. Si el repo de GitLab no está creado, `node scripts/publish-gitlab.mjs` utiliza una credencial ya guardada para esa cuenta y lo crea sin imprimirla.
+GitHub principal: `https://github.com/webr0m/rigthnder`. GitLab público: `https://gitlab.com/ridrogo/rigthnder`. Para publicar el mismo historial en ambos, configura remotos `origin` y `gitlab` y usa `git push origin main` / `git push gitlab main`; evita force-push y los espejos destructivos. Si el repo de GitLab no está creado, `node scripts/publish-gitlab.mjs` utiliza una credencial ya guardada para esa cuenta y lo crea sin imprimirla.
 
 Fotos de muestra y tipografía tienen sus propias condiciones: [créditos](docs/CREDITOS.md).
 
