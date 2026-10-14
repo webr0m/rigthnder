@@ -1,0 +1,18 @@
+/* Fuente central de la marca. Consulta docs/DISENO.md antes de cambiar tokens. */
+:root {
+  --bg: #111111;
+  --sidebar: #141414;
+  --surface: #1b1b1b;
+  --surface-raised: #242424;
+  --gold: #f4c44e;
+  --gold-hover: #ffda7a;
+  --gold-subtle: #302a1c;
+  --text: #f3f1eb;
+  --muted: #aaa7a0;
+  --border: #30302e;
+  --danger: #ed9292;
+  --radius-sm: 8px;
+  --radius-card: 18px;
+  --radius-pill: 999px;
+  --font: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}

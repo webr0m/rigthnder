@@ -1,0 +1,10 @@
+image: node:24-bookworm
+stages: [test]
+check:
+  stage: test
+  script:
+    - npm install --global pnpm@11.25.0
+    - pnpm install --frozen-lockfile
+    - pnpm check
+    - pnpm test
+    - pnpm build

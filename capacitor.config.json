@@ -1,0 +1,8 @@
+{
+  "appId": "com.rigthnder.app",
+  "appName": "Rigthnder",
+  "webDir": "dist",
+  "backgroundColor": "#111111",
+  "ios": { "contentInset": "never" },
+  "android": { "allowMixedContent": false }
+}

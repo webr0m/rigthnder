@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#111111" />
+    <meta
+      name="description"
+      content="Rigthnder. El amor también va a la derecha. Conoce personas que comparten tus valores."
+    />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>Rigthnder — El amor también va a la derecha</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <!-- La captura de Figma está disponible solo en desarrollo y al solicitarla en el hash. -->
+    <script type="module">
+      if (import.meta.env.DEV && location.hash.includes('figmacapture=')) {
+        const script = document.createElement('script');
+        script.src = 'https://mcp.figma.com/mcp/html-to-design/capture.js';
+        script.async = true;
+        document.head.appendChild(script);
+      }
+    </script>
+  </body>
+</html>
