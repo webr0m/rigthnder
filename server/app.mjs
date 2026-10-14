@@ -62,7 +62,7 @@ const profileSchema = z.object({
 export function createApp(db, options = {}) {
   const app = express();
   const production = options.production ?? process.env.NODE_ENV === 'production';
-  const demoEnabled = options.demoEnabled ?? (process.env.DEMO_ENABLED !== 'false' && !production);
+  const demoEnabled = options.demoEnabled ?? (process.env.DEMO_ENABLED ? process.env.DEMO_ENABLED === 'true' : !production);
   const origins = new Set(
     (
       options.origins ||
