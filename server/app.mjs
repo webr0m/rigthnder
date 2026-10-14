@@ -62,7 +62,9 @@ const profileSchema = z.object({
 export function createApp(db, options = {}) {
   const app = express();
   const production = options.production ?? process.env.NODE_ENV === 'production';
-  const demoEnabled = options.demoEnabled ?? (process.env.DEMO_ENABLED ? process.env.DEMO_ENABLED === 'true' : !production);
+  const demoEnabled =
+    options.demoEnabled ??
+    (process.env.DEMO_ENABLED ? process.env.DEMO_ENABLED === 'true' : !production);
   const origins = new Set(
     (
       options.origins ||
@@ -450,11 +452,9 @@ export function createApp(db, options = {}) {
     if (!last) return res.status(404).json({ error: 'No hay nada que deshacer.' });
     const [a, b] = [req.user.id, last.target_id].sort();
     if (db.prepare('SELECT 1 FROM matches WHERE user_a=? AND user_b=?').get(a, b))
-      return res
-        .status(409)
-        .json({
-          error: 'Un match no se puede deshacer aquí. Puedes bloquear el perfil en el chat.',
-        });
+      return res.status(409).json({
+        error: 'Un match no se puede deshacer aquí. Puedes bloquear el perfil en el chat.',
+      });
     db.prepare('DELETE FROM swipes WHERE user_id=? AND target_id=?').run(
       req.user.id,
       last.target_id,
@@ -579,12 +579,9 @@ export function createApp(db, options = {}) {
       return res.status(413).json({ error: 'El archivo es demasiado grande.' });
     const status = error.status || 500;
     if (status >= 500) console.error('Error del servidor:', error.message);
-    res
-      .status(status)
-      .json({
-        error:
-          status >= 500 ? 'No pudimos completar la solicitud. Intenta de nuevo.' : error.message,
-      });
+    res.status(status).json({
+      error: status >= 500 ? 'No pudimos completar la solicitud. Intenta de nuevo.' : error.message,
+    });
   });
   return app;
 }

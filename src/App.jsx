@@ -1329,7 +1329,7 @@ function AuthForm({ mode, setMode, googlePending, googleEnabled, onSuccess, noti
               try {
                 if (!googleEnabled) {
                   notify(
-                    'Google está preparado. Configura sus credenciales OAuth en el servidor para activarlo.',
+                    'El acceso con Google todavía no está disponible. Puedes ingresar con tu correo.',
                     true,
                   );
                   return;

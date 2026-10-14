@@ -20,7 +20,7 @@ La configuración inicial activa la demo para mostrar el MVP. Desactivar `DEMO_E
 3. En **Setup Node.js App**, crear una aplicación Node 24, modo Production, root `rigthnder-app`, URL `rigthnder.webrom.lat/`, startup `app.cjs`.
 4. Ejecutar **Run NPM Install**, luego Restart. El paquete del hosting contiene solo dependencias del backend; no hay que compilar Vite en el hosting.
 5. Conservar la base en `/home/jyscqqde/rigthnder-data/rigthnder.sqlite`. No copiar la base de pruebas local.
-6. Obtener un certificado válido para el subdominio en el origen con AutoSSL/Namecheap SSL y verificarlo antes de usar Cloudflare Full (strict).
+6. Verificar el certificado del origen antes de usar Cloudflare Full (strict). En este hosting, el certificado Cloudflare Origin existente cubre Rigthnder y requiere el proxy activo; un navegador que acceda directamente al origen no confía en esa CA.
 
 Passenger puede crear un archivo de ejemplo `app.js`; la entrada real es `app.cjs`. El proceso lee `.env` privado antes de importar el backend.
 

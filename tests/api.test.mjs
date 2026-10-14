@@ -308,12 +308,16 @@ test('explicit demo environment flag enables public preview with secure producti
   const previous = process.env.DEMO_ENABLED;
   process.env.DEMO_ENABLED = 'true';
   const prod = createApp(db, { production: true }).listen(0, '127.0.0.1');
-  if(previous === undefined) delete process.env.DEMO_ENABLED;
+  if (previous === undefined) delete process.env.DEMO_ENABLED;
   else process.env.DEMO_ENABLED = previous;
   await once(prod, 'listening');
   try {
-    const response = await fetch(`http://127.0.0.1:${prod.address().port}/api/auth/demo`, {method:'POST'});
-    assert.equal(response.status,201);
-    assert.match(response.headers.get('set-cookie'),/Secure/);
-  } finally { await new Promise(resolve=>prod.close(resolve)); }
+    const response = await fetch(`http://127.0.0.1:${prod.address().port}/api/auth/demo`, {
+      method: 'POST',
+    });
+    assert.equal(response.status, 201);
+    assert.match(response.headers.get('set-cookie'), /Secure/);
+  } finally {
+    await new Promise((resolve) => prod.close(resolve));
+  }
 });
