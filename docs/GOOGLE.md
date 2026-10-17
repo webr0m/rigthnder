@@ -3,7 +3,7 @@
 El backend implementa el flujo de código OAuth de Google. Solicita solo `openid email profile`, valida `state` y su cookie, intercambia el código en Node y consulta UserInfo con el token obtenido. El secreto nunca se entrega al frontend. Los tokens de Google se descartan tras verificar la identidad; la app usa sus propias sesiones.
 
 1. En [Google Auth Platform](https://console.cloud.google.com/auth/overview), crea o selecciona un proyecto.
-2. Configura nombre **Rigthnder**, correo de soporte, audiencia y usuarios de prueba si está en modo testing. Añade tu dominio cuando esté desplegado.
+2. Configura nombre **OnlyFachos**, correo de soporte, audiencia y usuarios de prueba si está en modo testing. Añade tu dominio cuando esté desplegado.
 3. Crea un cliente OAuth **Aplicación web**.
 4. Añade exactamente estas URLs de redirección:
 

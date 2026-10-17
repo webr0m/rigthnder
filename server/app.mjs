@@ -9,6 +9,7 @@ import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { ageOf, publicProfile, VALUES, INTERESTS } from './db.mjs';
 import { mountGoogleAuth } from './google.mjs';
+import { makeCommunitySchema, mountCommunity } from './community.mjs';
 
 const scryptAsync = promisify(scrypt);
 const hash = (text) => createHash('sha256').update(text).digest('hex');
@@ -37,6 +38,15 @@ const photoSchema = z
     if (header.includes('png')) return data.subarray(0, 8).toString('hex') === '89504e470d0a1a0a';
     return data.subarray(0, 4).toString() === 'RIFF' && data.subarray(8, 12).toString() === 'WEBP';
   }, 'La foto debe ser JPG, PNG o WebP y pesar menos de 2 MB.');
+const communitySchema = makeCommunitySchema(photoSchema);
+const demoCommunitySchema = makeCommunitySchema(
+  z.union([
+    photoSchema,
+    z
+      .string()
+      .regex(/^\/photos\/(lucia|martin|valentina|tomas|antonella|nicolas|coast|cafe)\.jpg$/),
+  ]),
+);
 const profileSchema = z.object({
   name: z.string().trim().min(2).max(40),
   gender: z.enum(['mujer', 'hombre', 'otro']),
@@ -45,7 +55,7 @@ const profileSchema = z.object({
   bio: z.string().trim().max(600).default(''),
   values: z
     .array(z.enum(VALUES))
-    .min(1)
+    .min(0)
     .max(6)
     .transform((v) => [...new Set(v)]),
   interests: z
@@ -57,6 +67,7 @@ const profileSchema = z.object({
   prompt: z.string().trim().min(1).max(100),
   answer: z.string().trim().max(250),
   photo: photoSchema.optional(),
+  community: z.unknown().optional(),
 });
 
 export function createApp(db, options = {}) {
@@ -84,6 +95,7 @@ export function createApp(db, options = {}) {
           scriptSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", 'data:'],
+          mediaSrc: ["'self'", 'data:', 'blob:'],
           connectSrc: ["'self'"],
           fontSrc: ["'self'"],
           ...(production ? {} : { upgradeInsecureRequests: null }),
@@ -184,6 +196,10 @@ export function createApp(db, options = {}) {
         .get(hash(token), Date.now());
     req.user = found && getUser(found.user_id);
     if (!req.user) return res.status(401).json({ error: 'Inicia sesión para continuar.' });
+    if (Date.now() - req.user.last_seen > 60_000) {
+      req.user.last_seen = Date.now();
+      db.prepare('UPDATE users SET last_seen=? WHERE id=?').run(req.user.last_seen, req.user.id);
+    }
     next();
   }
   function accessibleTarget(req, id) {
@@ -219,13 +235,14 @@ export function createApp(db, options = {}) {
     return db.prepare('SELECT * FROM matches WHERE user_a=? AND user_b=?').get(first, second);
   }
 
-  app.get('/api/health', (_req, res) => res.json({ ok: true, name: 'Rigthnder', demoEnabled }));
+  app.get('/api/health', (_req, res) => res.json({ ok: true, name: 'OnlyFachos', demoEnabled }));
   const googleEnabled = mountGoogleAuth(app, db, {
     production,
     parse,
     session,
     validBirthdate,
     google: options.google,
+    communitySchema,
     fetch: options.fetch,
   });
   app.get('/api/options', (_req, res) =>
@@ -255,13 +272,37 @@ export function createApp(db, options = {}) {
     for (const target of ['demo_lucia', 'demo_martin', 'demo_valentina'])
       db.prepare('INSERT INTO swipes VALUES (?,?,?,?)').run(target, id, 'like', Date.now());
     const match = makeMatch(id, 'demo_nicolas');
-    db.prepare('INSERT INTO messages VALUES (?,?,?,?,?)').run(
+    db.prepare(
+      'INSERT INTO messages (id,match_id,sender_id,text,created_at) VALUES (?,?,?,?,?)',
+    ).run(
       randomUUID(),
       match.id,
       'demo_nicolas',
       '¡Hola! ¿Café y una buena conversación? ☕',
       Date.now(),
     );
+    db.prepare('UPDATE users SET community_json=? WHERE id=?').run(
+      JSON.stringify({
+        ...JSON.parse(getAny('demo_lucia').community_json),
+        photos: [],
+        completed: false,
+      }),
+      id,
+    );
+    // Historial ficticio identificado: permite recorrer la sugerencia tras tres días sin esperar.
+    for (const days of [2, 1, 0])
+      for (const sender of [id, 'demo_nicolas'])
+        db.prepare(
+          'INSERT INTO messages (id,match_id,sender_id,text,created_at) VALUES (?,?,?,?,?)',
+        ).run(
+          randomUUID(),
+          match.id,
+          sender,
+          sender === id
+            ? '¿Un café después del trabajo?'
+            : 'Me encanta. Tenemos una conversación pendiente ☕',
+          Date.now() - days * 86400000 - 60000,
+        );
     res.status(201).json(session(res, getUser(id)));
   });
   app.post('/api/auth/register', async (req, res) => {
@@ -272,6 +313,10 @@ export function createApp(db, options = {}) {
           .max(160)
           .transform((v) => v.toLowerCase()),
         password: z.string().min(10).max(128),
+        community: communitySchema.optional(),
+        bio: z.string().trim().max(200).default(''),
+        occupation: z.string().trim().max(80).default(''),
+        lookingFor: z.enum(['mujer', 'hombre', 'otro', 'todos']).default('todos'),
         birthdate: validBirthdate,
         terms: z.literal(true),
         valuesConsent: z.literal(true),
@@ -309,6 +354,18 @@ export function createApp(db, options = {}) {
           .json({ error: 'No se pudo crear la cuenta. Prueba iniciar sesión o usa otro correo.' });
       throw error;
     }
+    if (data.community)
+      db.prepare(
+        'UPDATE users SET community_json=?,photo=?,bio=?,occupation=?,looking_for=?,values_json=? WHERE id=?',
+      ).run(
+        JSON.stringify(data.community),
+        data.community.photos[0],
+        data.bio,
+        data.occupation,
+        data.lookingFor,
+        '[]',
+        id,
+      );
     res.status(201).json(session(res, getUser(id)));
   });
   app.post('/api/auth/login', async (req, res) => {
@@ -345,8 +402,12 @@ export function createApp(db, options = {}) {
   );
   app.put('/api/me', auth, (req, res) => {
     const p = parse(profileSchema, req.body);
+    const community =
+      p.community && JSON.stringify(p.community) !== req.user.community_json
+        ? parse(req.user.demo ? demoCommunitySchema : communitySchema, p.community)
+        : null;
     db.prepare(
-      `UPDATE users SET name=?,gender=?,city=?,occupation=?,bio=?,values_json=?,interests_json=?,intention=?,looking_for=?,prompt=?,answer=?,photo=? WHERE id=?`,
+      `UPDATE users SET name=?,gender=?,city=?,occupation=?,bio=?,values_json=?,interests_json=?,intention=?,looking_for=?,prompt=?,answer=?,photo=?,community_json=? WHERE id=?`,
     ).run(
       p.name,
       p.gender,
@@ -359,7 +420,8 @@ export function createApp(db, options = {}) {
       p.lookingFor,
       p.prompt,
       p.answer,
-      p.photo ?? req.user.photo,
+      community?.photos[0] ?? p.photo ?? req.user.photo,
+      community ? JSON.stringify(community) : req.user.community_json,
       req.user.id,
     );
     res.json({
@@ -494,18 +556,16 @@ export function createApp(db, options = {}) {
   app.post('/api/matches/:id/messages', auth, (req, res) => {
     const match = accessibleMatch(req, req.params.id);
     const { text } = parse(z.object({ text: z.string().trim().min(1).max(1000) }), req.body);
-    db.prepare('INSERT INTO messages VALUES (?,?,?,?,?)').run(
-      randomUUID(),
-      match.id,
-      req.user.id,
-      text,
-      Date.now(),
-    );
+    db.prepare(
+      'INSERT INTO messages (id,match_id,sender_id,text,created_at) VALUES (?,?,?,?,?)',
+    ).run(randomUUID(), match.id, req.user.id, text, Date.now());
     if (req.user.demo) {
       const reply = text.toLowerCase().includes('café')
         ? '¡Ese plan tiene mi voto! ☕ ¿Un café y nos contamos más?'
         : 'Me gusta tu forma de pensar 😊 ¿Qué plan te gustaría para una primera cita?';
-      db.prepare('INSERT INTO messages VALUES (?,?,?,?,?)').run(
+      db.prepare(
+        'INSERT INTO messages (id,match_id,sender_id,text,created_at) VALUES (?,?,?,?,?)',
+      ).run(
         randomUUID(),
         match.id,
         match.user_a === req.user.id ? match.user_b : match.user_a,
@@ -558,6 +618,12 @@ export function createApp(db, options = {}) {
       messages: db
         .prepare('SELECT text,created_at FROM messages WHERE sender_id=?')
         .all(req.user.id),
+      invitations: db
+        .prepare(
+          'SELECT d.* FROM date_invitations d JOIN matches m ON m.id=d.conversation_id WHERE m.user_a=? OR m.user_b=?',
+        )
+        .all(req.user.id, req.user.id),
+      signals: db.prepare('SELECT * FROM conversation_signals WHERE sender_id=?').all(req.user.id),
       reports: db
         .prepare('SELECT reason,created_at,status FROM reports WHERE user_id=?')
         .all(req.user.id),
@@ -567,6 +633,16 @@ export function createApp(db, options = {}) {
     db.prepare('DELETE FROM users WHERE id=?').run(req.user.id);
     res.clearCookie('rigthnder_session', { path: '/' });
     res.json({ ok: true });
+  });
+  mountCommunity(app, db, {
+    auth,
+    parse,
+    accessibleTarget,
+    accessibleMatch,
+    makeMatch,
+    communitySchema,
+    demoCommunitySchema,
+    photoSchema,
   });
   app.use('/api', (_req, res) => res.status(404).json({ error: 'Ruta no encontrada.' }));
   const dist = resolve('dist');

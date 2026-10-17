@@ -57,3 +57,7 @@ Google prohíbe segmentar publicidad personalizada con afiliación política. Ma
 Antes de enviar: moderación y atención de denuncias, bloqueo, políticas del operador y contacto, restricciones de menores, eliminación desde la app y vía `https://rigthnder.webrom.lat/eliminar-cuenta`, iconos de launcher, capturas, pruebas y revisión de privacidad. El acceso por Google puede requerir un acceso equivalente en iOS según [la guía de Apple](https://developer.apple.com/app-store/review/guidelines/#login-services); evaluar Sign in with Apple antes del envío. Apple pide una experiencia diferenciada para nuevas apps de citas, y la aprobación no está garantizada.
 
 Referencias: [AdMob plugin](https://github.com/capacitor-community/admob), [consentimiento](https://github.com/capacitor-community/admob/blob/main/docs/consent.md), [seguridad de apps sociales y de citas en Play](https://support.google.com/googleplay/android-developer/answer/14747720), [eliminación de cuenta](https://support.google.com/googleplay/android-developer/answer/13327111).
+
+## Rediseño 0.2
+
+El nombre visible y los iconos son OnlyFachos. Se conserva `com.rigthnder.app` como identificador y esquema de retorno OAuth para mantener compatibilidad. El chat usa grabación web con MediaRecorder y permiso al micrófono; iOS/Android declaran su uso. Requiere validar permisos, formato, grabación, ciclo de vida y reproducción en dispositivos reales antes de distribuir una release.

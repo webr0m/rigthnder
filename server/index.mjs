@@ -3,7 +3,7 @@ import { createApp } from './app.mjs';
 const db = openDatabase();
 const port = Number(process.env.PORT || 3000);
 const server = createApp(db).listen(port, process.env.HOST || '0.0.0.0', () =>
-  console.log(`Rigthnder listo: http://localhost:${port}`),
+  console.log(`OnlyFachos listo: http://localhost:${port}`),
 );
 function close() {
   server.close(() => {

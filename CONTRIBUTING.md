@@ -1,4 +1,4 @@
-# Colaborar en Rigthnder
+# Colaborar en OnlyFachos
 
 Puedes colaborar en diseño sin tocar el backend. El dueño invita a su amigo al archivo de Figma con permiso de edición; para aportar código, agrega al colaborador en GitHub (Settings → Collaborators) o GitLab (Manage → Members). No compartan contraseñas ni tokens. No se han enviado invitaciones automáticamente.
 
@@ -25,7 +25,9 @@ GitHub es el origen principal. Sincronicen `main` a GitLab después de cada merg
 | ----------------- | ------------------------------------- |
 | `src/tokens.css`  | Colores, tipografía y radios de marca |
 | `src/styles.css`  | Layout, responsive y estados visuales |
-| `src/App.jsx`     | Pantallas y componentes               |
+| `src/App.jsx`     | Acceso, feed y navegación             |
+| `src/Onboarding.jsx` | Perfil en tres pasos |
+| `src/Conversations.jsx` | Chat, señales y citas |
 | `public/icon.svg` | Símbolo de marca                      |
 | `docs/DISENO.md`  | Brief compartido                      |
 

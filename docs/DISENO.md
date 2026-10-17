@@ -1,48 +1,40 @@
-# Diseño colaborativo · Rigthnder
+# OnlyFachos · Guía para colaborar en diseño
 
-Nombre definitivo: **Rigthnder**. Mantener la escritura exacta; no autocorregir a Rightnder. Lema: **El amor también va a la derecha.** Voz cercana, inteligente y con humor ligero. La identidad alude a la derecha política mediante libertad, familia, tradición, emprendimiento, responsabilidad y patria; sin ataques, caricaturas de adversarios ni promesas de compatibilidad científica.
+La referencia actual son los dos PDF «OnlyFachas Modo Claro» y «OnlyFachas Modo Oscuro», proporcionados por el usuario el 16 de octubre de 2026. El nombre aprobado es **OnlyFachos**, con O y sin cambiar el dominio existente. No incluir los PDF ni sus retratos en el repositorio público sin autorización de sus autores.
 
-Figma: https://www.figma.com/design/4c41jvZDxF8wAk5gc2P7yQ?node-id=2-2
+## Dirección visual
 
-La captura inicial permite revisar la composición. La biblioteca de componentes no pudo terminarse por el límite del plan Starter. Continuar con capas de texto, fotos individuales, Auto Layout y componentes; no usar una captura completa como fondo de una pantalla.
+- Negro `#0d0d11`, amarillo `#ffda00`, rojo `#ff343c`. Modo claro con fondo papel `#f2efe6`.
+- Anton para titulares condensados; Manrope para formularios, conversación y lectura. Fuentes locales con OFL.
+- Marca ONLY + FACHOS en una franja amarilla inclinada. Botones con contorno oscuro y sombra corta; rojo reservado para alerta y confirmación de cita.
+- En móvil: encabezado compacto, feed vertical completo y navegación Comunidad / Chats / Perfil. En escritorio, adaptar con navegación lateral y explicación del flujo sin comprimir el feed.
 
-## Marca
+## El recorrido que se debe respetar
 
-| Token CSS          | Color     | Función                    |
-| ------------------ | --------- | -------------------------- |
-| `--bg`             | `#111111` | Fondo negro                |
-| `--sidebar`        | `#141414` | Navegación                 |
-| `--surface`        | `#1B1B1B` | Tarjetas                   |
-| `--surface-raised` | `#242424` | Superficie secundaria      |
-| `--gold`           | `#F4C44E` | Acción principal y acentos |
-| `--gold-hover`     | `#FFDA7A` | Hover                      |
-| `--gold-subtle`    | `#302A1C` | Fondo de selección         |
-| `--text`           | `#F3F1EB` | Texto principal            |
-| `--muted`          | `#AAA7A0` | Texto secundario           |
-| `--border`         | `#30302E` | Contornos                  |
+Registro → perfil en tres pasos → comunidad por scrolling → chat directo → señal/invitación → respuesta de la otra persona → cita → coordinación en chat.
 
-Tipografía **Manrope**, alojada localmente, licencia OFL. Titulares 40–48 px en descubrimiento, cuerpo legible y acciones claras. Radios: 8 px en botones, 18 px en tarjetas, redondo en likes. No depender únicamente del color para informar selección, éxito o error.
+El scroll no vota ni descarta perfiles. El chat no requiere likes. El match significa aceptación bilateral de una cita. No mostrar personas reales como disponibles si no están activas ni inventar mensajes, rachas o afinidades. «Cerca» significa misma ciudad declarada.
 
-## Siguiente trabajo en Figma
+Política, religión y referentes son voluntarios y visibles solo al elegirlos y consentir. No asignar opiniones a usuarios reales; los ejemplos siempre deben identificarse como ficticios. Cualquiera puede invitar o dar luz verde, sin roles impuestos por género.
 
-1. Variables semánticas con nombres de CSS; un modo oscuro.
-2. Componentes Button (normal/hover/deshabilitado), Tag (normal/compartido), navegación (normal/activa), Avatar, ProfileCard y campo de formulario.
-3. Frames 1366 × 920 y 390 × 844. Adaptar layouts; no reducir la pantalla de escritorio proporcionalmente.
-4. Pantallas: Descubrir, Match, Conversación, Editar perfil y Acceso con Google.
-5. Estados: carga, sin perfiles, sin matches, error, denuncia guardada, bloqueo y borrado confirmado.
+## Reparto sugerido con tu amigo
 
-Los estilos en CSS son la fuente actual. Si Figma cambia un valor, documentarlo en el issue y actualizar el token correspondiente. Antes de mezclar, comparar el frame y la web.
+1. Acceso y registro: estados vacío, error, cargando, fotos y consentimiento.
+2. Feed: cards, galería, chips, hechos y filtros, con texto largo y sin datos opcionales.
+3. Chat: burbujas, audio/foto, stickers, foco/teclado y opciones de seguridad.
+4. Cita: invitación pendiente, aceptación, rechazo, señal voluntaria y coordinación.
 
-## Brief para tu amigo
+Tu amigo puede proponer cambios en Figma y adjuntar el frame a un issue. Para contribuir código, una rama `design/tema` y un pull request. Invítalo con su cuenta; no compartan contraseñas. El [archivo de Figma anterior](https://www.figma.com/design/4c41jvZDxF8wAk5gc2P7yQ?node-id=2-2) contiene la versión Rigthnder; no refleja este rediseño. Su biblioteca no se terminó por el límite Starter.
 
-“Ayúdame a mejorar Rigthnder, una app de citas para mayores de 18 años con valores de derecha. Mantén negro y amarillo dorado, Manrope y un tono respetuoso. Trabaja en propuestas para móvil, onboarding y chat. Usa Auto Layout, estados claros, acciones de al menos 44 px y perfiles ficticios. Deja tus propuestas en frames separados y comentarios con el comportamiento esperado.”
+## Archivos de trabajo
 
-## Criterios de revisión
+| Archivo | Uso |
+| --- | --- |
+| `src/tokens.css` | Temas claro/oscuro y tipografía |
+| `src/styles.css` | Layout y responsive |
+| `src/App.jsx` | Feed, acceso y navegación |
+| `src/Onboarding.jsx` | Registro y edición en tres pasos |
+| `src/Conversations.jsx` | Chat, señales y citas |
+| `src/Shared.jsx` | Controles, modales, bloqueo y textos |
 
-- Navegación inferior usable con una mano en móviles; área segura respetada.
-- Texto largo, nombres largos y fotos ausentes sin romper el layout.
-- Foco visible, etiquetas para iconos y uso con teclado.
-- Valores compartidos contados realmente, sin porcentajes inventados.
-- Google se entiende como acceso; la edad y el consentimiento se piden aparte.
-- Demo, funcionalidades futuras y anuncios de prueba identificados.
-- Bloqueo y denuncia localizables desde perfil y chat.
+Revisar 390 px, 320 px, escritorio, navegación por teclado, fotos ausentes, bios largas, zoom, ambos temas y estados sin resultados. Los modales deben contener el foco y devolverlo al cerrar. No activar botones de Apple, GIFs o pagos como si estuvieran integrados.

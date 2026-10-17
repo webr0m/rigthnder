@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>Rigthnder</string>
+        <string>OnlyFachos</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -66,6 +66,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+<key>NSMicrophoneUsageDescription</key>
+    <string>OnlyFachos usa el micrófono solo cuando eliges grabar un mensaje de voz.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Elige fotos para tu perfil o para compartirlas en una conversación.</string>
 <key>GADApplicationIdentifier</key>
     <string>ca-app-pub-3940256099942544~1458002511</string>
     <key>CFBundleURLTypes</key>

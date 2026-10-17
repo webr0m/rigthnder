@@ -1,6 +1,6 @@
 {
   "appId": "com.rigthnder.app",
-  "appName": "Rigthnder",
+  "appName": "OnlyFachos",
   "webDir": "dist",
   "backgroundColor": "#111111",
   "ios": { "contentInset": "never" },

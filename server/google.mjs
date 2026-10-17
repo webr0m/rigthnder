@@ -11,7 +11,7 @@ const cookieValue = (req, name) =>
 export function mountGoogleAuth(
   app,
   db,
-  { production, parse, session, validBirthdate, google, fetch: fetchImpl = fetch },
+  { production, parse, session, validBirthdate, google, communitySchema, fetch: fetchImpl = fetch },
 ) {
   const config = google || {
     clientId: process.env.GOOGLE_CLIENT_ID,
@@ -30,12 +30,10 @@ export function mountGoogleAuth(
   const pendingTicket = (req) => req.body?.ticket || cookieValue(req, 'rigthnder_google_pending');
   app.get('/api/auth/google', (req, res) => {
     if (!enabled)
-      return res
-        .status(503)
-        .json({
-          error:
-            'Configura GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET y GOOGLE_REDIRECT_URI en el servidor para activar Google.',
-        });
+      return res.status(503).json({
+        error:
+          'Configura GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET y GOOGLE_REDIRECT_URI en el servidor para activar Google.',
+      });
     const native = req.query.native === '1';
     const challenge = native ? req.query.challenge : '';
     if (native && !/^[A-Za-z0-9_-]{43}$/.test(challenge || ''))
@@ -69,12 +67,10 @@ export function mountGoogleAuth(
         .prepare('SELECT * FROM oauth_states WHERE state_hash=? AND expires_at>?')
         .get(hash(state), Date.now());
     if (!saved || cookieValue(req, 'rigthnder_oauth_state') !== state)
-      return res
-        .status(400)
-        .json({
-          error:
-            'La solicitud de Google expiró o no coincide con este navegador. Vuelve a iniciar sesión.',
-        });
+      return res.status(400).json({
+        error:
+          'La solicitud de Google expiró o no coincide con este navegador. Vuelve a iniciar sesión.',
+      });
     db.prepare('DELETE FROM oauth_states WHERE state_hash=?').run(hash(state));
     res.clearCookie('rigthnder_oauth_state', cookieOptions);
     const fail = (message) =>
@@ -198,6 +194,10 @@ export function mountGoogleAuth(
         city: z.string().trim().min(2).max(60),
         terms: z.literal(true),
         valuesConsent: z.literal(true),
+        community: communitySchema.optional(),
+        bio: z.string().trim().max(200).default(''),
+        occupation: z.string().trim().max(80).default(''),
+        lookingFor: z.enum(['mujer', 'hombre', 'otro', 'todos']).default('todos'),
       }),
       req.body,
     );
@@ -225,6 +225,18 @@ export function mountGoogleAuth(
         .status(409)
         .json({ error: 'Ese correo ya tiene una cuenta. Vuelve a iniciar sesión.' });
     }
+    if (p.community)
+      db.prepare(
+        'UPDATE users SET community_json=?,photo=?,bio=?,occupation=?,looking_for=?,values_json=? WHERE id=?',
+      ).run(
+        JSON.stringify(p.community),
+        p.community.photos[0],
+        p.bio,
+        p.occupation,
+        p.lookingFor,
+        '[]',
+        id,
+      );
     db.prepare('DELETE FROM oauth_pending WHERE ticket_hash=?').run(hash(ticket));
     res.clearCookie('rigthnder_google_pending', cookieOptions);
     res.status(201).json(session(res, db.prepare('SELECT * FROM users WHERE id=?').get(id)));

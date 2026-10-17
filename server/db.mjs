@@ -173,6 +173,39 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
     CREATE TABLE IF NOT EXISTS oauth_pending (ticket_hash TEXT PRIMARY KEY, payload TEXT NOT NULL, expires_at INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS oauth_handoffs (code_hash TEXT PRIMARY KEY, payload TEXT NOT NULL, challenge TEXT NOT NULL, expires_at INTEGER NOT NULL);
   `);
+  // Migración aditiva: conserva cuentas, conversaciones y mensajes de la versión anterior.
+  for (const [table, column, definition] of [
+    ['users', 'community_json', "TEXT NOT NULL DEFAULT '{}'"],
+    ['users', 'last_seen', 'INTEGER NOT NULL DEFAULT 0'],
+    ['messages', 'kind', "TEXT NOT NULL DEFAULT 'text'"],
+  ]) {
+    if (
+      !db
+        .prepare(`PRAGMA table_info(${table})`)
+        .all()
+        .some((c) => c.name === column)
+    )
+      db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS date_invitations (
+      id TEXT PRIMARY KEY, conversation_id TEXT NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+      sender_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      plan TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','accepted','declined')),
+      day TEXT NOT NULL DEFAULT '', place TEXT NOT NULL DEFAULT '', created_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS one_pending_date ON date_invitations(conversation_id) WHERE status='pending';
+    CREATE TABLE IF NOT EXISTS conversation_signals (
+      conversation_id TEXT NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+      sender_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      plan TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY(conversation_id,sender_id)
+    );
+    CREATE TABLE IF NOT EXISTS message_reactions (
+      message_id TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      reaction TEXT NOT NULL, PRIMARY KEY(message_id,user_id)
+    );
+  `);
   const insert = db.prepare(`INSERT OR IGNORE INTO users
     (id,name,birthdate,gender,city,occupation,photo,bio,values_json,interests_json,prompt,answer,intention,looking_for,demo,seed,consent_at,created_at)
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,1,?,?)`);
@@ -195,6 +228,104 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
       new Date().toISOString(),
       new Date().toISOString(),
     );
+  const sampleDetails = [
+    [
+      'Libertaria',
+      ['Mises TV', 'La Cofradía'],
+      ['Thomas Sowell', 'Axel Kaiser'],
+      'Sí',
+      'Ortodoxa',
+      'Sí',
+      'Simpatizo',
+      'PNL',
+      14,
+    ],
+    [
+      'Liberal clásico',
+      ['Agricultura'],
+      ['Hayek', 'Mises'],
+      'En búsqueda',
+      '',
+      'Algún día',
+      'Ninguno',
+      '',
+      6,
+    ],
+    [
+      'Conservadora',
+      ['La Cofrarneta'],
+      ['Chesterton', 'C. S. Lewis'],
+      'Sí',
+      'Católica',
+      'Sí',
+      'Simpatizo',
+      'Republicanos',
+      11,
+    ],
+    [
+      'Libertario',
+      ['Ingobernables'],
+      ['Hayek', 'Ayn Rand'],
+      'No',
+      '',
+      'Algún día',
+      'Ninguno',
+      '',
+      9,
+    ],
+    [
+      'Liberal clásica',
+      ['Mises TV'],
+      ['Thomas Sowell', 'Hayek'],
+      'No',
+      '',
+      'No',
+      'Simpatizo',
+      'Evópoli',
+      8,
+    ],
+    ['Conservador', ['La Cofradía'], ['Chesterton'], 'Sí', 'Católica', 'Sí', 'Ninguno', '', 4],
+  ];
+  DEMO_PROFILES.forEach((p, i) => {
+    const [
+      current,
+      streamers,
+      authors,
+      faith,
+      denomination,
+      children,
+      partyStance,
+      party,
+      countryCount,
+    ] = sampleDetails[i];
+    db.prepare("UPDATE users SET community_json=? WHERE id=? AND community_json='{}'").run(
+      JSON.stringify({
+        photos: [p.photo, '/photos/coast.jpg', '/photos/cafe.jpg'],
+        region: p.city === 'Santiago' ? 'Metropolitana' : p.city,
+        nationalities: ['Chilena'],
+        workMode: 'Trabajo',
+        current,
+        streamers,
+        creators: [],
+        authors,
+        faith,
+        denomination,
+        children,
+        partyStance,
+        party,
+        countryCount,
+        years: '1 a 5 años',
+        languages: [
+          { language: 'Español', level: 'Nativo' },
+          { language: 'Inglés', level: 'Avanzado' },
+        ],
+        countries: ['Argentina', 'España'],
+        sensitiveConsent: true,
+        completed: true,
+      }),
+      p.id,
+    );
+  });
   return db;
 }
 
@@ -227,5 +358,7 @@ export function publicProfile(user) {
     intention: user.intention,
     lookingFor: user.looking_for,
     demo: !!user.demo,
+    community: JSON.parse(user.community_json || '{}'),
+    online: !!user.seed || Date.now() - user.last_seen < 180_000,
   };
 }

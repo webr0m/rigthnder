@@ -2,7 +2,7 @@
 
 El código propio se distribuye bajo MIT. Manrope se distribuye bajo SIL Open Font License, incluida en `public/fonts/OFL.txt`. Fuente: https://github.com/google/fonts/tree/main/ofl/manrope
 
-Fotos descargadas de Unsplash para perfiles **ficticios** y planes de muestra. No representan usuarios, opiniones, afiliación política ni respaldo de las personas fotografiadas a Rigthnder. Sustituir por imágenes propias/licenciadas o ilustraciones antes de la campaña pública para evitar cualquier asociación con las personas reales.
+Fotos descargadas de Unsplash para perfiles **ficticios** y planes de muestra. No representan usuarios, opiniones, afiliación política ni respaldo de las personas fotografiadas a OnlyFachos. Sustituir por imágenes propias/licenciadas o ilustraciones antes de la campaña pública para evitar cualquier asociación con las personas reales.
 
 | Archivo       | Origen                                                       |
 | ------------- | ------------------------------------------------------------ |
@@ -17,4 +17,6 @@ Fotos descargadas de Unsplash para perfiles **ficticios** y planes de muestra. N
 
 Condiciones: https://unsplash.com/license y https://unsplash.com/terms. La MIT del software no sustituye derechos de imagen ni las condiciones de estos recursos.
 
-Iconos: Lucide, licencia ISC. Símbolo Rigthnder en SVG propio. React, Vite, Capacitor, Express y demás dependencias conservan sus licencias respectivas.
+Iconos: Lucide, licencia ISC. Símbolo OnlyFachos en SVG propio. React, Vite, Capacitor, Express y demás dependencias conservan sus licencias respectivas.
+
+Anton para titulares: SIL Open Font License, incluida en `public/fonts/ANTON-OFL.txt`. Fuente: https://github.com/google/fonts/tree/main/ofl/anton. Los mockups de referencia son documentos del usuario y no se redistribuyen en el repositorio.
