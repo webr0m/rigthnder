@@ -645,10 +645,19 @@ export function createApp(db, options = {}) {
     photoSchema,
   });
   app.use('/api', (_req, res) => res.status(404).json({ error: 'Ruta no encontrada.' }));
-  const dist = resolve('dist');
+  const dist = resolve(options.distDirectory || 'dist');
   if (existsSync(dist)) {
-    app.use(express.static(dist, { maxAge: production ? '1h' : 0 }));
-    app.get('/{*path}', (_req, res) => res.sendFile(resolve(dist, 'index.html')));
+    app.use(
+      express.static(dist, {
+        maxAge: production ? '1h' : 0,
+        setHeaders(res, file) {
+          if (file.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache');
+        },
+      }),
+    );
+    app.get('/{*path}', (_req, res) =>
+      res.set('Cache-Control', 'no-cache').sendFile(resolve(dist, 'index.html')),
+    );
   }
   app.use((error, _req, res, _next) => {
     if (error.type === 'entity.too.large')

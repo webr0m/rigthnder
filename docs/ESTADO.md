@@ -18,9 +18,10 @@
 
 ## Verificado
 
-- 18 pruebas del servidor, incluida la compatibilidad de cuentas/mensajes anteriores, OAuth simulado, chat directo, búsqueda por referentes y aceptación bilateral.
+- 19 pruebas del servidor, incluida la compatibilidad de cuentas/mensajes anteriores, OAuth simulado, chat directo, búsqueda por referentes, caché de HTML y aceptación bilateral.
 - Build web y sincronización de los proyectos Android/iOS con la nueva interfaz, marca e iconos.
 - Pruebas de navegador del feed, mensajes, stickers, invitación, aceptación simulada, coordinación y guardado del perfil de tres pasos. Revisión móvil de ambos temas.
+- Feed móvil comprobado a 320/390 px: un solo scroll vertical, carga automática de seis a diez perfiles en una base local de QA y regreso desde el chat a la misma posición. HTML revalidado para evitar conservar una interfaz anterior durante una hora.
 
 ## Pendientes de configuración o validación externa
 
