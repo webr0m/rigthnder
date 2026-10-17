@@ -209,6 +209,37 @@ test('feed pagination has no overlaps, does not discard chatted profiles, and re
   );
   assert.equal((await req('/community/profiles?minAge=90&maxAge=18', a.token)).status, 400);
 });
+test('community search finds authors, streamers, creators and cities without accents and keeps pagination', async () => {
+  const a = (await req('/auth/demo', null, {})).data;
+  for (const [q, field] of [
+    ['hayek', 'authors'],
+    ['mises tv', 'streamers'],
+  ]) {
+    const found = (await req('/community/profiles?q=' + encodeURIComponent(q), a.token)).data;
+    assert.ok(found.profiles.length > 0);
+    assert.ok(
+      found.profiles.every((p) => p.community[field].some((v) => v.toLowerCase().includes(q))),
+    );
+  }
+  const city = (await req('/community/profiles?q=concepcion', a.token)).data;
+  assert.ok(city.profiles.length > 0);
+  assert.ok(city.profiles.every((p) => p.city === 'Concepción'));
+  const candidate = (await req('/community/profiles', a.token)).data.profiles[0];
+  db.prepare('UPDATE users SET community_json=? WHERE id=?').run(
+    JSON.stringify({ ...candidate.community, creators: ['Creador Único'] }),
+    candidate.id,
+  );
+  const creators = (await req('/community/profiles?q=creador%20unico', a.token)).data;
+  assert.equal(creators.profiles.length, 1);
+  assert.equal(creators.profiles[0].id, candidate.id);
+  const paged = (await req('/community/profiles?q=hayek&limit=1', a.token)).data;
+  assert.equal(paged.profiles.length, 1);
+  assert.equal(paged.hasMore, true);
+  const next = (
+    await req('/community/profiles?q=hayek&limit=1&offset=' + paged.nextOffset, a.token)
+  ).data;
+  assert.notEqual(paged.profiles[0].id, next.profiles[0].id);
+});
 test('streak counts consecutive days with messages from both people, not fabricated elapsed days', () => {
   const now = Date.parse('2026-10-16T15:00:00Z'),
     m = [];

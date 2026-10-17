@@ -217,9 +217,21 @@ export function mountCommunity(
         (req.user.demo || p.lookingFor === 'todos' || p.lookingFor === req.user.gender),
     );
     const online = rows.filter((p) => p.online);
+    const searchText = (value) =>
+      value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
     if (f.q)
       rows = rows.filter((p) =>
-        [p.name, p.city, p.occupation].some((v) => v.toLowerCase().includes(f.q.toLowerCase())),
+        [
+          p.name,
+          p.city,
+          p.occupation,
+          ...(p.community?.streamers || []),
+          ...(p.community?.authors || []),
+          ...(p.community?.creators || []),
+        ].some((v) => searchText(v).includes(searchText(f.q))),
       );
     rows = rows.map((p) => ({ ...p, common: commonItems(me, p) }));
     if (f.mode === 'online') rows = rows.filter((p) => p.online);

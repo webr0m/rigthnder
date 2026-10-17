@@ -8,6 +8,8 @@ La referencia actual son los dos PDF «OnlyFachas Modo Claro» y «OnlyFachas Mo
 - Anton para titulares condensados; Manrope para formularios, conversación y lectura. Fuentes locales con OFL.
 - Marca ONLY + FACHOS en una franja amarilla inclinada. Botones con contorno oscuro y sombra corta; rojo reservado para alerta y confirmación de cita.
 - En móvil: encabezado compacto, feed vertical completo y navegación Comunidad / Chats / Perfil. En escritorio, adaptar con navegación lateral y explicación del flujo sin comprimir el feed.
+- La pantalla 5 define el feed móvil: marca y campana → buscador → filtros horizontales → personas en línea → tarjetas completas. Todo forma parte del scroll del documento; solo la navegación inferior queda fija. No usar carruseles verticales, scroll por tarjeta, pantallas por perfil ni scroll-snap.
+- Mantener las proporciones de las fotos, los seis datos en casillas y los referentes visibles. Al tocar una persona conectada se desplaza hasta su tarjeta; al volver de «Escribir» se restaura el punto del feed, sin filtrarlo ni reiniciarlo.
 
 ## El recorrido que se debe respetar
 
@@ -32,6 +34,7 @@ Tu amigo puede proponer cambios en Figma y adjuntar el frame a un issue. Para co
 | --- | --- |
 | `src/tokens.css` | Temas claro/oscuro y tipografía |
 | `src/styles.css` | Layout y responsive |
+| `src/mobile-feed.css` | Feed móvil one page y navegación inferior, siguiendo la pantalla 5 |
 | `src/App.jsx` | Feed, acceso y navegación |
 | `src/Onboarding.jsx` | Registro y edición en tres pasos |
 | `src/Conversations.jsx` | Chat, señales y citas |

@@ -225,6 +225,8 @@ export default function Conversations({
   conversations,
   active,
   setActive,
+  onBack,
+  backToCommunity,
   refresh,
   notify,
   safety,
@@ -451,8 +453,8 @@ export default function Conversations({
             <header className="chat-heading">
               <button
                 className="icon-button chat-back"
-                aria-label="Volver a conversaciones"
-                onClick={() => setActive(null)}
+                aria-label={backToCommunity ? 'Volver al feed' : 'Volver a conversaciones'}
+                onClick={onBack}
               >
                 <ArrowLeft size={20} />
               </button>

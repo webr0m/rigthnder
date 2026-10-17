@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   Bell,
@@ -73,11 +73,14 @@ export function ProfileCard({ profile: p, onWrite, onSafety }) {
     ['PARTIDO', c.party ? c.partyStance + ' ' + c.party : c.partyStance],
   ];
   return (
-    <article className="profile-card" id={'person-' + p.id}>
+    <article className="profile-card" id={'person-' + p.id} aria-labelledby={'name-' + p.id}>
       <header className="profile-card-heading">
-        <Photo profile={p} className="avatar" />
+        <span className={'profile-avatar' + (p.online ? ' is-online' : '')}>
+          <Photo profile={p} className="avatar" />
+          {p.online && <i aria-label={p.demo ? 'En línea en la demo' : 'En línea'} />}
+        </span>
         <div className="profile-name">
-          <h2>
+          <h2 id={'name-' + p.id}>
             {p.name}, {p.age}
             {p.demo && <small>DEMO</small>}
           </h2>
@@ -404,6 +407,7 @@ export default function App() {
   const [feed, setFeed] = useState({ profiles: [], online: [], hasMore: false }),
     [feedBusy, setFeedBusy] = useState(false),
     [feedError, setFeedError] = useState(''),
+    [pageError, setPageError] = useState(''),
     [reload, setReload] = useState(0);
   const [conversations, setConversations] = useState([]),
     [active, setActive] = useState(null),
@@ -411,6 +415,7 @@ export default function App() {
     [wizard, setWizard] = useState(null),
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState(null);
+  const [findPerson, setFindPerson] = useState(null);
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem('onlyfachos-theme') || 'dark';
@@ -421,7 +426,8 @@ export default function App() {
   const sentinel = useRef(null),
     version = useRef(0),
     toastTimer = useRef(),
-    scroll = useRef(0);
+    scroll = useRef(0),
+    chatOrigin = useRef('chat');
   function notify(message, error = false) {
     clearTimeout(toastTimer.current);
     setToast({ message, error });
@@ -509,9 +515,10 @@ export default function App() {
     const v = ++version.current;
     setFeedBusy(true);
     setFeedError('');
+    setPageError('');
     api('/community/profiles?' + params)
       .then((r) => {
-        if (v === version.current) setFeed(r);
+        if (v === version.current) setFeed({ ...r, requestKey: params });
       })
       .catch((e) => {
         if (v === version.current) setFeedError(e.message);
@@ -524,24 +531,29 @@ export default function App() {
     if (feedBusy || !feed.hasMore) return;
     const v = version.current;
     setFeedBusy(true);
+    setPageError('');
     try {
       const r = await api('/community/profiles?' + params + '&offset=' + feed.nextOffset);
       if (v === version.current)
         setFeed((f) => ({
           ...r,
+          requestKey: params,
           profiles: [
             ...f.profiles,
             ...r.profiles.filter((p) => !f.profiles.some((s) => s.id === p.id)),
           ],
         }));
     } catch (e) {
-      notify(e.message, true);
+      if (v === version.current) {
+        setFindPerson(null);
+        setPageError(e.message);
+      }
     } finally {
       if (v === version.current) setFeedBusy(false);
     }
   }
   useEffect(() => {
-    if (!sentinel.current || tab !== 'community' || feedBusy || !feed.hasMore) return;
+    if (!sentinel.current || tab !== 'community' || feedBusy || pageError || !feed.hasMore) return;
     const o = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) more();
@@ -550,13 +562,27 @@ export default function App() {
     );
     o.observe(sentinel.current);
     return () => o.disconnect();
-  }, [tab, feedBusy, feed.hasMore, feed.nextOffset]);
+  }, [tab, feedBusy, pageError, feed.hasMore, feed.nextOffset]);
+  useEffect(() => {
+    if (!findPerson || tab !== 'community' || feedBusy || feed.requestKey !== params) return;
+    const card = document.getElementById('person-' + findPerson);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setFindPerson(null);
+    } else if (feed.hasMore && !feedError && !pageError) more();
+    else {
+      setFindPerson(null);
+      if (!feedError) notify('Este perfil ya no está disponible.');
+    }
+  }, [findPerson, tab, feedBusy, feed, params, feedError, pageError]);
+  useLayoutEffect(() => {
+    if (user && !wizard)
+      window.scrollTo({ top: tab === 'community' ? scroll.current : 0, behavior: 'instant' });
+  }, [tab, user?.id, !!wizard]);
   function navigate(next) {
     if (tab === 'community') scroll.current = window.scrollY;
+    if (next !== 'community') setFindPerson(null);
     setTab(next);
-    requestAnimationFrame(() =>
-      window.scrollTo({ top: next === 'community' ? scroll.current : 0, behavior: 'instant' }),
-    );
   }
   async function write(p) {
     if (busy) return;
@@ -566,6 +592,7 @@ export default function App() {
       await refresh();
       setActive(c.id);
       setModal(null);
+      chatOrigin.current = 'community';
       navigate('chat');
     } catch (e) {
       notify(e.message, true);
@@ -658,7 +685,7 @@ export default function App() {
     );
   return (
     <div
-      className={`app ${!user ? 'is-access' : ''} ${tab === 'chat' && active ? 'chat-open' : ''}`}
+      className={`app view-${tab} ${!user ? 'is-access' : ''} ${tab === 'chat' && active ? 'chat-open' : ''}`}
     >
       {!user && !wizard ? (
         <>
@@ -770,7 +797,7 @@ export default function App() {
               </div>
               <div className="header-actions">
                 <button
-                  className="icon-button"
+                  className="icon-button theme-toggle"
                   aria-label="Cambiar tema"
                   title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -778,11 +805,12 @@ export default function App() {
                   {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
                 <button
-                  className="icon-button"
+                  className="icon-button activity-button"
                   aria-label="Ver invitaciones y actividad"
                   onClick={() => setModal('activity')}
                 >
                   <Bell size={20} />
+                  {conversations.some((c) => c.invitations.length) && <i />}
                 </button>
               </div>
             </header>
@@ -797,6 +825,19 @@ export default function App() {
             <main className={'page page-' + tab}>
               <div hidden={tab !== 'community'} className="community-layout">
                 <div className="feed-column">
+                  <div className="mobile-search">
+                    <Search size={17} />
+                    <input
+                      aria-label="Buscar en la comunidad"
+                      placeholder="Busca por streamer, autor, ciudad…"
+                      maxLength={60}
+                      value={search}
+                      onChange={(e) => {
+                        setFindPerson(null);
+                        setSearch(e.target.value);
+                      }}
+                    />
+                  </div>
                   <div className="feed-toolbar">
                     <div className="feed-tabs" role="tablist" aria-label="Filtrar comunidad">
                       {MODES.map(([id, label]) => (
@@ -807,6 +848,7 @@ export default function App() {
                           className={id === mode ? 'active' : ''}
                           onClick={() => {
                             setMode(id);
+                            setFindPerson(null);
                             scroll.current = 0;
                             window.scrollTo({ top: 0 });
                           }}
@@ -824,16 +866,6 @@ export default function App() {
                       <SlidersHorizontal size={18} />
                     </button>
                   </div>
-                  <div className="mobile-search">
-                    <Search size={14} />
-                    <input
-                      aria-label="Buscar en la comunidad"
-                      placeholder="Busca una persona o ciudad…"
-                      maxLength={60}
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                    />
-                  </div>
                   <section className="online-section" aria-label="Personas en línea">
                     <div className="online-title">
                       <i /> EN LÍNEA {user.demo ? 'EN LA DEMO' : 'AHORA'}{' '}
@@ -845,7 +877,9 @@ export default function App() {
                           key={p.id}
                           onClick={() => {
                             setMode('all');
-                            setSearch(p.name);
+                            setSearch('');
+                            setQuery('');
+                            setFindPerson(p.id);
                           }}
                         >
                           <span>
@@ -860,6 +894,11 @@ export default function App() {
                       )}
                     </div>
                   </section>
+                  {user.demo && (
+                    <p className="mobile-demo-note">
+                      DEMO · Perfiles ficticios y respuestas simuladas.
+                    </p>
+                  )}
                   <div className="feed-caption">
                     <span>
                       {mode === 'near'
@@ -878,9 +917,15 @@ export default function App() {
                     </div>
                   ) : (
                     <>
-                      {feed.profiles.map((p) => (
-                        <ProfileCard profile={p} onWrite={write} onSafety={safety} key={p.id} />
-                      ))}
+                      <section
+                        className="profile-feed"
+                        aria-label="Perfiles de la comunidad"
+                        aria-busy={feedBusy}
+                      >
+                        {feed.profiles.map((p) => (
+                          <ProfileCard profile={p} onWrite={write} onSafety={safety} key={p.id} />
+                        ))}
+                      </section>
                       {feedBusy && (
                         <div className="loading">
                           <LoaderCircle className="spin" /> Cargando perfiles…
@@ -903,6 +948,11 @@ export default function App() {
                         </div>
                       )}
                       <div ref={sentinel} />
+                      {pageError && (
+                        <p className="form-error" role="alert">
+                          {pageError}. Puedes reintentar sin perder los perfiles que ya cargaron.
+                        </p>
+                      )}
                       {feed.hasMore && (
                         <button className="load-more" disabled={feedBusy} onClick={more}>
                           Cargar más perfiles
@@ -975,7 +1025,15 @@ export default function App() {
                   user={user}
                   conversations={conversations}
                   active={active}
-                  setActive={setActive}
+                  setActive={(id) => {
+                    chatOrigin.current = 'chat';
+                    setActive(id);
+                  }}
+                  backToCommunity={chatOrigin.current === 'community'}
+                  onBack={() => {
+                    setActive(null);
+                    if (chatOrigin.current === 'community') navigate('community');
+                  }}
                   refresh={refresh}
                   notify={notify}
                   safety={safety}
@@ -1071,6 +1129,7 @@ export default function App() {
                 className={tab === id ? 'active' : ''}
                 onClick={() => {
                   if (id === 'chat' && tab === 'chat') setActive(null);
+                  if (id === 'chat') chatOrigin.current = 'chat';
                   navigate(id);
                 }}
               >
