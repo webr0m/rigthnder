@@ -1,4 +1,9 @@
-# OnlyFachos 0.2.1 · 16 de octubre de 2026
+# OnlyFachos 0.2.2 · 18 de octubre de 2026
+
+## Preparado para publicar en 0.2.2
+
+- Campo «Sexo» y residencia explícita «En Chile» / «En el extranjero». Ciudad de texto libre en ambos casos; la residencia extranjera se muestra junto a la ciudad y «Cerca» distingue Chile de exterior.
+- La publicación en Namecheap está pendiente de renovar la sesión de cPanel, que caducó. El sitio público conserva la versión 0.2.1 hasta completar ese acceso.
 
 ## Implementado y publicado
 
@@ -18,7 +23,7 @@
 
 ## Verificado
 
-- 19 pruebas del servidor, incluida la compatibilidad de cuentas/mensajes anteriores, OAuth simulado, chat directo, búsqueda por referentes, caché de HTML y aceptación bilateral.
+- 20 pruebas del servidor, incluida la compatibilidad de cuentas/mensajes anteriores, OAuth simulado, chat directo, búsqueda por referentes, residencia extranjera, caché de HTML y aceptación bilateral.
 - Build web y sincronización de los proyectos Android/iOS con la nueva interfaz, marca e iconos.
 - Pruebas de navegador del feed, mensajes, stickers, invitación, aceptación simulada, coordinación y guardado del perfil de tres pasos. Revisión móvil de ambos temas.
 - Feed móvil comprobado a 320/390 px: un solo scroll vertical, carga automática de seis a diez perfiles en una base local de QA y regreso desde el chat a la misma posición. HTML revalidado para evitar conservar una interfaz anterior durante una hora.

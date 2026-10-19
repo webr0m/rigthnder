@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Ban, Flag, LoaderCircle } from 'lucide-react';
 import { api } from './api';
+export function locationLabel(profile) {
+  return (
+    profile.city + (profile.community?.region === 'Fuera de Chile' ? ' · En el extranjero' : '')
+  );
+}
 function Photo({ profile, className = '', ...props }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [profile?.photo]);

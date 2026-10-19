@@ -188,6 +188,39 @@ test('profile consent is explicit, two validated photos are required, clearing o
   const exported = (await req('/me/export', a.token)).data;
   assert.equal(exported.profile.community.current, '');
 });
+test('foreign residence and city persist, and nearby profiles do not mix Chile with abroad', async () => {
+  const a = await account('AbroadA'),
+    b = await account('AbroadB'),
+    c = await account('ChileA');
+  for (const [person, region] of [
+    [a, 'Fuera de Chile'],
+    [b, 'Fuera de Chile'],
+    [c, 'Metropolitana'],
+  ]) {
+    const saved = await req(
+      '/me',
+      person.token,
+      {
+        ...person.user,
+        city: 'Madrid',
+        community: { photos: [image, image], region },
+      },
+      'PUT',
+    );
+    assert.equal(saved.status, 200);
+  }
+  const me = (await req('/me', a.token)).data;
+  assert.equal(me.city, 'Madrid');
+  assert.equal(me.community.region, 'Fuera de Chile');
+  const nearby = (await req('/community/profiles?mode=near', a.token)).data.profiles;
+  assert.ok(nearby.some((p) => p.id === b.user.id));
+  assert.ok(!nearby.some((p) => p.id === c.user.id));
+  const chile = (await req('/community/profiles?mode=near', c.token)).data.profiles;
+  assert.ok(!chile.some((p) => [a.user.id, b.user.id].includes(p.id)));
+  const everyone = (await req('/community/profiles?city=Madrid', c.token)).data.profiles;
+  assert.ok(everyone.some((p) => p.id === a.user.id));
+});
+
 test('feed pagination has no overlaps, does not discard chatted profiles, and respects city/shared filters', async () => {
   const a = (await req('/auth/demo', null, {})).data;
   const first = (await req('/community/profiles?limit=2', a.token)).data;

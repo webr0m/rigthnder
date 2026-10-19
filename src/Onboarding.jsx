@@ -147,6 +147,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy }) {
   }));
   const [terms, setTerms] = useState(!!user),
     [consent, setConsent] = useState(!!user);
+  const abroad = c.region === 'Fuera de Chile';
   const update = (key, value) => setC((v) => ({ ...v, [key]: value }));
   const field = (key, value) => setDraft((v) => ({ ...v, [key]: value }));
   async function upload(e) {
@@ -314,34 +315,47 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy }) {
             />
             <small className="hint">Se muestra tu edad, nunca tu fecha de nacimiento.</small>
           </label>
-          <div className="form-row">
-            <label>
-              Región
-              <select value={c.region} onChange={(e) => update('region', e.target.value)}>
-                <option value="">Seleccionar</option>
-                {[
-                  'Arica y Parinacota',
-                  'Tarapacá',
-                  'Antofagasta',
-                  'Atacama',
-                  'Coquimbo',
-                  'Valparaíso',
-                  'Metropolitana',
-                  'O’Higgins',
-                  'Maule',
-                  'Ñuble',
-                  'Biobío',
-                  'La Araucanía',
-                  'Los Ríos',
-                  'Los Lagos',
-                  'Aysén',
-                  'Magallanes',
-                  'Fuera de Chile',
-                ].map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
-            </label>
+          <label>
+            ¿Dónde vives?
+            <select
+              value={abroad ? 'abroad' : 'chile'}
+              onChange={(e) =>
+                update('region', e.target.value === 'abroad' ? 'Fuera de Chile' : '')
+              }
+            >
+              <option value="chile">En Chile</option>
+              <option value="abroad">En el extranjero</option>
+            </select>
+          </label>
+          <div className={abroad ? 'residence-city' : 'form-row'}>
+            {!abroad && (
+              <label>
+                Región
+                <select value={c.region} onChange={(e) => update('region', e.target.value)}>
+                  <option value="">Seleccionar</option>
+                  {[
+                    'Arica y Parinacota',
+                    'Tarapacá',
+                    'Antofagasta',
+                    'Atacama',
+                    'Coquimbo',
+                    'Valparaíso',
+                    'Metropolitana',
+                    'O’Higgins',
+                    'Maule',
+                    'Ñuble',
+                    'Biobío',
+                    'La Araucanía',
+                    'Los Ríos',
+                    'Los Lagos',
+                    'Aysén',
+                    'Magallanes',
+                  ].map((v) => (
+                    <option key={v}>{v}</option>
+                  ))}
+                </select>
+              </label>
+            )}
             <label>
               Ciudad
               <input
@@ -350,8 +364,12 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy }) {
                 maxLength={60}
                 value={draft.city}
                 onChange={(e) => field('city', e.target.value)}
-                placeholder="Tu ciudad"
+                placeholder={abroad ? 'Ej.: Madrid, Buenos Aires, Berlín…' : 'Tu ciudad'}
+                autoComplete="address-level2"
               />
+              {abroad && (
+                <small className="hint">Escribe la ciudad donde vives, en cualquier país.</small>
+              )}
             </label>
           </div>
           {c.nationalities.map((v, i) => (
@@ -387,11 +405,11 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy }) {
           </button>
           <div className="form-row">
             <label>
-              Me identifico como
+              Sexo
               <select value={draft.gender} onChange={(e) => field('gender', e.target.value)}>
                 <option value="mujer">Mujer</option>
                 <option value="hombre">Hombre</option>
-                <option value="otro">Otra identidad</option>
+                <option value="otro">Otro</option>
               </select>
             </label>
             <label>

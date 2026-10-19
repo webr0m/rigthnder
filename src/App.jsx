@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { api, setToken } from './api';
 import { googleLogin, listenGoogle, startAds, privacyAds } from './mobile';
-import { Button, Modal, Photo, Safety, Legal } from './Shared';
+import { Button, Modal, Photo, Safety, Legal, locationLabel } from './Shared';
 import Onboarding from './Onboarding';
 import Conversations from './Conversations';
 export function Wordmark() {
@@ -86,7 +86,7 @@ export function ProfileCard({ profile: p, onWrite, onSafety }) {
           </h2>
           <span className="current-tag">{c.current || 'Ideas propias'}</span>
           <p>
-            {p.occupation || 'Con ganas de conversar'} · {p.city}
+            {p.occupation || 'Con ganas de conversar'} · {locationLabel(p)}
           </p>
         </div>
         <Button
@@ -1054,7 +1054,8 @@ export default function App() {
                           {user.name}, {user.age}
                         </h2>
                         <p>
-                          {user.city} · {user.demo ? 'Perfil de demostración' : user.email}
+                          {locationLabel(user)} ·{' '}
+                          {user.demo ? 'Perfil de demostración' : user.email}
                         </p>
                         <Button onClick={() => setWizard({ type: 'edit' })}>
                           EDITAR MI PERFIL <ArrowRight size={16} />

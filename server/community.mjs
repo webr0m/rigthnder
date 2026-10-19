@@ -238,7 +238,12 @@ export function mountCommunity(
     if (f.mode === 'shared')
       rows = rows.filter((p) => p.common.some((s) => /^(Ve |Lee a |Sigue a )/.test(s)));
     if (f.mode === 'near')
-      rows = rows.filter((p) => p.city.toLowerCase() === me.city.toLowerCase());
+      rows = rows.filter(
+        (p) =>
+          p.city.toLowerCase() === me.city.toLowerCase() &&
+          (p.community?.region === 'Fuera de Chile') ===
+            (me.community?.region === 'Fuera de Chile'),
+      );
     rows.sort((a, b) => b.common.length - a.common.length || a.id.localeCompare(b.id));
     res.json({
       profiles: rows.slice(f.offset, f.offset + f.limit),
