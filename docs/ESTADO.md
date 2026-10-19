@@ -1,9 +1,9 @@
 # OnlyFachos 0.2.2 · 18 de octubre de 2026
 
-## Preparado para publicar en 0.2.2
+## Publicado en 0.2.2
 
 - Campo «Sexo» y residencia explícita «En Chile» / «En el extranjero». Ciudad de texto libre en ambos casos; la residencia extranjera se muestra junto a la ciudad y «Cerca» distingue Chile de exterior.
-- La publicación en Namecheap está pendiente de renovar la sesión de cPanel, que caducó. El sitio público conserva la versión 0.2.1 hasta completar ese acceso.
+- Publicado en Namecheap con respaldo consistente de la base y los archivos anteriores. HTTPS, API y bundle de la versión 0.2.2 verificados en el dominio público.
 
 ## Implementado y publicado
 
