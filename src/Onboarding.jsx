@@ -139,6 +139,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy }) {
   const [c, setC] = useState(() => ({
     ...empty,
     ...user?.community,
+    nationalities: user?.community?.nationalities?.length ? user.community.nationalities : [''],
     photos: user?.community?.photos?.length
       ? user.community.photos
       : user?.photo
