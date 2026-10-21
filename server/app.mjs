@@ -491,6 +491,8 @@ export function createApp(db, options = {}) {
       req.body,
     );
     const target = accessibleTarget(req, targetId);
+    if (settingsOf(target).paused)
+      return res.status(404).json({ error: 'Ese perfil no está disponible.' });
     const existing = db
       .prepare('SELECT 1 FROM swipes WHERE user_id=? AND target_id=?')
       .get(req.user.id, targetId);

@@ -253,6 +253,7 @@ export function mountCommunity(
           ...(p.community?.streamers || []),
           ...(p.community?.authors || []),
           ...(p.community?.creators || []),
+          ...(p.community?.artists || []),
         ].some((v) => searchText(v).includes(searchText(f.q))),
       );
     rows = rows.map((p) => ({ ...p, common: commonItems(me, p) }));
@@ -267,7 +268,7 @@ export function mountCommunity(
     if (f.verified === 'true') rows = [];
     if (f.mode === 'online') rows = rows.filter((p) => p.online);
     if (f.mode === 'shared')
-      rows = rows.filter((p) => p.common.some((s) => /^(Ve |Lee a |Sigue a )/.test(s)));
+      rows = rows.filter((p) => p.common.some((s) => /^(Ve |Lee a |Sigue a |Escucha )/.test(s)));
     if (f.mode === 'near')
       rows = rows.filter(
         (p) =>
@@ -474,11 +475,9 @@ export function mountCommunity(
     const row = invitation(req, req.params.id);
     if (row.status !== 'accepted')
       return res.status(409).json({ error: 'Primero deben aceptar la invitación.' });
-    res
-      .status(409)
-      .json({
-        error:
-          'Usa una propuesta de cita: el día y el lugar requieren aceptación de la otra persona.',
-      });
+    res.status(409).json({
+      error:
+        'Usa una propuesta de cita: el día y el lugar requieren aceptación de la otra persona.',
+    });
   });
 }
