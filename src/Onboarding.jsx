@@ -111,6 +111,8 @@ const empty = {
   streamers: [],
   creators: [],
   authors: [],
+  artists: [],
+  debate: '',
   partyStance: '',
   party: '',
   years: '',
@@ -123,8 +125,8 @@ const empty = {
   countryCount: 0,
   sensitiveConsent: false,
 };
-export default function Onboarding({ user, identity, onSave, onCancel, busy }) {
-  const [step, setStep] = useState(1),
+export default function Onboarding({ user, identity, onSave, onCancel, busy, initialStep = 1 }) {
+  const [step, setStep] = useState(initialStep),
     [error, setError] = useState(''),
     [uploading, setUploading] = useState(false);
   const [draft, setDraft] = useState(() => ({
@@ -455,6 +457,21 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy }) {
       )}
       {step === 2 && (
         <>
+          <label>
+            Debate me on
+            <textarea
+              value={c.debate || ''}
+              maxLength={180}
+              placeholder="Una idea para romper el hielo…"
+              onChange={(e) => update('debate', e.target.value)}
+            />
+          </label>
+          <Tags
+            label="ARTISTAS Y CANTANTES"
+            suggestions={['Rammstein', 'Juan Luis Guerra', 'Raphael', 'Los Jaivas']}
+            value={c.artists || []}
+            onChange={(v) => update('artists', v)}
+          />
           <Tags
             label="STREAMERS QUE VES"
             suggestions={[
@@ -679,6 +696,8 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy }) {
                         sensitiveConsent: false,
                         streamers: [],
                         authors: [],
+                        artists: [],
+                        debate: '',
                         creators: [],
                         years: '',
                         current: '',

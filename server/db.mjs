@@ -178,6 +178,8 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
     ['users', 'community_json', "TEXT NOT NULL DEFAULT '{}'"],
     ['users', 'last_seen', 'INTEGER NOT NULL DEFAULT 0'],
     ['messages', 'kind', "TEXT NOT NULL DEFAULT 'text'"],
+    ['users', 'settings_json', "TEXT NOT NULL DEFAULT '{}'"],
+    ['reports', 'details', "TEXT NOT NULL DEFAULT ''"],
   ]) {
     if (
       !db
@@ -204,6 +206,28 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
       message_id TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
       user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       reaction TEXT NOT NULL, PRIMARY KEY(message_id,user_id)
+    );
+    CREATE TABLE IF NOT EXISTS conversation_reads (
+      conversation_id TEXT NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      read_at INTEGER NOT NULL, PRIMARY KEY(conversation_id,user_id)
+    );
+    CREATE TABLE IF NOT EXISTS profile_visits (
+      target_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      viewer_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      day TEXT NOT NULL, PRIMARY KEY(target_id,viewer_id,day)
+    );
+    CREATE TABLE IF NOT EXISTS date_proposals (
+      id TEXT PRIMARY KEY, conversation_id TEXT NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+      sender_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      day TEXT NOT NULL, place TEXT NOT NULL, timezone TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','accepted','declined','superseded')),
+      created_at INTEGER NOT NULL
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS one_pending_proposal ON date_proposals(conversation_id) WHERE status='pending';
+    CREATE TABLE IF NOT EXISTS beta_feedback (
+      id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      kind TEXT NOT NULL, text TEXT NOT NULL, created_at INTEGER NOT NULL
     );
   `);
   const insert = db.prepare(`INSERT OR IGNORE INTO users
@@ -341,7 +365,32 @@ export function ageOf(birthdate, now = new Date()) {
   );
 }
 
-export function publicProfile(user) {
+export const DEFAULT_SETTINGS = {
+  appearance: 'auto',
+  messages: true,
+  dates: true,
+  news: false,
+  hideParty: false,
+  hideFaith: false,
+  paused: false,
+};
+export function settingsOf(user) {
+  return { ...DEFAULT_SETTINGS, ...JSON.parse(user.settings_json || '{}') };
+}
+export function ownProfile(user) {
+  return { ...publicProfile(user, true), settings: settingsOf(user) };
+}
+export function publicProfile(user, own = false) {
+  const community = JSON.parse(user.community_json || '{}');
+  const settings = settingsOf(user);
+  if (own !== true && settings.hideParty) {
+    community.party = '';
+    community.partyStance = '';
+  }
+  if (own !== true && settings.hideFaith) {
+    community.faith = '';
+    community.denomination = '';
+  }
   return {
     id: user.id,
     name: user.name,
@@ -358,7 +407,7 @@ export function publicProfile(user) {
     intention: user.intention,
     lookingFor: user.looking_for,
     demo: !!user.demo,
-    community: JSON.parse(user.community_json || '{}'),
+    community,
     online: !!user.seed || Date.now() - user.last_seen < 180_000,
   };
 }

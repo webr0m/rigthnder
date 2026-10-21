@@ -24,6 +24,7 @@ import { googleLogin, listenGoogle, startAds, privacyAds } from './mobile';
 import { Button, Modal, Photo, Safety, Legal, locationLabel } from './Shared';
 import Onboarding from './Onboarding';
 import Conversations from './Conversations';
+import { BetaAccount, BetaSettings, BetaService, BetaFilters, ProfileDetail } from './BetaPages';
 export function Wordmark() {
   return (
     <span className="wordmark">
@@ -31,7 +32,17 @@ export function Wordmark() {
     </span>
   );
 }
-const DEFAULT = { minAge: 18, maxAge: 60, gender: 'todos', city: '' };
+const DEFAULT = {
+  minAge: 18,
+  maxAge: 60,
+  gender: 'todos',
+  city: '',
+  current: '',
+  faith: '',
+  children: '',
+  shared: 'false',
+  verified: 'false',
+};
 const MODES = [
   ['all', 'Para ti'],
   ['online', 'En línea'],
@@ -43,7 +54,7 @@ const NAV = [
   ['chat', MessageCircle, 'Chats'],
   ['profile', UserRound, 'Perfil'],
 ];
-export function ProfileCard({ profile: p, onWrite, onSafety }) {
+export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
   const c = p.community || {},
     photos = c.photos?.length ? c.photos : p.photo ? [p.photo] : [];
   const facts = [
@@ -81,8 +92,10 @@ export function ProfileCard({ profile: p, onWrite, onSafety }) {
         </span>
         <div className="profile-name">
           <h2 id={'name-' + p.id}>
-            {p.name}, {p.age}
-            {p.demo && <small>DEMO</small>}
+            <button className="profile-open" onClick={() => onOpen?.(p)}>
+              {p.name}, {p.age}
+              {p.demo && <small>DEMO</small>}
+            </button>
           </h2>
           <span className="current-tag">{c.current || 'Ideas propias'}</span>
           <p>
@@ -151,6 +164,7 @@ export function ProfileCard({ profile: p, onWrite, onSafety }) {
             ['VE', c.streamers],
             ['LEE', c.authors],
             ['SIGUE', c.creators],
+            ['ESCUCHA', c.artists],
           ]
             .filter(([, v]) => v?.length)
             .map(([label, items]) => (
@@ -173,66 +187,6 @@ export function ProfileCard({ profile: p, onWrite, onSafety }) {
         )}
       </div>
     </article>
-  );
-}
-function Filters({ filters, onApply }) {
-  const [d, set] = useState(filters);
-  return (
-    <form
-      className="form"
-      onSubmit={(e) => {
-        e.preventDefault();
-        onApply(d);
-      }}
-    >
-      <p>«Cerca» muestra personas de tu misma ciudad, sin usar tu ubicación exacta.</p>
-      <div className="form-row">
-        <label>
-          Edad mínima
-          <input
-            required
-            type="number"
-            min={18}
-            max={100}
-            value={d.minAge}
-            onChange={(e) => set({ ...d, minAge: e.target.value })}
-          />
-        </label>
-        <label>
-          Edad máxima
-          <input
-            required
-            type="number"
-            min={d.minAge}
-            max={100}
-            value={d.maxAge}
-            onChange={(e) => set({ ...d, maxAge: e.target.value })}
-          />
-        </label>
-      </div>
-      <label>
-        Quiero conocer
-        <select value={d.gender} onChange={(e) => set({ ...d, gender: e.target.value })}>
-          <option value="todos">Todas las personas</option>
-          <option value="mujer">Mujeres</option>
-          <option value="hombre">Hombres</option>
-          <option value="otro">Otras identidades</option>
-        </select>
-      </label>
-      <label>
-        Ciudad
-        <input
-          maxLength={60}
-          value={d.city}
-          onChange={(e) => set({ ...d, city: e.target.value })}
-          placeholder="Cualquier ciudad"
-        />
-      </label>
-      <Button>APLICAR FILTROS</Button>
-      <button type="button" className="text-link" onClick={() => set(DEFAULT)}>
-        Restablecer
-      </button>
-    </form>
   );
 }
 function Access({ options, notify, onLogin, onRegister, onLegal }) {
@@ -288,7 +242,7 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
         <span className="label-strip">
           {login ? 'TU COMUNIDAD TE ESPERA' : 'AQUÍ EMPIEZA LA CONVERSACIÓN'}
         </span>
-        <h2>{login ? 'DE VUELTA.' : 'SIN RODEOS.'}</h2>
+        <h2>{login ? 'VOLVISTE, BASADO.' : 'SIN RODEOS.'}</h2>
         <form className="form" onSubmit={submit}>
           <button
             type="button"
@@ -340,6 +294,19 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
               autoComplete={login ? 'current-password' : 'new-password'}
             />
           </label>
+          {login && (
+            <button
+              type="button"
+              className="text-link"
+              onClick={() =>
+                notify(
+                  'La recuperación automática por correo aún no está habilitada en la beta. Conserva tu contraseña para volver a entrar.',
+                )
+              }
+            >
+              Olvidé mi contraseña
+            </button>
+          )}
           {error && (
             <p className="form-error" role="alert">
               {error}
@@ -416,11 +383,32 @@ export default function App() {
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState(null);
   const [findPerson, setFindPerson] = useState(null);
+  const [profileView, setProfileView] = useState(null),
+    [settingsOpen, setSettingsOpen] = useState(false),
+    [service, setService] = useState(null);
+  async function saveSettings(patch) {
+    try {
+      const result = await api('/me/settings', { method: 'PUT', body: patch });
+      setUser(result);
+      setReload((v) => v + 1);
+    } catch (e) {
+      notify(e.message, true);
+    }
+  }
+  async function openProfile(p) {
+    try {
+      const result = await api('/people/' + p.id);
+      setProfileView(result);
+      if (p.id !== user.id) await api('/people/' + p.id + '/visit', { method: 'POST' });
+    } catch (e) {
+      notify(e.message, true);
+    }
+  }
   const [theme, setTheme] = useState(() => {
     try {
-      return localStorage.getItem('onlyfachos-theme') || 'dark';
+      return localStorage.getItem('onlyfachos-theme') || 'auto';
     } catch {
-      return 'dark';
+      return 'auto';
     }
   });
   const sentinel = useRef(null),
@@ -436,6 +424,7 @@ export default function App() {
   function signedIn(r) {
     setToken(r.token);
     setUser(r.user);
+    if (r.user.settings?.appearance) setTheme(r.user.settings.appearance);
     setTab('community');
     setWizard(null);
     setFilters({ ...DEFAULT, gender: r.user.lookingFor });
@@ -443,13 +432,20 @@ export default function App() {
     setReload((v) => v + 1);
   }
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    document
-      .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', theme === 'dark' ? '#0d0d11' : '#f2efe6');
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const apply = () => {
+      const value = theme === 'auto' ? (media.matches ? 'dark' : 'light') : theme;
+      document.documentElement.dataset.theme = value;
+      document
+        .querySelector('meta[name="theme-color"]')
+        ?.setAttribute('content', value === 'dark' ? '#0d0d11' : '#f2efe6');
+    };
+    apply();
+    media.addEventListener('change', apply);
     try {
       localStorage.setItem('onlyfachos-theme', theme);
     } catch {}
+    return () => media.removeEventListener('change', apply);
   }, [theme]);
   useEffect(() => {
     let alive = true,
@@ -468,6 +464,7 @@ export default function App() {
             const me = await api('/me');
             if (alive) {
               setUser(me);
+              if (me.settings?.appearance) setTheme(me.settings.appearance);
               setFilters({ ...DEFAULT, gender: me.lookingFor });
               if (location.pathname === '/eliminar-cuenta') setTab('profile');
             }
@@ -713,6 +710,7 @@ export default function App() {
             key={wizard.type}
             user={wizard.type === 'edit' ? user : null}
             identity={wizard.identity}
+            initialStep={wizard.step || 1}
             onSave={saveWizard}
             onCancel={() => setWizard(null)}
             busy={busy}
@@ -751,8 +749,8 @@ export default function App() {
                 >
                   <Icon size={20} />
                   {label}
-                  {id === 'chat' && conversations.length > 0 && (
-                    <small>{conversations.length}</small>
+                  {id === 'chat' && conversations.some((c) => c.unread) && (
+                    <small>{conversations.reduce((n, c) => n + c.unread, 0)}</small>
                   )}
                 </button>
               ))}
@@ -769,7 +767,7 @@ export default function App() {
               <Photo profile={user} className="avatar" />
               <span>
                 {user.name}
-                <small>{user.demo ? 'Perfil demo' : 'Mi cuenta'}</small>
+                <small>{user.demo ? 'Perfil demo · Beta 1' : 'Mi cuenta · Beta 1'}</small>
               </span>
             </button>
           </aside>
@@ -923,7 +921,13 @@ export default function App() {
                         aria-busy={feedBusy}
                       >
                         {feed.profiles.map((p) => (
-                          <ProfileCard profile={p} onWrite={write} onSafety={safety} key={p.id} />
+                          <ProfileCard
+                            profile={p}
+                            onWrite={write}
+                            onOpen={openProfile}
+                            onSafety={safety}
+                            key={p.id}
+                          />
                         ))}
                       </section>
                       {feedBusy && (
@@ -934,8 +938,18 @@ export default function App() {
                       {!feedBusy && !feed.profiles.length && (
                         <div className="empty-state">
                           <Search size={28} />
-                          <h2>AÚN NO HAY NADIE POR AQUÍ.</h2>
-                          <p>Prueba otra pestaña o amplía tus filtros.</p>
+                          <h2>SE ACABARON LOS FACHOS POR HOY.</h2>
+                          <p>
+                            Prueba otra ciudad, amplía tus filtros o sigue una buena conversación.
+                          </p>
+                          <button className="text-link" onClick={() => setModal('filters')}>
+                            Ajustar mis filtros
+                          </button>
+                          {conversations.length > 0 && (
+                            <button className="text-link" onClick={() => navigate('chat')}>
+                              Volver a mis chats
+                            </button>
+                          )}
                           <Button
                             onClick={() => {
                               setSearch('');
@@ -1040,86 +1054,46 @@ export default function App() {
                   onDiscover={() => navigate('community')}
                 />
               )}
-              {tab === 'profile' && (
-                <div className="account-layout">
-                  <section className="account-main">
-                    <span className="label-strip">TU ESPACIO</span>
-                    <h1>
-                      ESTO ES <mark>MUY TÚ.</mark>
-                    </h1>
-                    <div className="my-profile-summary">
-                      <Photo profile={user} className="large-avatar" />
-                      <div>
-                        <h2>
-                          {user.name}, {user.age}
-                        </h2>
-                        <p>
-                          {locationLabel(user)} ·{' '}
-                          {user.demo ? 'Perfil de demostración' : user.email}
-                        </p>
-                        <Button onClick={() => setWizard({ type: 'edit' })}>
-                          EDITAR MI PERFIL <ArrowRight size={16} />
-                        </Button>
-                      </div>
-                    </div>
-                    <ProfileCard
-                      profile={{ ...user, common: [] }}
-                      onWrite={() => notify('Así ven tu perfil las personas de la comunidad.')}
-                      onSafety={() => setModal('privacy')}
-                    />
-                    <p className="hint">
-                      Tu correo y fecha de nacimiento no se muestran en el perfil público.
-                    </p>
-                  </section>
-                  <aside className="account-settings">
-                    <h3>
-                      TUS DATOS.
-                      <br />
-                      TUS DECISIONES.
-                    </h3>
-                    <p>
-                      Política y religión son opcionales. Puedes quitarlas en «Editar mi perfil».
-                    </p>
-                    <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-                      <Sun size={18} /> Apariencia: {theme === 'dark' ? 'oscura' : 'clara'}
-                    </button>
-                    <button onClick={() => setModal('privacy')}>
-                      <ShieldCheck size={18} /> Privacidad
-                    </button>
-                    <button onClick={exportData}>
-                      <Download size={18} /> Descargar mis datos
-                    </button>
-                    <button
-                      onClick={async () => {
-                        try {
-                          notify(await startAds());
-                        } catch (e) {
-                          notify(e.message, true);
-                        }
-                      }}
-                    >
-                      <Zap size={18} /> Anuncios en móvil
-                    </button>
-                    <button
-                      onClick={async () => {
-                        try {
-                          await privacyAds();
-                        } catch (e) {
-                          notify(e.message, true);
-                        }
-                      }}
-                    >
-                      <SlidersHorizontal size={18} /> Privacidad de anuncios
-                    </button>
-                    <button onClick={logout}>
-                      <LogOut size={18} /> Cerrar sesión
-                    </button>
-                    <button className="danger-text" onClick={() => setModal('delete')}>
-                      Eliminar mi cuenta
-                    </button>
-                  </aside>
-                </div>
-              )}
+              {tab === 'profile' &&
+                (settingsOpen ? (
+                  <BetaSettings
+                    user={user}
+                    theme={theme}
+                    setTheme={setTheme}
+                    saveSettings={saveSettings}
+                    onBack={() => setSettingsOpen(false)}
+                    onLegal={setModal}
+                    onDelete={() => setModal('delete')}
+                    logout={logout}
+                    exportData={exportData}
+                    notify={notify}
+                    onService={setService}
+                    onAds={async () => {
+                      try {
+                        notify(await startAds());
+                      } catch (e) {
+                        notify(e.message, true);
+                      }
+                    }}
+                    onAdPrivacy={async () => {
+                      try {
+                        await privacyAds();
+                      } catch (e) {
+                        notify(e.message, true);
+                      }
+                    }}
+                  />
+                ) : (
+                  <BetaAccount
+                    user={user}
+                    onEdit={(step) => setWizard({ type: 'edit', step })}
+                    onPreview={() => openProfile(user)}
+                    onSettings={() => setSettingsOpen(true)}
+                    saveSettings={saveSettings}
+                    onPro={() => setService('pro')}
+                    notify={notify}
+                  />
+                ))}
             </main>
           </div>
           <nav className="bottom-nav" aria-label="Navegación móvil">
@@ -1136,8 +1110,8 @@ export default function App() {
               >
                 <span>
                   <Icon size={20} />
-                  {id === 'chat' && conversations.length > 0 && (
-                    <small>{conversations.length}</small>
+                  {id === 'chat' && conversations.some((c) => c.unread) && (
+                    <small>{conversations.reduce((n, c) => n + c.unread, 0)}</small>
                   )}
                 </span>
                 {label}
@@ -1146,9 +1120,25 @@ export default function App() {
           </nav>
         </>
       )}
+      {service && <BetaService kind={service} onClose={() => setService(null)} notify={notify} />}
+      {profileView && (
+        <ProfileDetail
+          profile={profileView}
+          me={user}
+          onWrite={(p) => {
+            setProfileView(null);
+            if (p.id !== user.id) write(p);
+          }}
+          safety={(p) => {
+            setProfileView(null);
+            safety(p);
+          }}
+          onClose={() => setProfileView(null)}
+        />
+      )}
       {modal === 'filters' && (
         <Modal title="TU COMUNIDAD, A TU MANERA" onClose={() => setModal(null)}>
-          <Filters
+          <BetaFilters
             filters={filters}
             onApply={(v) => {
               setFilters(v);

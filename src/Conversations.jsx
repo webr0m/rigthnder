@@ -19,6 +19,7 @@ import {
 import { api } from './api';
 import { Button, Modal, Photo } from './Shared';
 import { Chips, compressPhoto } from './Onboarding';
+import { DatePlanner, ConfirmedPlan } from './DatePlanner';
 const PLANS = ['Un café', 'Una cena', 'Un asado', 'Un paseo', 'Sorpréndeme'];
 const STICKERS = [
   'BASADO',
@@ -239,7 +240,9 @@ export default function Conversations({
     [sending, setSending] = useState(false),
     [stickers, setStickers] = useState(false),
     [dialog, setDialog] = useState(null),
-    [recording, setRecording] = useState(false);
+    [recording, setRecording] = useState(false),
+    [listMode, setListMode] = useState('all'),
+    [chatSearch, setChatSearch] = useState('');
   const end = useRef(),
     generation = useRef(0),
     recorder = useRef(),
@@ -251,7 +254,17 @@ export default function Conversations({
   async function load(id = active) {
     if (!id) return;
     const result = await api('/conversations/' + id);
-    if (id === activeRef.current) setDetail(result);
+    if (id === activeRef.current) {
+      setDetail(result);
+      const through = Math.max(
+        0,
+        ...result.messages.filter((m) => m.senderId !== user.id).map((m) => m.createdAt),
+      );
+      if (through && document.visibilityState === 'visible') {
+        await api('/conversations/' + id + '/read', { method: 'POST', body: { through } });
+        if (result.unread) await refresh();
+      }
+    }
     return result;
   }
   useEffect(() => {
@@ -265,7 +278,7 @@ export default function Conversations({
     if (!active) return;
     setLoading(true);
     const fetchDetail = () =>
-      api('/conversations/' + active)
+      load(active)
         .then((r) => {
           if (v === generation.current) setDetail(r);
         })
@@ -420,26 +433,78 @@ export default function Conversations({
             TUS CHATS<span> ({conversations.length})</span>
           </h1>
         </div>
-        {conversations.map((c) => (
-          <button
-            key={c.id}
-            className={'chat-person ' + (active === c.id ? 'active' : '')}
-            onClick={() => setActive(c.id)}
-          >
-            <Photo profile={c.profile} className="avatar" />
-            <span>
-              <strong>
-                {c.profile.name}
-                {c.invitations.some((d) => d.status === 'accepted') && <Coffee size={15} />}
-              </strong>
-              <p>{c.lastMessage?.text || 'Di hola. Lo demás se conversa.'}</p>
-              <small>
-                {c.streak > 0 ? '🔥 ' + c.streak + ' días de racha' : 'Conversación abierta'}
-              </small>
-            </span>
-            {c.lastMessage && <time>{time(c.lastMessage.createdAt)}</time>}
-          </button>
-        ))}
+        <div className="chat-filters">
+          <input
+            aria-label="Buscar conversaciones"
+            placeholder="Buscar conversación…"
+            value={chatSearch}
+            onChange={(e) => setChatSearch(e.target.value)}
+          />
+          <div className="segmented">
+            {[
+              ['all', 'Todos'],
+              ['unread', 'Sin leer'],
+              ['dates', 'Citas'],
+              ['archived', 'Archivados'],
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                className={listMode === id ? 'selected' : ''}
+                aria-pressed={listMode === id}
+                onClick={() => setListMode(id)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <small className="hint">
+            Sin actividad en 14 días: pasan a Archivados. Un mensaje nuevo las recupera.
+          </small>
+        </div>
+        {conversations
+          .filter(
+            (c) =>
+              (listMode === 'archived' ? c.archived : !c.archived) &&
+              (listMode !== 'unread' || c.unread > 0) &&
+              (listMode !== 'dates' || c.proposals?.some((p) => p.status === 'accepted')) &&
+              c.profile.name.toLowerCase().includes(chatSearch.toLowerCase()),
+          )
+          .map((c) => (
+            <button
+              key={c.id}
+              className={
+                'chat-person ' + (active === c.id ? 'active' : '') + (c.unread ? ' is-unread' : '')
+              }
+              onClick={() => setActive(c.id)}
+            >
+              <Photo profile={c.profile} className="avatar" />
+              <span>
+                <strong>
+                  {c.profile.name}
+                  {c.invitations.some((d) => d.status === 'accepted') && <Coffee size={15} />}
+                </strong>
+                <p>
+                  {c.proposals?.find((p) => p.status === 'accepted')
+                    ? '☕ ' +
+                      new Date(
+                        c.proposals.find((p) => p.status === 'accepted').day,
+                      ).toLocaleDateString('es-CL') +
+                      ' · ' +
+                      c.proposals.find((p) => p.status === 'accepted').place
+                    : c.lastMessage?.text || 'Di hola. Lo demás se conversa.'}
+                </p>
+                <small>
+                  {c.streak > 0 ? '🔥 ' + c.streak + ' días de racha' : 'Conversación abierta'}
+                </small>
+              </span>
+              {c.unread > 0 && (
+                <span className="unread-count" aria-label={c.unread + ' mensajes sin leer'}>
+                  {c.unread}
+                </span>
+              )}
+              {c.lastMessage && <time>{time(c.lastMessage.createdAt)}</time>}
+            </button>
+          ))}
       </aside>
       <section className="chat-conversation">
         {!active ? (
@@ -480,7 +545,7 @@ export default function Conversations({
               <button
                 className="icon-button"
                 aria-label="Invitar a salir"
-                onClick={() => setDialog('invite')}
+                onClick={() => setDialog('plan')}
                 disabled={!detail}
               >
                 <Coffee size={20} />
@@ -494,6 +559,14 @@ export default function Conversations({
                 <MoreHorizontal size={22} />
               </button>
             </header>
+            {detail?.proposals?.find((p) => p.status === 'accepted') && (
+              <ConfirmedPlan
+                plan={detail.proposals.find((p) => p.status === 'accepted')}
+                peer={peer}
+                notify={notify}
+                onChange={() => setDialog('plan')}
+              />
+            )}
             {!!detail?.common.length && (
               <div className="chat-common">
                 <strong>EN COMÚN</strong>
@@ -536,7 +609,7 @@ export default function Conversations({
                           {detail.signal.plan && 'Le gustaría: ' + detail.signal.plan + '. '}¿Te
                           animas a invitar?
                         </p>
-                        <button className="text-link" onClick={() => setDialog('invite')}>
+                        <button className="text-link" onClick={() => setDialog('plan')}>
                           Invitar
                         </button>
                       </div>
@@ -620,7 +693,7 @@ export default function Conversations({
                             ¿LO LLEVAN A UN CAFÉ?
                           </h3>
                           <div>
-                            <button onClick={() => setDialog('invite')}>
+                            <button onClick={() => setDialog('plan')}>
                               Invitar a salir <Coffee size={14} />
                             </button>
                             <button onClick={() => setDialog('signal')}>
@@ -629,6 +702,85 @@ export default function Conversations({
                           </div>
                         </div>
                       )}
+                    {detail.proposals?.map((p) => (
+                      <div className="proposal-card" key={p.id}>
+                        <small>
+                          {p.status === 'accepted'
+                            ? 'LOS DOS DIJERON QUE SÍ'
+                            : p.status === 'pending'
+                              ? 'PROPUESTA DE CITA'
+                              : p.status === 'superseded'
+                                ? 'PLAN ANTERIOR'
+                                : 'PROPUESTA CERRADA'}
+                        </small>
+                        <h3>{new Date(p.day).toLocaleString('es-CL')}</h3>
+                        <p>{p.place}</p>
+                        <small>Propuesto en {p.timezone} · Se muestra en tu horario</small>
+                        {p.status === 'pending' && (
+                          <>
+                            <p>
+                              {p.senderId === user.id
+                                ? 'Esperando respuesta. La cita aún no está confirmada.'
+                                : peer.name + ' te propone este plan.'}
+                            </p>
+                            <div className="beta-actions">
+                              {p.senderId !== user.id ? (
+                                <>
+                                  <Button
+                                    onClick={() =>
+                                      run('/proposals/' + p.id + '/answer', 'POST', {
+                                        accept: true,
+                                      }).catch((e) => notify(e.message, true))
+                                    }
+                                  >
+                                    ACEPTAR
+                                  </Button>
+                                  <button
+                                    className="button secondary"
+                                    onClick={async () => {
+                                      try {
+                                        await run('/proposals/' + p.id + '/answer', 'POST', {
+                                          accept: false,
+                                        });
+                                        setDialog('plan');
+                                      } catch (e) {
+                                        notify(e.message, true);
+                                      }
+                                    }}
+                                  >
+                                    SUGERIR OTRO
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  className="text-link"
+                                  onClick={() =>
+                                    run('/proposals/' + p.id, 'DELETE').catch((e) =>
+                                      notify(e.message, true),
+                                    )
+                                  }
+                                >
+                                  Retirar propuesta
+                                </button>
+                              )}
+                            </div>
+                            {p.senderId === user.id && user.demo && (
+                              <button
+                                className="text-link"
+                                onClick={() =>
+                                  run('/proposals/' + p.id + '/answer', 'POST', {
+                                    accept: true,
+                                    demo: true,
+                                  }).catch((e) => notify(e.message, true))
+                                }
+                              >
+                                Simular aceptación · SOLO DEMO
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    ))}
                     {detail.invitations.map((d) => (
                       <div className={'invitation-card status-' + d.status} key={d.id}>
                         <small>
@@ -684,9 +836,7 @@ export default function Conversations({
                               {d.place || 'Lugar por elegir'}
                             </p>
                             <div className="invitation-actions">
-                              <button
-                                onClick={() => setDialog({ mode: 'edit', invitationId: d.id })}
-                              >
+                              <button onClick={() => setDialog('plan')}>
                                 <Calendar size={15} /> Elegir día y lugar
                               </button>
                               <button
@@ -787,7 +937,10 @@ export default function Conversations({
           </>
         )}
       </section>
-      {dialog && detail && (
+      {dialog === 'plan' && detail && (
+        <DatePlanner detail={detail} run={run} onClose={() => setDialog(null)} />
+      )}
+      {dialog && dialog !== 'plan' && detail && (
         <DateDialog
           key={typeof dialog === 'string' ? dialog : dialog.mode + dialog.invitationId}
           mode={typeof dialog === 'string' ? dialog : dialog.mode}

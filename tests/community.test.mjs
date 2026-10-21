@@ -121,11 +121,11 @@ test('a date needs explicit acceptance from the other participant, cannot be ans
         'PATCH',
       )
     ).status,
-    200,
+    409,
   );
   const updated = (await req('/conversations/' + conv, b.token)).data;
   assert.equal(updated.invitations[0].status, 'accepted');
-  assert.equal(updated.invitations[0].place, 'Café del centro');
+  assert.equal(updated.invitations[0].place, '');
 });
 test('declining keeps chat available, signals are voluntary, blocking removes invitations and prevents new chat', async () => {
   const a = await account('BlockA'),

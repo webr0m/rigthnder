@@ -1,3 +1,7 @@
+# OnlyFachos Beta 1 · 20 de octubre de 2026
+
+La versión `1.0.0-beta.1` está preparada para publicación web y compilación móvil. El resultado efectivo del despliegue, repositorios y artefactos se registra al terminar la publicación. Consulta [recorrido de prueba y límites](BETA-1.md).
+
 # OnlyFachos 0.2.2 · 18 de octubre de 2026
 
 ## Publicado en 0.2.2

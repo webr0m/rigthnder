@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
-import { publicProfile } from './db.mjs';
+import { publicProfile, ownProfile, settingsOf } from './db.mjs';
+import { proposalsFor } from './beta.mjs';
 
 export const PLANS = ['Un café', 'Una cena', 'Un asado', 'Un paseo', 'Sorpréndeme'];
 export const STICKERS = [
@@ -28,6 +29,8 @@ export function makeCommunitySchema(photoSchema) {
       streamers: tags.default([]),
       creators: tags.default([]),
       authors: tags.default([]),
+      artists: tags.default([]),
+      debate: z.string().trim().max(180).default(''),
       partyStance: z.enum(['Milito', 'Simpatizo', 'Ninguno', '']).default(''),
       party: short.default(''),
       years: short.default(''),
@@ -86,6 +89,7 @@ export function commonItems(a, b) {
     ...(ac.creators || [])
       .filter((v) => (bc.creators || []).includes(v))
       .map((v) => 'Sigue a ' + v),
+    ...(ac.artists || []).filter((v) => (bc.artists || []).includes(v)).map((v) => 'Escucha ' + v),
     ...(ac.children && ac.children === bc.children
       ? [ac.children === 'Sí' ? 'Quiere hijos' : 'Hijos: ' + ac.children]
       : []),
@@ -145,6 +149,18 @@ export function mountCommunity(
       common: commonItems(publicProfile(req.user), target),
       streak: streakFor(messages),
       messageCount: messages.length,
+      unread: messages.filter(
+        (msg) =>
+          msg.sender_id !== req.user.id &&
+          msg.created_at >
+            (db
+              .prepare(
+                'SELECT read_at FROM conversation_reads WHERE conversation_id=? AND user_id=?',
+              )
+              .get(m.id, req.user.id)?.read_at || 0),
+      ).length,
+      archived: Date.now() - (last?.created_at || m.created_at) > 14 * 86400000,
+      proposals: proposalsFor(db, m.id),
       basedCount: db
         .prepare(
           "SELECT count(*) AS n FROM message_reactions r JOIN messages msg ON msg.id=r.message_id WHERE msg.match_id=? AND r.reaction='BASADO'",
@@ -179,7 +195,7 @@ export function mountCommunity(
       req.user.id,
     );
     res.json({
-      ...publicProfile(any(req.user.id)),
+      ...ownProfile(any(req.user.id)),
       email: req.user.email,
       birthdate: req.user.birthdate,
     });
@@ -193,6 +209,11 @@ export function mountCommunity(
         maxAge: z.coerce.number().int().min(18).max(100).default(60),
         city: z.string().trim().max(60).default(''),
         q: z.string().trim().max(60).default(''),
+        current: z.string().trim().max(60).default(''),
+        faith: z.string().trim().max(60).default(''),
+        children: z.string().trim().max(60).default(''),
+        shared: z.enum(['true', 'false']).default('false'),
+        verified: z.enum(['true', 'false']).default('false'),
         offset: z.coerce.number().int().min(0).max(100000).default(0),
         limit: z.coerce.number().int().min(1).max(24).default(6),
       }),
@@ -207,6 +228,7 @@ export function mountCommunity(
       AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.user_id=? AND b.target_id=u.id) OR (b.user_id=u.id AND b.target_id=?)) ORDER BY u.created_at DESC,u.id`,
       )
       .all(req.user.id, req.user.demo, req.user.demo ? 1 : 0, req.user.id, req.user.id)
+      .filter((u) => !settingsOf(u).paused)
       .map(publicProfile);
     rows = rows.filter(
       (p) =>
@@ -234,6 +256,15 @@ export function mountCommunity(
         ].some((v) => searchText(v).includes(searchText(f.q))),
       );
     rows = rows.map((p) => ({ ...p, common: commonItems(me, p) }));
+    rows = rows.filter(
+      (p) =>
+        (!f.current || p.community.current === f.current) &&
+        (!f.faith || p.community.faith === f.faith) &&
+        (!f.children || p.community.children === f.children) &&
+        (f.shared !== 'true' || p.common.some((s) => /^(Ve |Lee a |Sigue a |Escucha )/.test(s))),
+    );
+    // No identity provider is configured: nobody receives an unearned verification badge.
+    if (f.verified === 'true') rows = [];
     if (f.mode === 'online') rows = rows.filter((p) => p.online);
     if (f.mode === 'shared')
       rows = rows.filter((p) => p.common.some((s) => /^(Ve |Lee a |Sigue a )/.test(s)));
@@ -256,6 +287,13 @@ export function mountCommunity(
   app.post('/api/conversations', auth, (req, res) => {
     const { targetId } = parse(z.object({ targetId: z.string().max(80) }), req.body);
     const target = accessibleTarget(req, targetId);
+    if (
+      settingsOf(target).paused &&
+      !db
+        .prepare('SELECT 1 FROM matches WHERE (user_a=? AND user_b=?) OR (user_a=? AND user_b=?)')
+        .get(req.user.id, target.id, target.id, req.user.id)
+    )
+      return res.status(404).json({ error: 'Este perfil está pausado.' });
     if (!req.user.demo && target.looking_for !== 'todos' && target.looking_for !== req.user.gender)
       return res.status(404).json({ error: 'Ese perfil no está disponible.' });
     const m = makeMatch(req.user.id, target.id);
@@ -436,22 +474,11 @@ export function mountCommunity(
     const row = invitation(req, req.params.id);
     if (row.status !== 'accepted')
       return res.status(409).json({ error: 'Primero deben aceptar la invitación.' });
-    const p = parse(
-      z.object({
-        day: z
-          .string()
-          .max(16)
-          .refine(
-            (v) =>
-              v === '' ||
-              (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v) && Number.isFinite(Date.parse(v))),
-            'Elige un día y hora válidos.',
-          ),
-        place: z.string().trim().max(120),
-      }),
-      req.body,
-    );
-    db.prepare('UPDATE date_invitations SET day=?,place=? WHERE id=?').run(p.day, p.place, row.id);
-    res.json({ ok: true });
+    res
+      .status(409)
+      .json({
+        error:
+          'Usa una propuesta de cita: el día y el lugar requieren aceptación de la otra persona.',
+      });
   });
 }

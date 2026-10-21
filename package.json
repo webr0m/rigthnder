@@ -1,6 +1,6 @@
 {
   "name": "rigthnder",
-  "version": "0.2.2",
+  "version": "1.0.0-beta.1",
   "private": true,
   "type": "module",
   "description": "OnlyFachos: comunidad con feed vertical, chat directo y citas de mutuo acuerdo.",
@@ -13,7 +13,7 @@
     "build": "vite build",
     "start": "node --env-file-if-exists=.env server/index.mjs",
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
-    "check": "node --check server/app.mjs && node --check server/db.mjs && node --check server/index.mjs",
+    "check": "node --check server/app.mjs && node --check server/db.mjs && node --check server/index.mjs && node --check server/community.mjs && node --check server/beta.mjs && node --check scripts/moderation.mjs",
     "mobile:android": "node scripts/mobile.mjs android",
     "mobile:ios": "node scripts/mobile.mjs ios",
     "mobile:sync": "cap sync"

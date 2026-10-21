@@ -95,18 +95,23 @@ function Modal({ title, children, onClose, className = '' }) {
 
 function Safety({ profile, onDone, notify }) {
   const [reason, setReason] = useState('Perfil falso'),
+    [details, setDetails] = useState(''),
+    [alsoBlock, setAlsoBlock] = useState(true),
     [loading, setLoading] = useState(false),
     [reportDone, setReportDone] = useState(false);
   async function action(type) {
     setLoading(true);
     try {
-      await api('/' + type, { method: 'POST', body: { targetId: profile.id, reason } });
+      await api('/' + type, {
+        method: 'POST',
+        body: { targetId: profile.id, reason, details, alsoBlock },
+      });
       notify(
         type === 'blocks'
           ? 'Perfil bloqueado. Ya no podrán verse ni conversar.'
           : 'Denuncia guardada para revisión del equipo.',
       );
-      if (type === 'blocks') onDone();
+      if (type === 'blocks' || alsoBlock) onDone();
       else setReportDone(true);
     } catch (e) {
       notify(e.message, true);
@@ -128,31 +133,50 @@ function Safety({ profile, onDone, notify }) {
         Reportar un problema
         <span />
       </div>
+      <fieldset className="report-reasons">
+        <legend>¿Qué ocurrió?</legend>
+        {[
+          'Perfil falso',
+          'Acoso o amenazas',
+          'Contenido inapropiado',
+          'Persona menor de edad',
+          'Estafa o solicitud de dinero',
+          'Otro',
+        ].map((v) => (
+          <label key={v}>
+            <input
+              type="radio"
+              name="reason"
+              value={v}
+              checked={reason === v}
+              onChange={() => setReason(v)}
+            />
+            {v}
+          </label>
+        ))}
+      </fieldset>
       <label>
-        ¿Qué ocurrió?
-        <select value={reason} onChange={(e) => setReason(e.target.value)}>
-          {[
-            'Perfil falso',
-            'Acoso o amenazas',
-            'Contenido inapropiado',
-            'Persona menor de edad',
-            'Otro',
-          ].map((v) => (
-            <option key={v}>{v}</option>
-          ))}
-        </select>
+        Algo más que debamos saber (opcional)
+        <textarea maxLength={2000} value={details} onChange={(e) => setDetails(e.target.value)} />
       </label>
-      <Button
-        disabled={loading || reportDone}
-        className="secondary"
-        onClick={() => action('reports')}
-      >
+      <label className="check-label">
+        <input
+          type="checkbox"
+          checked={alsoBlock}
+          onChange={(e) => setAlsoBlock(e.target.checked)}
+        />
+        Bloquear también a {profile.name}
+      </label>
+      <p className="hint">
+        La denuncia es privada. No compartimos tu identidad ni tu mensaje con el perfil denunciado.
+      </p>
+      <Button disabled={loading || reportDone} className="danger" onClick={() => action('reports')}>
         <Flag size={17} />
         {reportDone ? 'Denuncia registrada' : 'Enviar denuncia'}
       </Button>
       <p className="small-copy muted">
-        Esta versión registra denuncias en el servidor. El operador debe revisar y atender los
-        reportes.
+        La beta registra denuncias para revisión manual, sin prometer un plazo de respuesta. Si hay
+        peligro inmediato, contacta a los servicios de emergencia de tu país.
       </p>
     </div>
   );
@@ -163,15 +187,16 @@ function Legal({ type }) {
       <div className="legal-copy">
         <p>
           OnlyFachos guarda tu nombre, correo, fecha de nacimiento, ciudad, foto, perfil, valores,
-          intereses, datos opcionales de política y religión, invitaciones y mensajes en el servidor
-          de la aplicación.
+          intereses, datos opcionales de política y religión, invitaciones, propuestas de citas,
+          visitas al perfil, preferencias y mensajes en el servidor de la aplicación.
         </p>
         <h3>Valores que eliges compartir</h3>
         <p>
           Los valores, referentes, afiliación política y religión son opcionales. Tú decides cuáles
           publicar y aceptas su uso para sugerir conexiones. Puedes cambiarlos, descargar tus datos
-          o eliminar tu cuenta en Mi perfil. Solo mostramos tu edad, no tu fecha de nacimiento ni tu
-          correo.
+          o eliminar tu cuenta en Mi perfil. Puedes ocultar fe y partido, pausar tu perfil y
+          gestionar bloqueos en Ajustes. No recogemos ubicación GPS; «Cerca» usa tu ciudad
+          declarada. Solo mostramos tu edad, no tu fecha de nacimiento ni tu correo.
         </p>
         <h3>Google y publicidad</h3>
         <p>
@@ -182,14 +207,14 @@ function Legal({ type }) {
         </p>
         <h3>Tu control</h3>
         <p>
-          Mi perfil → Descargar mis datos / Eliminar mi cuenta. Al eliminarla, borramos los
-          registros asociados de la base activa. El operador debe gestionar también la eliminación
-          de copias de seguridad y publicar su contacto y plazos antes de abrir el servicio al
-          público.
+          Mi perfil → Ajustes → Descargar mis datos / Eliminar mi cuenta. Al eliminarla, borramos
+          los registros asociados de la base activa. El operador debe gestionar también la
+          eliminación de copias de seguridad y publicar su contacto y plazos antes de abrir el
+          servicio al público.
         </p>
         <p className="legal-status">
-          Texto de la versión de prueba. El operador y el contacto de privacidad todavía deben
-          configurarse para el lanzamiento.
+          Beta pública de prueba. El operador y el contacto de privacidad todavía deben configurarse
+          para el lanzamiento.
         </p>
       </div>
     );
@@ -218,8 +243,9 @@ function Legal({ type }) {
         activas. Las denuncias quedan registradas para que el operador las revise.
       </p>
       <p className="legal-status">
-        Antes del lanzamiento se requiere un equipo de moderación, un contacto de soporte y
-        políticas definitivas del operador.
+        La beta recibe consultas privadas en Ajustes → Contactar soporte y denuncias en cada perfil.
+        El operador debe revisar ambas bandejas y completar sus políticas y datos de contacto antes
+        de una explotación comercial.
       </p>
     </div>
   );

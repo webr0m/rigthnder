@@ -7,7 +7,8 @@ import { randomBytes, randomUUID, scrypt, timingSafeEqual, createHash } from 'no
 import { promisify } from 'node:util';
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { ageOf, publicProfile, VALUES, INTERESTS } from './db.mjs';
+import { ageOf, publicProfile, ownProfile, settingsOf, VALUES, INTERESTS } from './db.mjs';
+import { mountBeta } from './beta.mjs';
 import { mountGoogleAuth } from './google.mjs';
 import { makeCommunitySchema, mountCommunity } from './community.mjs';
 
@@ -177,7 +178,7 @@ export function createApp(db, options = {}) {
       path: '/',
     });
     return {
-      user: { ...publicProfile(user), email: user.email, birthdate: user.birthdate },
+      user: { ...ownProfile(user), email: user.email, birthdate: user.birthdate },
       token,
     };
   }
@@ -235,7 +236,9 @@ export function createApp(db, options = {}) {
     return db.prepare('SELECT * FROM matches WHERE user_a=? AND user_b=?').get(first, second);
   }
 
-  app.get('/api/health', (_req, res) => res.json({ ok: true, name: 'OnlyFachos', demoEnabled }));
+  app.get('/api/health', (_req, res) =>
+    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1', demoEnabled }),
+  );
   const googleEnabled = mountGoogleAuth(app, db, {
     production,
     parse,
@@ -398,7 +401,7 @@ export function createApp(db, options = {}) {
     res.json({ ok: true });
   });
   app.get('/api/me', auth, (req, res) =>
-    res.json({ ...publicProfile(req.user), email: req.user.email, birthdate: req.user.birthdate }),
+    res.json({ ...ownProfile(req.user), email: req.user.email, birthdate: req.user.birthdate }),
   );
   app.put('/api/me', auth, (req, res) => {
     const p = parse(profileSchema, req.body);
@@ -425,7 +428,7 @@ export function createApp(db, options = {}) {
       req.user.id,
     );
     res.json({
-      ...publicProfile(getUser(req.user.id)),
+      ...ownProfile(getUser(req.user.id)),
       email: req.user.email,
       birthdate: req.user.birthdate,
     });
@@ -463,6 +466,7 @@ export function createApp(db, options = {}) {
       );
     res.json(
       rows
+        .filter((u) => !settingsOf(u).paused)
         .map(publicProfile)
         .filter(
           (p) =>
@@ -584,7 +588,7 @@ export function createApp(db, options = {}) {
     res.status(201).json({ ok: true });
   });
   app.post('/api/reports', auth, (req, res) => {
-    const { targetId, reason } = parse(
+    const { targetId, reason, details, alsoBlock } = parse(
       z.object({
         targetId: z.string().max(80),
         reason: z.enum([
@@ -592,22 +596,30 @@ export function createApp(db, options = {}) {
           'Acoso o amenazas',
           'Contenido inapropiado',
           'Persona menor de edad',
+          'Estafa o solicitud de dinero',
           'Otro',
         ]),
+        details: z.string().trim().max(2000).default(''),
+        alsoBlock: z.boolean().default(false),
       }),
       req.body,
     );
     accessibleTarget(req, targetId);
     db.prepare(
-      'INSERT INTO reports (id,user_id,target_id,reason,created_at) VALUES (?,?,?,?,?)',
-    ).run(randomUUID(), req.user.id, targetId, reason, Date.now());
+      'INSERT INTO reports (id,user_id,target_id,reason,created_at,details) VALUES (?,?,?,?,?,?)',
+    ).run(randomUUID(), req.user.id, targetId, reason, Date.now(), details);
+    if (alsoBlock) {
+      db.prepare('INSERT OR IGNORE INTO blocks VALUES (?,?)').run(req.user.id, targetId);
+      const [a, b] = [req.user.id, targetId].sort();
+      db.prepare('DELETE FROM matches WHERE user_a=? AND user_b=?').run(a, b);
+    }
     res.status(201).json({ ok: true });
   });
   app.get('/api/me/export', auth, (req, res) => {
     res.set('Content-Disposition', 'attachment; filename="rigthnder-mis-datos.json"');
     res.json({
       profile: {
-        ...publicProfile(req.user),
+        ...ownProfile(req.user),
         email: req.user.email,
         birthdate: req.user.birthdate,
         consentAt: req.user.consent_at,
@@ -625,8 +637,12 @@ export function createApp(db, options = {}) {
         .all(req.user.id, req.user.id),
       signals: db.prepare('SELECT * FROM conversation_signals WHERE sender_id=?').all(req.user.id),
       reports: db
-        .prepare('SELECT reason,created_at,status FROM reports WHERE user_id=?')
+        .prepare('SELECT reason,details,created_at,status FROM reports WHERE user_id=?')
         .all(req.user.id),
+      proposals: db.prepare('SELECT * FROM date_proposals WHERE sender_id=?').all(req.user.id),
+      feedback: db.prepare('SELECT * FROM beta_feedback WHERE user_id=?').all(req.user.id),
+      blocks: db.prepare('SELECT target_id FROM blocks WHERE user_id=?').all(req.user.id),
+      readStates: db.prepare('SELECT * FROM conversation_reads WHERE user_id=?').all(req.user.id),
     });
   });
   app.delete('/api/me', auth, (req, res) => {
@@ -644,6 +660,7 @@ export function createApp(db, options = {}) {
     demoCommunitySchema,
     photoSchema,
   });
+  mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMatch });
   app.use('/api', (_req, res) => res.status(404).json({ error: 'Ruta no encontrada.' }));
   const dist = resolve(options.distDirectory || 'dist');
   if (existsSync(dist)) {

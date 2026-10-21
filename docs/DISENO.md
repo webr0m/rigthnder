@@ -1,6 +1,6 @@
 # OnlyFachos · Guía para colaborar en diseño
 
-La referencia actual son los dos PDF «OnlyFachas Modo Claro» y «OnlyFachas Modo Oscuro», proporcionados por el usuario el 16 de octubre de 2026. El nombre aprobado es **OnlyFachos**, con O y sin cambiar el dominio existente. No incluir los PDF ni sus retratos en el repositorio público sin autorización de sus autores.
+La referencia actual del nuevo menú son «OnlyFachos-Nuevas-Pantallas-Modo-Claro.pdf» y «OnlyFachos-Nuevas-Pantallas-Modo-Oscuro.pdf». El feed mantiene los mockups iniciales y el scroll único aprobado. El nombre aprobado es **OnlyFachos**, con O y sin cambiar el dominio existente. No incluir los PDF ni sus retratos en el repositorio público sin autorización de sus autores.
 
 ## Dirección visual
 
@@ -37,6 +37,9 @@ Tu amigo puede proponer cambios en Figma y adjuntar el frame a un issue. Para co
 | `src/mobile-feed.css` | Feed móvil one page y navegación inferior, siguiendo la pantalla 5 |
 | `src/App.jsx` | Feed, acceso y navegación |
 | `src/Onboarding.jsx` | Registro y edición en tres pasos |
+| `src/BetaPages.jsx` | Perfil completo, Mi perfil, ajustes, filtros, soporte/PRO/verificación |
+| `src/DatePlanner.jsx` | Propuesta en dos pasos y cita confirmada |
+| `src/beta.css` | Pantallas nuevas y temas |
 | `src/Conversations.jsx` | Chat, señales y citas |
 | `src/Shared.jsx` | Controles, modales, bloqueo y textos |
 
