@@ -30,7 +30,7 @@ La integración de `src/mobile.js`:
 
 - No solicita anuncios en web.
 - Está desactivada por defecto.
-- Al pulsar **Mi perfil → Probar anuncios en móvil**, pide información de consentimiento y muestra el formulario si corresponde.
+- Al pulsar **Mi perfil → Ajustes → Anuncios AdMob**, pide información de consentimiento y muestra el formulario si corresponde.
 - Solo inicializa y carga cuando `canRequestAds` lo permite.
 - Usa anuncios de Google de prueba por defecto y `npa: true`.
 - No recibe ni envía valores políticos, perfil, intereses o mensajes.
@@ -61,3 +61,7 @@ Referencias: [AdMob plugin](https://github.com/capacitor-community/admob), [cons
 ## Rediseño 0.2
 
 El nombre visible y los iconos son OnlyFachos. Se conserva `com.rigthnder.app` como identificador y esquema de retorno OAuth para mantener compatibilidad. El chat usa grabación web con MediaRecorder y permiso al micrófono; iOS/Android declaran su uso. Requiere validar permisos, formato, grabación, ciclo de vida y reproducción en dispositivos reales antes de distribuir una release.
+
+## Beta 1 compilada
+
+Hay un [APK Android y una app para iOS Simulator](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1) generados por el workflow `Build mobile beta`. Se comparten el menú y el feed de la beta web. El paquete iOS requiere un Mac; para instalar en iPhone físico falta firma del titular. [Instrucciones y límites](BETA-1.md).

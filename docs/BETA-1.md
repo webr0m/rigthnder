@@ -1,13 +1,13 @@
 # OnlyFachos · Beta 1
 
-Versión `1.0.0-beta.1`, 20 de octubre de 2026. Distribución principal: web pública en https://rigthnder.webrom.lat. Los nombres de dominio, repositorio y paquete móvil (`com.rigthnder.app`) se conservan para mantener compatibilidad.
+Versión `1.0.0-beta.1.1`, 20 de octubre de 2026. Distribución principal: web pública en https://rigthnder.webrom.lat. Los nombres de dominio, repositorio y paquete móvil (`com.rigthnder.app`) se conservan para mantener compatibilidad.
 
 ## Recorrido de prueba
 
 1. Abre «Explorar la demostración». Sus perfiles, respuestas y aceptación simulada son ficticios. Las cuentas reales están separadas.
 2. Recorre Comunidad con un solo scroll vertical en móvil. Toca el nombre de un perfil para abrir su ficha completa; «Escribir» abre el chat sin match previo.
 3. En Chats, busca y filtra Todos / Sin leer / Citas / Archivados. Una conversación sin actividad por 14 días se archiva; un mensaje nuevo la recupera. Los contadores se calculan con mensajes recibidos y marcas de lectura.
-4. Pulsa la taza para proponer una cita: día/hora → lugar público → enviar. Solo la otra persona puede aceptarla. La demo tiene un control explícito para simular esa aceptación. Un cambio pendiente o rechazado conserva el plan ya confirmado.
+4. Pulsa la taza para proponer una cita: día/hora → lugar público → enviar. Solo la otra persona puede aceptarla. La propuesta, su respuesta y su retiro dejan un aviso de texto en la conversación y alimentan los mensajes sin leer. La demo tiene un control explícito para simular esa aceptación. Un cambio pendiente o rechazado conserva el plan ya confirmado.
 5. La cita confirmada permite descargar `.ics`, abrir una búsqueda en Maps y compartir/copiar el plan por decisión del usuario. No se envían mensajes a terceros automáticamente.
 6. Mi perfil ofrece progreso real, visitas únicas, chats, citas confirmadas, fotos y acceso a cada paso del editor. Pausar quita el perfil del descubrimiento y conserva sus conversaciones.
 7. Ajustes: claro/oscuro/automático, preferencias de avisos, ocultar partido/fe, desbloquear, soporte privado, exportar y eliminar cuenta. Ocultar se aplica en el servidor, no solo en la interfaz.

@@ -126,7 +126,17 @@ test('date time and venue require the other participant; rejected changes preser
   );
   assert.equal((await req('/proposals/' + id + '/answer', c.token, { accept: true })).status, 404);
   assert.equal((await req('/conversations/' + conv + '/proposals', b.token, body)).status, 409);
+  const pendingNotice = (await req('/conversations', b.token)).data.find((c) => c.id === conv);
+  assert.equal(pendingNotice.unread, 1);
+  assert.match(pendingNotice.lastMessage.text, /Propuesta de cita/);
+  const pendingDetail = (await req('/conversations/' + conv, b.token)).data;
+  await req('/conversations/' + conv + '/read', b.token, {
+    through: pendingDetail.messages.at(-1).createdAt,
+  });
   assert.equal((await req('/proposals/' + id + '/answer', b.token, { accept: true })).status, 200);
+  const acceptedNotice = (await req('/conversations', a.token)).data.find((c) => c.id === conv);
+  assert.equal(acceptedNotice.unread, 1);
+  assert.match(acceptedNotice.lastMessage.text, /Día y lugar confirmados/);
   assert.equal((await req('/proposals/' + id + '/answer', b.token, { accept: true })).status, 409);
   const change = (
     await req('/conversations/' + conv + '/proposals', b.token, {

@@ -1189,7 +1189,7 @@ export default function App() {
         <Modal title="LO QUE ESTÁ PASANDO" onClose={() => setModal(null)}>
           <div className="activity-list">
             {conversations
-              .filter((c) => c.invitations.length)
+              .filter((c) => c.invitations.length || c.proposals?.length)
               .map((c) => (
                 <button
                   key={c.id}
@@ -1203,9 +1203,9 @@ export default function App() {
                   <span>
                     {c.profile.name}
                     <small>
-                      {c.invitations[0].status === 'accepted'
+                      {(c.proposals?.[0] || c.invitations[0]).status === 'accepted'
                         ? '¡Tienen una cita!'
-                        : c.invitations[0].status === 'pending'
+                        : (c.proposals?.[0] || c.invitations[0]).status === 'pending'
                           ? 'Invitación pendiente'
                           : 'Pueden seguir conversando'}
                     </small>
@@ -1213,7 +1213,7 @@ export default function App() {
                   <ArrowRight size={18} />
                 </button>
               ))}
-            {!conversations.some((c) => c.invitations.length) && (
+            {!conversations.some((c) => c.invitations.length || c.proposals?.length) && (
               <div className="empty-state">
                 <Coffee size={30} />
                 <h3>TODAVÍA NO HAY INVITACIONES.</h3>

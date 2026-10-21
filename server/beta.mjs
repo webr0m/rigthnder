@@ -13,6 +13,12 @@ export function proposalsFor(db, conversationId) {
 }
 export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMatch }) {
   const get = (id) => db.prepare('SELECT * FROM users WHERE id=?').get(id);
+  const dateMessage = (conversationId, senderId, text) =>
+    db
+      .prepare(
+        'INSERT INTO messages (id,match_id,sender_id,text,created_at,kind) VALUES (?,?,?,?,?,?)',
+      )
+      .run(randomUUID(), conversationId, senderId, text, Date.now(), 'text');
   const profile = (user) => ({ ...ownProfile(user), email: user.email, birthdate: user.birthdate });
   app.put('/api/me/settings', auth, (req, res) => {
     const boolean = z.boolean().optional();
@@ -154,15 +160,32 @@ export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMa
         .status(409)
         .json({ error: 'Responde o retira la propuesta pendiente antes de crear otra.' });
     const id = randomUUID();
-    db.prepare(
-      'INSERT INTO date_proposals (id,conversation_id,sender_id,day,place,timezone,created_at) VALUES (?,?,?,?,?,?,?)',
-    ).run(id, req.params.id, req.user.id, p.day, p.place, p.timezone, Date.now());
+    db.exec('BEGIN');
+    try {
+      db.prepare(
+        'INSERT INTO date_proposals (id,conversation_id,sender_id,day,place,timezone,created_at) VALUES (?,?,?,?,?,?,?)',
+      ).run(id, req.params.id, req.user.id, p.day, p.place, p.timezone, Date.now());
+      dateMessage(
+        req.params.id,
+        req.user.id,
+        '☕ Propuesta de cita: ' +
+          new Date(p.day).toLocaleString('es-CL', { timeZone: p.timezone }) +
+          ' (' +
+          p.timezone +
+          ') · ' +
+          p.place,
+      );
+      db.exec('COMMIT');
+    } catch (e) {
+      db.exec('ROLLBACK');
+      throw e;
+    }
     res.status(201).json({ id });
   });
   app.post('/api/proposals/:id/answer', auth, (req, res) => {
     const row = db.prepare('SELECT * FROM date_proposals WHERE id=?').get(req.params.id);
     if (!row) return res.status(404).json({ error: 'Propuesta no disponible.' });
-    accessibleMatch(req, row.conversation_id);
+    const match = accessibleMatch(req, row.conversation_id);
     const p = parse(z.object({ accept: z.boolean(), demo: z.boolean().default(false) }), req.body);
     if (p.demo ? !req.user.demo || row.sender_id !== req.user.id : row.sender_id === req.user.id)
       return res
@@ -180,6 +203,24 @@ export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMa
         p.accept ? 'accepted' : 'declined',
         row.id,
       );
+      const actor = p.demo
+        ? match.user_a === req.user.id
+          ? match.user_b
+          : match.user_a
+        : req.user.id;
+      dateMessage(
+        row.conversation_id,
+        actor,
+        (p.demo ? '[Respuesta simulada · DEMO] ' : '') +
+          (p.accept
+            ? '☕ Acepto esta propuesta de cita. Día y lugar confirmados: '
+            : 'Esta propuesta no me acomoda: ') +
+          new Date(row.day).toLocaleString('es-CL', { timeZone: row.timezone }) +
+          ' (' +
+          row.timezone +
+          ') · ' +
+          row.place,
+      );
       db.exec('COMMIT');
     } catch (e) {
       db.exec('ROLLBACK');
@@ -193,7 +234,21 @@ export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMa
     accessibleMatch(req, row.conversation_id);
     if (row.sender_id !== req.user.id || row.status !== 'pending')
       return res.status(403).json({ error: 'Solo puedes retirar tu propuesta pendiente.' });
-    db.prepare("UPDATE date_proposals SET status='declined' WHERE id=?").run(row.id);
+    db.exec('BEGIN');
+    try {
+      db.prepare("UPDATE date_proposals SET status='declined' WHERE id=?").run(row.id);
+      dateMessage(
+        row.conversation_id,
+        req.user.id,
+        'Retiré mi propuesta de cita: ' +
+          row.place +
+          '. El plan confirmado anterior, si lo había, se conserva.',
+      );
+      db.exec('COMMIT');
+    } catch (e) {
+      db.exec('ROLLBACK');
+      throw e;
+    }
     res.json({ ok: true });
   });
 }
