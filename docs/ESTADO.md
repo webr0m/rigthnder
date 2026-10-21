@@ -10,7 +10,7 @@ Versión `1.0.0-beta.1`. [Recorrido de prueba, apps y límites](BETA-1.md).
 - Android: APK debug compilado en GitHub Actions; paquete `com.rigthnder.app`, versión `1.0.0-beta.1`, código `10001`.
 - iOS: app compilada para iPhoneSimulator en macOS/Xcode; nombre OnlyFachos, versión `1.0.0`, build `10001`. No es un IPA firmado para iPhone físico.
 - Compilaciones: https://github.com/webr0m/rigthnder/actions/runs/39532685414. Los artefactos corresponden al código de interfaz del commit `f5c938a`; las correcciones siguientes son del backend y documentación.
-- GitHub: https://github.com/webr0m/rigthnder. GitLab existente: https://gitlab.com/ridrogo/rigthnder; sincronización final pendiente de completar autenticación Git del titular.
+- GitHub: https://github.com/webr0m/rigthnder. GitLab: https://gitlab.com/ridrogo/rigthnder. Ambos repositorios reciben el mismo historial y la etiqueta de Beta 1; no hay un espejo automático configurado.
 
 ## Verificado
 
@@ -18,7 +18,7 @@ Versión `1.0.0-beta.1`. [Recorrido de prueba, apps y límites](BETA-1.md).
 - Aceptación exclusiva por el otro participante, cambios pendientes/rechazados conservan la cita anterior, lectura por conversación, archivo, ocultación de datos desde el servidor, pausa, filtros, visitas y denuncia privada con bloqueo.
 - Prueba local por navegador: edición con artistas y Debate me on, ficha completa, ajustes y propuesta → aceptación explícitamente simulada → calendario `.ics` descargado con fecha UTC y lugar escapado.
 - Ambos paquetes móviles íntegros y configuración iOS inspeccionada. CORS del backend permite el origen Android `https://localhost`.
-- No se han probado dispositivos físicos ni publicado en tiendas.
+- Descargas publicadas: https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1. No se han probado dispositivos físicos ni publicado en tiendas.
 
 ## Configuración pendiente del titular
 
