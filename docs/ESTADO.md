@@ -1,3 +1,16 @@
+# Beta web 1.0.0-beta.1.3 · 22 de octubre de 2026
+
+Publicada y verificada en **https://onlyfachos.webrom.lat**. Respaldo privado consistente: `onlyfachos-2026-10-22T21-19-25-811Z`. DNS A con proxy Cloudflare y dominio cPanel apuntando al mismo Passenger. Regla de Cloudflare «OnlyFachos - dominio anterior» activa; HTTP y HTTPS redirigen directamente con 301, conservando ruta y consulta. Ambos dominios responden en `/api/health` con `1.0.0-beta.1.3`.
+
+- Denuncia con controles de tamaño fijo, filas alineadas y casilla de bloqueo legible.
+- Mi perfil con foto circular de 136 px en móvil, sin compresión por nombres largos.
+- Fecha de nacimiento validada en el primer paso, en el campo y antes de avanzar: fechas reales, de 18 a 100 años; misma regla en correo y Google.
+- Nuevas denominaciones «No denominational» y «Protestante».
+- Etiquetas con Enter y tecla móvil «Hecho», sin avanzar el formulario; evita duplicados por mayúsculas. «Hablemos de» reemplaza «Debate me on».
+- Español, inglés y alemán; cambios de idioma conservan el borrador. Se guardan idioma y apariencia al registrarse, iniciar sesión y en Ajustes.
+- Nuevo DNS y dominio en el mismo hosting; páginas del nombre anterior redirigidas con HTTP 301, conservando ruta y parámetros. API antigua disponible para clientes móviles instalados.
+- 31 pruebas pasan y comprobación móvil a 320 y 390 px. Las compilaciones nativas publicadas siguen en beta 1.1; su fuente compartida incluye estos cambios para la próxima compilación.
+
 # Corrección de carga de fotos · 22 de octubre de 2026
 
 Web `1.0.0-beta.1.2`. Publicada en https://rigthnder.webrom.lat con respaldo privado consistente `onlyfachos-2026-10-22T06-16-37-151Z`. Verificados en el dominio público dos JPG cargados sin error y avance al paso 2 del perfil. La carga previa fallaba con «The source image cannot be decoded» incluso usando un JPG válido: el lector generaba una URL `blob:` incompatible con la política CSP de imágenes de producción. Se usa FileReader y una URL `data:` permitida por la política existente.

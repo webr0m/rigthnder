@@ -1,3 +1,4 @@
+import { t, getLanguage } from './locale.mjs';
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Ban, Flag, LoaderCircle } from 'lucide-react';
 import { api } from './api';
@@ -21,9 +22,9 @@ function Photo({ profile, className = '', ...props }) {
     <span
       className={`photo-fallback ${className}`}
       role="img"
-      aria-label={profile?.name || 'Tu perfil'}
+      aria-label={profile?.name || t('Tu perfil')}
     >
-      {profile?.name?.slice(0, 1) || 'R'}
+      {profile?.name?.slice(0, 1) || t('R')}
     </span>
   );
 }
@@ -78,12 +79,12 @@ function Modal({ title, children, onClose, className = '' }) {
         className={`modal ${className}`}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label={t(title)}
         ref={ref}
       >
         <div className="modal-heading">
-          <h2>{title}</h2>
-          <button className="icon-button" aria-label="Cerrar" onClick={onClose}>
+          <h2>{t(title)}</h2>
+          <button className="icon-button" aria-label={t('Cerrar')} onClick={onClose}>
             <X size={21} />
           </button>
         </div>
@@ -120,21 +121,24 @@ function Safety({ profile, onDone, notify }) {
     }
   }
   return (
-    <div className="form">
+    <div className="form safety-form">
       <p className="modal-copy">
-        Tu tranquilidad va primero. Bloquear un perfil cierra la conversación y evita que vuelvan a
-        encontrarse.
+        {t(
+          'Tu tranquilidad va primero. Bloquear un perfil cierra la conversación y evita que vuelvan a encontrarse.',
+        )}
       </p>
       <Button className="secondary" disabled={loading} onClick={() => action('blocks')}>
-        <Ban size={18} /> Bloquear a {profile.name}
+        <Ban size={18} />
+        {t(' Bloquear a ')}
+        {profile.name}
       </Button>
       <div className="form-divider">
         <span />
-        Reportar un problema
+        {t('Reportar un problema')}
         <span />
       </div>
       <fieldset className="report-reasons">
-        <legend>¿Qué ocurrió?</legend>
+        <legend>{t('¿Qué ocurrió?')}</legend>
         {[
           'Perfil falso',
           'Acoso o amenazas',
@@ -151,32 +155,38 @@ function Safety({ profile, onDone, notify }) {
               checked={reason === v}
               onChange={() => setReason(v)}
             />
-            {v}
+            <span>{t(v)}</span>
           </label>
         ))}
       </fieldset>
       <label>
-        Algo más que debamos saber (opcional)
+        {t('Algo más que debamos saber (opcional)')}
         <textarea maxLength={2000} value={details} onChange={(e) => setDetails(e.target.value)} />
       </label>
-      <label className="check-label">
+      <label className="checkbox-label">
         <input
           type="checkbox"
           checked={alsoBlock}
           onChange={(e) => setAlsoBlock(e.target.checked)}
         />
-        Bloquear también a {profile.name}
+        <span>
+          {t('Bloquear también a ')}
+          {profile.name}
+        </span>
       </label>
       <p className="hint">
-        La denuncia es privada. No compartimos tu identidad ni tu mensaje con el perfil denunciado.
+        {t(
+          'La denuncia es privada. No compartimos tu identidad ni tu mensaje con el perfil denunciado.',
+        )}
       </p>
       <Button disabled={loading || reportDone} className="danger" onClick={() => action('reports')}>
         <Flag size={17} />
-        {reportDone ? 'Denuncia registrada' : 'Enviar denuncia'}
+        {reportDone ? t('Denuncia registrada') : t('Enviar denuncia')}
       </Button>
       <p className="small-copy muted">
-        La beta registra denuncias para revisión manual, sin prometer un plazo de respuesta. Si hay
-        peligro inmediato, contacta a los servicios de emergencia de tu país.
+        {t(
+          'La beta registra denuncias para revisión manual, sin prometer un plazo de respuesta. Si hay peligro inmediato, contacta a los servicios de emergencia de tu país.',
+        )}
       </p>
     </div>
   );
@@ -186,66 +196,64 @@ function Legal({ type }) {
     return (
       <div className="legal-copy">
         <p>
-          OnlyFachos guarda tu nombre, correo, fecha de nacimiento, ciudad, foto, perfil, valores,
-          intereses, datos opcionales de política y religión, invitaciones, propuestas de citas,
-          visitas al perfil, preferencias y mensajes en el servidor de la aplicación.
+          {t(
+            'OnlyFachos guarda tu nombre, correo, fecha de nacimiento, ciudad, foto, perfil, valores, intereses, datos opcionales de política y religión, invitaciones, propuestas de citas, visitas al perfil, preferencias y mensajes en el servidor de la aplicación.',
+          )}
         </p>
-        <h3>Valores que eliges compartir</h3>
+        <h3>{t('Valores que eliges compartir')}</h3>
         <p>
-          Los valores, referentes, afiliación política y religión son opcionales. Tú decides cuáles
-          publicar y aceptas su uso para sugerir conexiones. Puedes cambiarlos, descargar tus datos
-          o eliminar tu cuenta en Mi perfil. Puedes ocultar fe y partido, pausar tu perfil y
-          gestionar bloqueos en Ajustes. No recogemos ubicación GPS; «Cerca» usa tu ciudad
-          declarada. Solo mostramos tu edad, no tu fecha de nacimiento ni tu correo.
+          {t(
+            'Los valores, referentes, afiliación política y religión son opcionales. Tú decides cuáles publicar y aceptas su uso para sugerir conexiones. Puedes cambiarlos, descargar tus datos o eliminar tu cuenta en Mi perfil. Puedes ocultar fe y partido, pausar tu perfil y gestionar bloqueos en Ajustes. No recogemos ubicación GPS; «Cerca» usa tu ciudad declarada. Solo mostramos tu edad, no tu fecha de nacimiento ni tu correo.',
+          )}
         </p>
-        <h3>Google y publicidad</h3>
+        <h3>{t('Google y publicidad')}</h3>
         <p>
-          Google se usa únicamente para verificar tu identidad y obtener tu correo y nombre. No
-          guardamos sus tokens de acceso. AdMob se ofrece solo en móvil, con consentimiento y
-          anuncios no personalizados. No enviamos valores, opiniones políticas, mensajes ni datos
-          del perfil a AdMob. La web no tiene publicidad ni analítica.
+          {t(
+            'Google se usa únicamente para verificar tu identidad y obtener tu correo y nombre. No guardamos sus tokens de acceso. AdMob se ofrece solo en móvil, con consentimiento y anuncios no personalizados. No enviamos valores, opiniones políticas, mensajes ni datos del perfil a AdMob. La web no tiene publicidad ni analítica.',
+          )}
         </p>
-        <h3>Tu control</h3>
+        <h3>{t('Tu control')}</h3>
         <p>
-          Mi perfil → Ajustes → Descargar mis datos / Eliminar mi cuenta. Al eliminarla, borramos
-          los registros asociados de la base activa. El operador debe gestionar también la
-          eliminación de copias de seguridad y publicar su contacto y plazos antes de abrir el
-          servicio al público.
+          {t(
+            'Mi perfil → Ajustes → Descargar mis datos / Eliminar mi cuenta. Al eliminarla, borramos los registros asociados de la base activa. El operador debe gestionar también la eliminación de copias de seguridad y publicar su contacto y plazos antes de abrir el servicio al público.',
+          )}
         </p>
         <p className="legal-status">
-          Beta pública de prueba. El operador y el contacto de privacidad todavía deben configurarse
-          para el lanzamiento.
+          {t(
+            'Beta pública de prueba. El operador y el contacto de privacidad todavía deben configurarse para el lanzamiento.',
+          )}
         </p>
       </div>
     );
   return (
     <div className="legal-copy">
       <p>
-        OnlyFachos es una comunidad de citas para personas mayores de 18 años, inspirada en la
-        libertad, la familia y los valores compartidos.
+        {t(
+          'OnlyFachos es una comunidad de citas para personas mayores de 18 años, inspirada en la libertad, la familia y los valores compartidos.',
+        )}
       </p>
-      <h3>Ideas claras. Respeto siempre.</h3>
+      <h3>{t('Ideas claras. Respeto siempre.')}</h3>
       <p>
-        Usa tu identidad, publica fotos propias y trata a los demás con respeto. No se permiten
-        acoso, amenazas, discriminación, odio, estafas, suplantación, pornografía, explotación
-        sexual ni contenido relacionado con abuso o explotación de menores.
+        {t(
+          'Usa tu identidad, publica fotos propias y trata a los demás con respeto. No se permiten acoso, amenazas, discriminación, odio, estafas, suplantación, pornografía, explotación sexual ni contenido relacionado con abuso o explotación de menores.',
+        )}
       </p>
-      <h3>Conecta con cuidado</h3>
+      <h3>{t('Conecta con cuidado')}</h3>
       <p>
-        Puedes iniciar una conversación desde el feed. Una cita requiere que ambos acepten. No
-        compartas dinero, documentos ni tu dirección con personas desconocidas. Puedes denunciar o
-        bloquear desde el perfil o la conversación.
+        {t(
+          'Puedes iniciar una conversación desde el feed. Una cita requiere que ambos acepten. No compartas dinero, documentos ni tu dirección con personas desconocidas. Puedes denunciar o bloquear desde el perfil o la conversación.',
+        )}
       </p>
-      <h3>Sobre esta versión</h3>
+      <h3>{t('Sobre esta versión')}</h3>
       <p>
-        Los perfiles del modo demo son ficticios y sus respuestas están simuladas. Las cuentas
-        reales están separadas de la demo. No hay verificación de identidad, cobros ni suscripciones
-        activas. Las denuncias quedan registradas para que el operador las revise.
+        {t(
+          'Los perfiles del modo demo son ficticios y sus respuestas están simuladas. Las cuentas reales están separadas de la demo. No hay verificación de identidad, cobros ni suscripciones activas. Las denuncias quedan registradas para que el operador las revise.',
+        )}
       </p>
       <p className="legal-status">
-        La beta recibe consultas privadas en Ajustes → Contactar soporte y denuncias en cada perfil.
-        El operador debe revisar ambas bandejas y completar sus políticas y datos de contacto antes
-        de una explotación comercial.
+        {t(
+          'La beta recibe consultas privadas en Ajustes → Contactar soporte y denuncias en cada perfil. El operador debe revisar ambas bandejas y completar sus políticas y datos de contacto antes de una explotación comercial.',
+        )}
       </p>
     </div>
   );

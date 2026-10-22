@@ -368,7 +368,7 @@ mark {
   font-weight: 800;
   position: relative;
 }
-.form input:not([type='checkbox']):not([type='file']),
+.form input:not([type='checkbox']):not([type='radio']):not([type='file']),
 .form select,
 .form textarea {
   min-width: 0;

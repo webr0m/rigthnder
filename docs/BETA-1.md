@@ -1,6 +1,6 @@
 # OnlyFachos · Beta 1
 
-Versión `1.0.0-beta.1.1`, 20 de octubre de 2026. Distribución principal: web pública en https://rigthnder.webrom.lat. Los nombres de dominio, repositorio y paquete móvil (`com.rigthnder.app`) se conservan para mantener compatibilidad.
+Versión `1.0.0-beta.1.1`, 20 de octubre de 2026. Distribución principal: web pública en https://onlyfachos.webrom.lat. Los nombres de dominio, repositorio y paquete móvil (`com.rigthnder.app`) se conservan para mantener compatibilidad.
 
 ## Recorrido de prueba
 

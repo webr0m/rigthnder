@@ -1,6 +1,8 @@
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+export { ageOf } from './birthdate.mjs';
+import { ageOf } from './birthdate.mjs';
 
 export const VALUES = [
   'Libertad',
@@ -353,20 +355,9 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
   return db;
 }
 
-export function ageOf(birthdate, now = new Date()) {
-  const birth = new Date(`${birthdate}T00:00:00Z`);
-  return (
-    now.getUTCFullYear() -
-    birth.getUTCFullYear() -
-    (now.getUTCMonth() < birth.getUTCMonth() ||
-    (now.getUTCMonth() === birth.getUTCMonth() && now.getUTCDate() < birth.getUTCDate())
-      ? 1
-      : 0)
-  );
-}
-
 export const DEFAULT_SETTINGS = {
   appearance: 'auto',
+  language: 'es',
   messages: true,
   dates: true,
   news: false,

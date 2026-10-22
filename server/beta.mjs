@@ -26,6 +26,7 @@ export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMa
       z
         .object({
           appearance: z.enum(['light', 'dark', 'auto']).optional(),
+          language: z.enum(['es', 'en', 'de']).optional(),
           messages: boolean,
           dates: boolean,
           news: boolean,

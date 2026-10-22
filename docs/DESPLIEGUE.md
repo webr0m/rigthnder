@@ -1,6 +1,14 @@
-# Desplegar Rigthnder en Namecheap y Cloudflare
+# Desplegar OnlyFachos en Namecheap y Cloudflare
 
-Destino solicitado: **https://rigthnder.webrom.lat**. La aplicación requiere Node.js 22.13 o superior; el plan Stellar Plus observado tiene Node 24.21.0. Usar la entrada `app.cjs` para Passenger y un directorio de aplicación independiente. No subir solo el frontend: cuentas y mensajes requieren el backend.
+Dominio principal: **https://onlyfachos.webrom.lat**. El anterior, `rigthnder.webrom.lat`, queda como redirección web 301. La aplicación requiere Node.js 22.13 o superior; el plan Stellar Plus observado tiene Node 24.21.0. Usar la entrada `app.cjs` para Passenger y un directorio de aplicación independiente. No subir solo el frontend: cuentas y mensajes requieren el backend.
+
+## Cambio de dominio · 22 de octubre de 2026
+
+El registro A `onlyfachos` apunta a `162.0.209.150`, con proxy Cloudflare y TTL automático. En cPanel el dominio nuevo comparte el document root `/home/jyscqqde/rigthnder.webrom.lat` y Passenger sirve la misma aplicación `/home/jyscqqde/rigthnder-app`. No se mueve ni se duplica la base. HTTPS debe funcionar con Full (strict) antes de activar la redirección.
+
+Configuración privada: `PUBLIC_URL=https://onlyfachos.webrom.lat`, `CANONICAL_HOST=onlyfachos.webrom.lat`, `LEGACY_HOST=rigthnder.webrom.lat`; añadir ambos orígenes a `ALLOWED_ORIGINS`. La regla única de Cloudflare «OnlyFachos - dominio anterior» redirige GET/HEAD del host anterior, excluyendo `/api` y `/api/*`. Destino dinámico: `concat("https://onlyfachos.webrom.lat", http.request.uri.path)`, HTTP 301 y conservar cadena de consulta. Se comprobó un único salto desde HTTP y HTTPS. El servidor también incluye esta redirección como respaldo. `/api/*` continúa en el dominio anterior para compatibilidad con las compilaciones móviles existentes. Nuevas compilaciones usan el dominio nuevo. Google OAuth debe autorizar el callback del nuevo dominio en su consola al habilitarlo.
+
+Los pasos siguientes describen la instalación original y conservan los nombres internos de directorios.
 
 ## Paquete
 

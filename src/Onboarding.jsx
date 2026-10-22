@@ -1,12 +1,14 @@
+import { t, getLanguage } from './locale.mjs';
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, X, Camera, Check, LoaderCircle } from 'lucide-react';
 import { Button } from './Shared';
+import { birthdateError, birthdateBounds } from '../server/birthdate.mjs';
 
 export async function compressPhoto(file) {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
-    throw Error('Elige una foto JPG, PNG o WebP.');
-  if (file.size > 12_000_000) throw Error('La foto original debe pesar menos de 12 MB.');
-  if (!file.size) throw Error('La foto está vacía. Elige otra imagen.');
+    throw Error(t('Elige una foto JPG, PNG o WebP.'));
+  if (file.size > 12_000_000) throw Error(t('La foto original debe pesar menos de 12 MB.'));
+  if (!file.size) throw Error(t('La foto está vacía. Elige otra imagen.'));
   try {
     // img-src already permits data: in production. blob: previews were blocked by CSP.
     const source = await new Promise((resolve, reject) => {
@@ -27,14 +29,16 @@ export async function compressPhoto(file) {
     return canvas.toDataURL('image/jpeg', 0.78);
   } catch {
     throw Error(
-      'No pudimos abrir esta foto. Puede estar dañada o tener un formato distinto. Prueba con otra JPG, PNG o WebP.',
+      t(
+        'No pudimos abrir esta foto. Puede estar dañada o tener un formato distinto. Prueba con otra JPG, PNG o WebP.',
+      ),
     );
   }
 }
 export function Chips({ label, choices, value, onChange, multiple = false }) {
   return (
     <fieldset className="choice-group">
-      <legend>{label}</legend>
+      <legend>{t(label)}</legend>
       <div className="chips">
         {choices.map((v) => (
           <button
@@ -54,31 +58,39 @@ export function Chips({ label, choices, value, onChange, multiple = false }) {
               )
             }
           >
-            {v}
+            {t(v)}
           </button>
         ))}
       </div>
     </fieldset>
   );
 }
-function Tags({ label, suggestions, value, onChange }) {
+export function Tags({ label, suggestions, value, onChange }) {
   const [search, setSearch] = useState('');
   function add(v) {
-    if (v.trim() && value.length < 12) onChange([...new Set([...value, v.trim().slice(0, 60)])]);
+    const text = v.trim().slice(0, 60);
+    if (
+      text &&
+      value.length < 12 &&
+      !value.some((item) => item.toLocaleLowerCase() === text.toLocaleLowerCase())
+    )
+      onChange([...value, text]);
     setSearch('');
   }
   return (
     <div className="tag-field">
-      <h4>{label}</h4>
+      <h4>{t(label)}</h4>
       <input
-        aria-label={label}
+        aria-label={t(label)}
         value={search}
         maxLength={60}
-        placeholder="Busca o añade el tuyo…"
+        enterKeyHint="done"
+        placeholder={t('Busca o añade el tuyo…')}
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             e.preventDefault();
+            if (e.nativeEvent.isComposing) return;
             add(search);
           }
         }}
@@ -106,7 +118,8 @@ function Tags({ label, suggestions, value, onChange }) {
           ))}
         {search.trim() && !value.includes(search.trim()) && (
           <button type="button" onClick={() => add(search)}>
-            + Añadir «{search}»
+            {t('+ Añadir «')}
+            {search}»
           </button>
         )}
       </div>
@@ -138,6 +151,7 @@ const empty = {
 export default function Onboarding({ user, identity, onSave, onCancel, busy, initialStep = 1 }) {
   const [step, setStep] = useState(initialStep),
     [error, setError] = useState(''),
+    [birthError, setBirthError] = useState(''),
     [uploading, setUploading] = useState(false);
   const [draft, setDraft] = useState(() => ({
     name: user?.name || identity?.name || '',
@@ -193,12 +207,14 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
     e.preventDefault();
     setError('');
     if (step === 1) {
+      const birthError = birthdateError(draft.birthdate);
+      setBirthError(birthError);
+      if (birthError) {
+        document.getElementById('birthdate')?.focus();
+        return;
+      }
       if (c.photos.length < 2)
         return setError('Añade al menos dos fotos propias antes de continuar.');
-      const age = new Date(),
-        birth = new Date(draft.birthdate + 'T00:00:00');
-      age.setFullYear(age.getFullYear() - 18);
-      if (!draft.birthdate || birth > age) return setError('Debes tener al menos 18 años.');
     }
     if (step < 3) {
       setStep(step + 1);
@@ -223,7 +239,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
         <button
           type="button"
           className="icon-button"
-          aria-label={step === 1 ? 'Cancelar registro' : 'Volver al paso anterior'}
+          aria-label={step === 1 ? t('Cancelar registro') : t('Volver al paso anterior')}
           onClick={() => (step > 1 ? setStep(step - 1) : onCancel())}
         >
           <ArrowLeft size={18} />
@@ -237,33 +253,35 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
       </div>
       <div className="wizard-title">
         <span className="label-strip">
-          PASO {step} · {['LO BÁSICO', 'TU FEED', 'SIN FILTRO'][step - 1]}
+          {t('PASO ')}
+          {step} · {t(['LO BÁSICO', 'TU FEED', 'SIN FILTRO'][step - 1])}
         </span>
-        <h1>{['ARMA TU PERFIL', '¿QUÉ CONSUMES?', 'TU LADO DEL ESPECTRO'][step - 1]}</h1>
+        <h1>{t(['ARMA TU PERFIL', '¿QUÉ CONSUMES?', 'TU LADO DEL ESPECTRO'][step - 1])}</h1>
         <p>
-          {
+          {t(
             [
               'Fotos reales y una bio que no dé sueño.',
               'Así te encuentra la gente que ve y lee lo mismo que tú.',
               'Lo que importa antes del primer café. Comparte solo lo que quieras.',
-            ][step - 1]
-          }
+            ][step - 1],
+          )}
         </p>
       </div>
       {step === 1 && (
         <>
           <div>
             <h4>
-              FOTOS · MÍNIMO 2 <span>{c.photos.length}/6</span>
+              {t('FOTOS · MÍNIMO 2 ')}
+              <span>{c.photos.length}/6</span>
             </h4>
             <div className="photo-slots">
               {c.photos.map((photo, i) => (
                 <div key={i} className="photo-slot">
-                  <img src={photo} alt={'Tu foto ' + (i + 1)} />
+                  <img src={photo} alt={t('Tu foto ') + (i + 1)} />
                   <button
                     type="button"
                     className="remove-photo"
-                    aria-label={'Quitar foto ' + (i + 1)}
+                    aria-label={t('Quitar foto ') + (i + 1)}
                     onClick={() =>
                       update(
                         'photos',
@@ -274,7 +292,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
                     <X size={14} />
                   </button>
                   {i === 0 ? (
-                    <small>PRINCIPAL</small>
+                    <small>{t('PRINCIPAL')}</small>
                   ) : (
                     <button
                       type="button"
@@ -283,7 +301,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
                         update('photos', [photo, ...c.photos.filter((_, n) => n !== i)])
                       }
                     >
-                      Hacer principal
+                      {t('Hacer principal')}
                     </button>
                   )}
                 </div>
@@ -291,10 +309,10 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
               {c.photos.length < 6 && (
                 <label className="photo-add">
                   <Plus size={24} />
-                  <span>{uploading ? 'Preparando…' : 'Añadir fotos'}</span>
+                  <span>{uploading ? t('Preparando…') : t('Añadir fotos')}</span>
                   <input
                     type="file"
-                    aria-label="Añadir fotos"
+                    aria-label={t('Añadir fotos')}
                     multiple
                     accept="image/jpeg,image/png,image/webp"
                     onChange={upload}
@@ -303,61 +321,81 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
                 </label>
               )}
             </div>
-            <p className="hint">Solo fotos tuyas. La primera será tu foto principal.</p>
+            <p className="hint">{t('Solo fotos tuyas. La primera será tu foto principal.')}</p>
             {user?.demo && (
               <button
                 type="button"
                 className="text-link"
                 onClick={() => update('photos', ['/photos/lucia.jpg', '/photos/coast.jpg'])}
               >
-                Usar fotos de muestra (solo demo)
+                {t('Usar fotos de muestra (solo demo)')}
               </button>
             )}
           </div>
           <label>
-            Nombre
+            {t('Nombre')}
             <input
               required
               minLength={2}
               maxLength={40}
               value={draft.name}
               onChange={(e) => field('name', e.target.value)}
-              placeholder="¿Cómo te llamas?"
+              placeholder={t('¿Cómo te llamas?')}
               autoComplete="given-name"
             />
           </label>
           <label>
-            Fecha de nacimiento
+            {t('Fecha de nacimiento')}
             <input
+              id="birthdate"
               type="date"
               required
               value={draft.birthdate}
               disabled={!!user}
-              onChange={(e) => field('birthdate', e.target.value)}
-              max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
-                .toISOString()
-                .slice(0, 10)}
+              onChange={(e) => {
+                field('birthdate', e.target.value);
+                if (birthError) setBirthError(birthdateError(e.target.value));
+              }}
+              onBlur={(e) => {
+                field('birthdate', e.target.value);
+                setBirthError(birthdateError(e.target.value));
+              }}
+              onInvalid={(e) => {
+                e.preventDefault();
+                setBirthError(birthdateError(e.target.value));
+                e.target.focus();
+              }}
+              {...birthdateBounds()}
+              aria-invalid={!!birthError}
+              aria-describedby={birthError ? 'birthdate-error' : 'birthdate-hint'}
             />
-            <small className="hint">Se muestra tu edad, nunca tu fecha de nacimiento.</small>
+            <small id="birthdate-hint" className="hint">
+              {t('Se muestra tu edad, nunca tu fecha de nacimiento.')}
+            </small>
+            {birthError && (
+              <small id="birthdate-error" className="field-error" role="alert">
+                {t(birthError)}
+              </small>
+            )}
           </label>
           <label>
-            ¿Dónde vives?
+            {t('¿Dónde vives?')}
             <select
               value={abroad ? 'abroad' : 'chile'}
               onChange={(e) =>
                 update('region', e.target.value === 'abroad' ? 'Fuera de Chile' : '')
               }
             >
-              <option value="chile">En Chile</option>
-              <option value="abroad">En el extranjero</option>
+              <option value="chile">{t('En Chile')}</option>
+              <option value="abroad">{t('En el extranjero')}</option>
             </select>
           </label>
           <div className={abroad ? 'residence-city' : 'form-row'}>
             {!abroad && (
               <label>
-                Región
+                {t('Región')}
                 <select value={c.region} onChange={(e) => update('region', e.target.value)}>
-                  <option value="">Seleccionar</option>
+                  <option value="">{t('Seleccionar')}</option>
                   {[
                     'Arica y Parinacota',
                     'Tarapacá',
@@ -376,30 +414,34 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
                     'Aysén',
                     'Magallanes',
                   ].map((v) => (
-                    <option key={v}>{v}</option>
+                    <option key={v} value={v}>
+                      {t(v)}
+                    </option>
                   ))}
                 </select>
               </label>
             )}
             <label>
-              Ciudad
+              {t('Ciudad')}
               <input
                 required
                 minLength={2}
                 maxLength={60}
                 value={draft.city}
                 onChange={(e) => field('city', e.target.value)}
-                placeholder={abroad ? 'Ej.: Madrid, Buenos Aires, Berlín…' : 'Tu ciudad'}
+                placeholder={abroad ? t('Ej.: Madrid, Buenos Aires, Berlín…') : t('Tu ciudad')}
                 autoComplete="address-level2"
               />
               {abroad && (
-                <small className="hint">Escribe la ciudad donde vives, en cualquier país.</small>
+                <small className="hint">
+                  {t('Escribe la ciudad donde vives, en cualquier país.')}
+                </small>
               )}
             </label>
           </div>
           {c.nationalities.map((v, i) => (
             <label key={i}>
-              {i ? 'Segunda nacionalidad' : 'Nacionalidad (opcional)'}
+              {i ? t('Segunda nacionalidad') : t('Nacionalidad (opcional)')}
               <input
                 value={v}
                 maxLength={60}
@@ -425,54 +467,57 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
             }
           >
             {c.nationalities.length === 1
-              ? '+ Tengo doble nacionalidad'
-              : 'Quitar segunda nacionalidad'}
+              ? t('+ Tengo doble nacionalidad')
+              : t('Quitar segunda nacionalidad')}
           </button>
           <div className="form-row">
             <label>
-              Sexo
+              {t('Sexo')}
               <select value={draft.gender} onChange={(e) => field('gender', e.target.value)}>
-                <option value="mujer">Mujer</option>
-                <option value="hombre">Hombre</option>
-                <option value="otro">Otro</option>
+                <option value="mujer">{t('Mujer')}</option>
+                <option value="hombre">{t('Hombre')}</option>
+                <option value="otro">{t('Otro')}</option>
               </select>
             </label>
             <label>
-              Quiero conocer
+              {t('Quiero conocer')}
               <select
                 value={draft.lookingFor}
                 onChange={(e) => field('lookingFor', e.target.value)}
               >
-                <option value="todos">Todas las personas</option>
-                <option value="mujer">Mujeres</option>
-                <option value="hombre">Hombres</option>
-                <option value="otro">Otras identidades</option>
+                <option value="todos">{t('Todas las personas')}</option>
+                <option value="mujer">{t('Mujeres')}</option>
+                <option value="hombre">{t('Hombres')}</option>
+                <option value="otro">{t('Otras identidades')}</option>
               </select>
             </label>
           </div>
           <Chips
-            label="¿ESTUDIAS O TRABAJAS?"
+            label={t('¿ESTUDIAS O TRABAJAS?')}
             choices={['Trabajo', 'Estudio', 'Ambos', 'Emprendo']}
             value={c.workMode}
             onChange={(v) => update('workMode', v)}
           />
           <label>
-            Qué haces y dónde
+            {t('Qué haces y dónde')}
             <input
               maxLength={80}
               value={draft.occupation}
               onChange={(e) => field('occupation', e.target.value)}
-              placeholder="Lo que haces, en tus palabras"
+              placeholder={t('Lo que haces, en tus palabras')}
             />
           </label>
           <label>
-            Bio <span className="character-count">{draft.bio.length}/200</span>
+            {t('Bio ')}
+            <span className="character-count">{draft.bio.length}/200</span>
             <textarea
               maxLength={200}
               rows={3}
               value={draft.bio}
               onChange={(e) => field('bio', e.target.value)}
-              placeholder="Algo que te defina en dos líneas. Prohibido poner ‘me gusta viajar’."
+              placeholder={t(
+                'Algo que te defina en dos líneas. Prohibido poner ‘me gusta viajar’.',
+              )}
             />
           </label>
         </>
@@ -480,22 +525,22 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
       {step === 2 && (
         <>
           <label>
-            Debate me on
+            {t('Hablemos de')}
             <textarea
               value={c.debate || ''}
               maxLength={180}
-              placeholder="Una idea para romper el hielo…"
+              placeholder={t('Una idea para romper el hielo…')}
               onChange={(e) => update('debate', e.target.value)}
             />
           </label>
           <Tags
-            label="ARTISTAS Y CANTANTES"
+            label={t('ARTISTAS Y CANTANTES')}
             suggestions={['Rammstein', 'Juan Luis Guerra', 'Raphael', 'Los Jaivas']}
             value={c.artists || []}
             onChange={(v) => update('artists', v)}
           />
           <Tags
-            label="STREAMERS QUE VES"
+            label={t('STREAMERS QUE VES')}
             suggestions={[
               'La Cofradía',
               'Mises TV',
@@ -507,13 +552,13 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
             onChange={(v) => update('streamers', v)}
           />
           <Tags
-            label="INFLUENCERS"
+            label={t('INFLUENCERS')}
             suggestions={[]}
             value={c.creators}
             onChange={(v) => update('creators', v)}
           />
           <Tags
-            label="ESCRITORES Y PENSADORES"
+            label={t('ESCRITORES Y PENSADORES')}
             suggestions={[
               'Thomas Sowell',
               'Hayek',
@@ -530,7 +575,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
             onChange={(v) => update('authors', v)}
           />
           <Chips
-            label="¿PERTENECES O SIMPATIZAS CON ALGÚN PARTIDO?"
+            label={t('¿PERTENECES O SIMPATIZAS CON ALGÚN PARTIDO?')}
             choices={['Milito', 'Simpatizo', 'Ninguno']}
             value={c.partyStance}
             onChange={(v) => update('partyStance', v)}
@@ -538,13 +583,13 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
           {['Milito', 'Simpatizo'].includes(c.partyStance) && (
             <>
               <Chips
-                label="¿CON CUÁL?"
+                label={t('¿CON CUÁL?')}
                 choices={['PNL', 'Republicanos', 'Evópoli', 'RN', 'Chile Vamos']}
                 value={c.party}
                 onChange={(v) => update('party', v)}
               />
               <label>
-                Otro partido (opcional)
+                {t('Otro partido (opcional)')}
                 <input
                   maxLength={60}
                   value={c.party}
@@ -554,14 +599,14 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
             </>
           )}
           <p className="hint">
-            Todos estos campos son opcionales. Puedes dejarlos vacíos o cambiarlos después.
+            {t('Todos estos campos son opcionales. Puedes dejarlos vacíos o cambiarlos después.')}
           </p>
         </>
       )}
       {step === 3 && (
         <>
           <Chips
-            label="¿HACE CUÁNTO ERES DE DERECHA?"
+            label={t('¿HACE CUÁNTO ERES DE DERECHA?')}
             choices={[
               'Desde siempre',
               '+10 años',
@@ -573,7 +618,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
             onChange={(v) => update('years', v)}
           />
           <Chips
-            label="CORRIENTE"
+            label={t('CORRIENTE')}
             choices={[
               'Conservador',
               'Libertario',
@@ -588,17 +633,19 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
             onChange={(v) => update('current', v)}
           />
           <Chips
-            label="¿ERES CREYENTE?"
+            label={t('¿ERES CREYENTE?')}
             choices={['Sí', 'No', 'En búsqueda']}
             value={c.faith}
             onChange={(v) => update('faith', v)}
           />
           {c.faith === 'Sí' && (
             <Chips
-              label="¿CUÁL? (OPCIONAL)"
+              label={t('¿CUÁL? (OPCIONAL)')}
               choices={[
                 'Católica',
                 'Evangélica',
+                'No denominational',
+                'Protestante',
                 'Ortodoxa',
                 'Bautista',
                 'Pentecostal',
@@ -612,17 +659,17 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
             />
           )}
           <Chips
-            label="¿QUIERES TENER HIJOS?"
+            label={t('¿QUIERES TENER HIJOS?')}
             choices={['Sí', 'Ya tengo', 'Algún día', 'No']}
             value={c.children}
             onChange={(v) => update('children', v)}
           />
           <div>
-            <h4>IDIOMAS</h4>
+            <h4>{t('IDIOMAS')}</h4>
             {c.languages.map((l, i) => (
               <div className="language-row" key={i}>
                 <input
-                  aria-label={'Idioma ' + (i + 1)}
+                  aria-label={t('Idioma ') + (i + 1)}
                   maxLength={60}
                   value={l.language}
                   onChange={(e) =>
@@ -633,7 +680,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
                   }
                 />
                 <select
-                  aria-label={'Nivel del idioma ' + (i + 1)}
+                  aria-label={t('Nivel del idioma ') + (i + 1)}
                   value={l.level}
                   onChange={(e) =>
                     update(
@@ -643,12 +690,14 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
                   }
                 >
                   {['Nativo', 'Avanzado', 'Intermedio', 'Básico'].map((v) => (
-                    <option key={v}>{v}</option>
+                    <option key={v} value={v}>
+                      {t(v)}
+                    </option>
                   ))}
                 </select>
                 <button
                   type="button"
-                  aria-label={'Quitar idioma ' + (i + 1)}
+                  aria-label={t('Quitar idioma ') + (i + 1)}
                   onClick={() =>
                     update(
                       'languages',
@@ -668,17 +717,17 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
                   update('languages', [...c.languages, { language: '', level: 'Básico' }])
                 }
               >
-                + Agregar idioma
+                {t('+ Agregar idioma')}
               </button>
             )}
           </div>
           <div className="travel-box">
-            <h4>¿HAS VIAJADO?</h4>
+            <h4>{t('¿HAS VIAJADO?')}</h4>
             <div className="counter">
-              <span>Países que conoces</span>
+              <span>{t('Países que conoces')}</span>
               <button
                 type="button"
-                aria-label="Menos países"
+                aria-label={t('Menos países')}
                 onClick={() => update('countryCount', Math.max(0, c.countryCount - 1))}
               >
                 −
@@ -686,14 +735,14 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
               <strong>{c.countryCount}</strong>
               <button
                 type="button"
-                aria-label="Más países"
+                aria-label={t('Más países')}
                 onClick={() => update('countryCount', Math.min(195, c.countryCount + 1))}
               >
                 +
               </button>
             </div>
             <Tags
-              label="PAÍSES (OPCIONAL)"
+              label={t('PAÍSES (OPCIONAL)')}
               suggestions={['Argentina', 'España', 'Alemania', 'Estados Unidos']}
               value={c.countries}
               onChange={(v) =>
@@ -732,9 +781,9 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
               }
             />
             <span>
-              Quiero mostrar los datos de política y religión que elegí y usarlos para encontrar
-              coincidencias. Al desmarcar, se eliminan los referentes y los datos de política y
-              religión de este formulario. No se envían a anunciantes.
+              {t(
+                'Quiero mostrar los datos de política y religión que elegí y usarlos para encontrar coincidencias. Al desmarcar, se eliminan los referentes y los datos de política y religión de este formulario. No se envían a anunciantes.',
+              )}
             </span>
           </label>
           <label className="checkbox-label">
@@ -745,9 +794,9 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
               onChange={(e) => setTerms(e.target.checked)}
             />
             <span>
-              Tengo 18 años o más y acepto los{' '}
+              {t('Tengo 18 años o más y acepto los')}{' '}
               <a href="/terminos" target="_blank" rel="noreferrer">
-                términos de comunidad
+                {t('términos de comunidad')}
               </a>
               .
             </span>
@@ -760,9 +809,9 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
               onChange={(e) => setConsent(e.target.checked)}
             />
             <span>
-              Acepto publicar los datos de mi perfil y usarlos para sugerir conexiones.{' '}
+              {t('Acepto publicar los datos de mi perfil y usarlos para sugerir conexiones.')}{' '}
               <a href="/privacidad" target="_blank" rel="noreferrer">
-                Ver privacidad
+                {t('Ver privacidad')}
               </a>
               .
             </span>
@@ -771,7 +820,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
       )}
       {error && (
         <p className="form-error" role="alert">
-          {error}
+          {t(error)}
         </p>
       )}
       <div className="wizard-footer">
@@ -779,11 +828,11 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
           {busy ? (
             <LoaderCircle className="spin" size={18} />
           ) : step < 3 ? (
-            'SIGUIENTE'
+            t('SIGUIENTE')
           ) : user ? (
-            'GUARDAR MI PERFIL'
+            t('GUARDAR MI PERFIL')
           ) : (
-            'ENTRAR A LA COMUNIDAD'
+            t('ENTRAR A LA COMUNIDAD')
           )}
         </Button>
       </div>

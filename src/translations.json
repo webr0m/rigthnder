@@ -1,0 +1,2538 @@
+{
+  "idioma de la app": {
+    "en": "App language",
+    "de": "App-Sprache"
+  },
+  "cambiar tema": {
+    "en": "Change theme",
+    "de": "Design ändern"
+  },
+  "modo claro": {
+    "en": "Light mode",
+    "de": "Heller Modus"
+  },
+  "modo oscuro": {
+    "en": "Dark mode",
+    "de": "Dunkler Modus"
+  },
+  "claro": {
+    "en": "Light",
+    "de": "Hell"
+  },
+  "oscuro": {
+    "en": "Dark",
+    "de": "Dunkel"
+  },
+  "automático": {
+    "en": "Automatic",
+    "de": "Automatisch"
+  },
+  "apariencia": {
+    "en": "Appearance",
+    "de": "Darstellung"
+  },
+  "ajustes": {
+    "en": "Settings",
+    "de": "Einstellungen"
+  },
+  "cuenta": {
+    "en": "Account",
+    "de": "Konto"
+  },
+  "correo": {
+    "en": "Email",
+    "de": "E-Mail"
+  },
+  "sesión demo": {
+    "en": "Demo session",
+    "de": "Demo-Sitzung"
+  },
+  "comunidad": {
+    "en": "Community",
+    "de": "Community"
+  },
+  "chats": {
+    "en": "Chats",
+    "de": "Chats"
+  },
+  "perfil": {
+    "en": "Profile",
+    "de": "Profil"
+  },
+  "mi perfil": {
+    "en": "My profile",
+    "de": "Mein Profil"
+  },
+  "para ti": {
+    "en": "For you",
+    "de": "Für dich"
+  },
+  "en línea": {
+    "en": "Online",
+    "de": "Online"
+  },
+  "ven lo mismo": {
+    "en": "Shared interests",
+    "de": "Gleiche Interessen"
+  },
+  "cerca": {
+    "en": "Nearby",
+    "de": "In der Nähe"
+  },
+  "escribir": {
+    "en": "Message",
+    "de": "Nachricht"
+  },
+  "escribir a": {
+    "en": "Message",
+    "de": "Nachricht an"
+  },
+  "opciones de": {
+    "en": "Options for",
+    "de": "Optionen für"
+  },
+  "ideas propias": {
+    "en": "Independent ideas",
+    "de": "Eigene Ideen"
+  },
+  "con ganas de conversar": {
+    "en": "Ready to chat",
+    "de": "Lust auf ein Gespräch"
+  },
+  "sin compartir": {
+    "en": "Not shared",
+    "de": "Nicht angegeben"
+  },
+  "en común": {
+    "en": "In common",
+    "de": "Gemeinsam"
+  },
+  "de derecha": {
+    "en": "Right-leaning",
+    "de": "Rechtsorientiert"
+  },
+  "fe": {
+    "en": "Faith",
+    "de": "Glaube"
+  },
+  "hijos": {
+    "en": "Children",
+    "de": "Kinder"
+  },
+  "idiomas": {
+    "en": "Languages",
+    "de": "Sprachen"
+  },
+  "viajó": {
+    "en": "Travelled",
+    "de": "Gereist"
+  },
+  "partido": {
+    "en": "Party",
+    "de": "Partei"
+  },
+  "ve": {
+    "en": "Watches",
+    "de": "Schaut"
+  },
+  "lee": {
+    "en": "Reads",
+    "de": "Liest"
+  },
+  "sigue": {
+    "en": "Follows",
+    "de": "Folgt"
+  },
+  "escucha": {
+    "en": "Listens to",
+    "de": "Hört"
+  },
+  "creyente": {
+    "en": "Believer",
+    "de": "Gläubig"
+  },
+  "no creyente": {
+    "en": "Non-believer",
+    "de": "Nicht gläubig"
+  },
+  "quiere": {
+    "en": "Would like children",
+    "de": "Kinderwunsch"
+  },
+  "países": {
+    "en": "countries",
+    "de": "Länder"
+  },
+  "en el extranjero": {
+    "en": "Abroad",
+    "de": "Im Ausland"
+  },
+  "tu perfil": {
+    "en": "Your profile",
+    "de": "Dein Profil"
+  },
+  "tu foto": {
+    "en": "Your photo",
+    "de": "Dein Foto"
+  },
+  "foto": {
+    "en": "Photo",
+    "de": "Foto"
+  },
+  "de": {
+    "en": "of",
+    "de": "von"
+  },
+  "plan ilustrativo de": {
+    "en": "Illustrative activity for",
+    "de": "Beispielaktivität von"
+  },
+  "todavía está preparando su presentación. rompe el hielo con un hola.": {
+    "en": "Still working on an introduction. Break the ice with a hello.",
+    "de": "Die Vorstellung ist noch in Arbeit. Brich das Eis mit einem Hallo."
+  },
+  "+18 · sin swipes · solo conversación": {
+    "en": "18+ · NO SWIPING · JUST CONVERSATION",
+    "de": "AB 18 · KEIN SWIPEN · ECHTE GESPRÄCHE"
+  },
+  "conoce gente": {
+    "en": "Meet someone",
+    "de": "Finde Menschen"
+  },
+  "basada": {
+    "en": "Like-minded",
+    "de": "Mit Überzeugung"
+  },
+  "scrollea perfiles, mira a quién ve, qué lee y qué piensa. si te convence, escríbele.": {
+    "en": "Scroll through profiles, see what they watch, read and believe. Feel a connection? Say hello.",
+    "de": "Scrolle durch Profile und entdecke, was sie schauen, lesen und denken. Passt es? Schreib ihnen."
+  },
+  "scrollea": {
+    "en": "Scroll",
+    "de": "Scrollen"
+  },
+  "conversa": {
+    "en": "Chat",
+    "de": "Schreiben"
+  },
+  "conecta": {
+    "en": "Connect",
+    "de": "Kennenlernen"
+  },
+  "sin swipes.": {
+    "en": "No swiping.",
+    "de": "Kein Swipen."
+  },
+  "sin rodeos.": {
+    "en": "Straight to the point.",
+    "de": "Ohne Umwege."
+  },
+  "personas reales.": {
+    "en": "Real people.",
+    "de": "Echte Menschen."
+  },
+  "tu comunidad te espera": {
+    "en": "Your community awaits",
+    "de": "Deine Community wartet"
+  },
+  "volviste, basado.": {
+    "en": "Welcome back.",
+    "de": "Willkommen zurück."
+  },
+  "entrar": {
+    "en": "Log in",
+    "de": "Anmelden"
+  },
+  "iniciar sesión": {
+    "en": "Log in",
+    "de": "Anmelden"
+  },
+  "crear cuenta": {
+    "en": "Create account",
+    "de": "Konto erstellen"
+  },
+  "crear mi cuenta": {
+    "en": "Create my account",
+    "de": "Mein Konto erstellen"
+  },
+  "continuar con google": {
+    "en": "Continue with Google",
+    "de": "Mit Google fortfahren"
+  },
+  "o con correo": {
+    "en": "Or with email",
+    "de": "Oder per E-Mail"
+  },
+  "nombre": {
+    "en": "Name",
+    "de": "Name"
+  },
+  "contraseña": {
+    "en": "Password",
+    "de": "Passwort"
+  },
+  "tu contraseña": {
+    "en": "Your password",
+    "de": "Dein Passwort"
+  },
+  "mínimo 10 caracteres": {
+    "en": "At least 10 characters",
+    "de": "Mindestens 10 Zeichen"
+  },
+  "olvidé mi contraseña": {
+    "en": "Forgot password",
+    "de": "Passwort vergessen"
+  },
+  "¿ya tienes cuenta?": {
+    "en": "Already have an account?",
+    "de": "Du hast schon ein Konto?"
+  },
+  "¿primera vez por aquí?": {
+    "en": "New here?",
+    "de": "Neu hier?"
+  },
+  "explorar la demo": {
+    "en": "Explore the demo",
+    "de": "Demo ansehen"
+  },
+  "ver demo": {
+    "en": "View demo",
+    "de": "Demo ansehen"
+  },
+  "entrar a la demo": {
+    "en": "Try the demo",
+    "de": "Demo ausprobieren"
+  },
+  "probar demo": {
+    "en": "Try demo",
+    "de": "Demo testen"
+  },
+  "solo mayores de 18 años. revisa los": {
+    "en": "For adults aged 18 and over. Read the",
+    "de": "Nur für Personen ab 18 Jahren. Lies die"
+  },
+  "términos de comunidad": {
+    "en": "community terms",
+    "de": "Community-Regeln"
+  },
+  "y la": {
+    "en": "and the",
+    "de": "und die"
+  },
+  "política de privacidad": {
+    "en": "privacy policy",
+    "de": "Datenschutzerklärung"
+  },
+  "preparando buenas conversaciones…": {
+    "en": "Getting conversations ready…",
+    "de": "Gespräche werden vorbereitet…"
+  },
+  "volver a intentar": {
+    "en": "Try again",
+    "de": "Erneut versuchen"
+  },
+  "tu perfil. tus reglas.": {
+    "en": "Your profile. Your rules.",
+    "de": "Dein Profil. Deine Regeln."
+  },
+  "que te conozcan": {
+    "en": "Let them know you",
+    "de": "Zeig dich"
+  },
+  "por lo que": {
+    "en": "For what",
+    "de": "Mit deinen"
+  },
+  "piensas.": {
+    "en": "You believe.",
+    "de": "Überzeugungen."
+  },
+  "cancelar registro": {
+    "en": "Cancel registration",
+    "de": "Registrierung abbrechen"
+  },
+  "volver al paso anterior": {
+    "en": "Previous step",
+    "de": "Vorheriger Schritt"
+  },
+  "paso": {
+    "en": "Step",
+    "de": "Schritt"
+  },
+  "lo básico": {
+    "en": "The basics",
+    "de": "Grundlagen"
+  },
+  "tu feed": {
+    "en": "Your feed",
+    "de": "Dein Feed"
+  },
+  "sin filtro": {
+    "en": "Unfiltered",
+    "de": "Ungefiltert"
+  },
+  "arma tu perfil": {
+    "en": "Build your profile",
+    "de": "Erstelle dein Profil"
+  },
+  "¿qué consumes?": {
+    "en": "What are you into?",
+    "de": "Was interessiert dich?"
+  },
+  "tu lado del espectro": {
+    "en": "Your beliefs and outlook",
+    "de": "Deine Werte und Ansichten"
+  },
+  "fotos reales y una bio que no dé sueño.": {
+    "en": "Real photos and a bio worth reading.",
+    "de": "Echte Fotos und eine Bio, die neugierig macht."
+  },
+  "así te encuentra la gente que ve y lee lo mismo que tú.": {
+    "en": "Meet people who watch and read the same things as you.",
+    "de": "So finden dich Menschen, die das Gleiche schauen und lesen wie du."
+  },
+  "lo que importa antes del primer café. comparte solo lo que quieras.": {
+    "en": "What matters before the first coffee. Share only what you want.",
+    "de": "Was vor dem ersten Kaffee zählt. Teile nur, was du möchtest."
+  },
+  "fotos · mínimo 2": {
+    "en": "Photos · At least 2",
+    "de": "Fotos · Mindestens 2"
+  },
+  "principal": {
+    "en": "Main photo",
+    "de": "Hauptfoto"
+  },
+  "hacer principal": {
+    "en": "Make main photo",
+    "de": "Als Hauptfoto nutzen"
+  },
+  "quitar foto": {
+    "en": "Remove photo",
+    "de": "Foto entfernen"
+  },
+  "añadir fotos": {
+    "en": "Add photos",
+    "de": "Fotos hinzufügen"
+  },
+  "preparando…": {
+    "en": "Preparing…",
+    "de": "Wird vorbereitet…"
+  },
+  "solo fotos tuyas. la primera será tu foto principal.": {
+    "en": "Only photos of you. The first is your main photo.",
+    "de": "Nur Fotos von dir. Das erste wird dein Hauptfoto."
+  },
+  "usar fotos de muestra (solo demo)": {
+    "en": "Use sample photos (demo only)",
+    "de": "Beispielfotos verwenden (nur Demo)"
+  },
+  "¿cómo te llamas?": {
+    "en": "What's your name?",
+    "de": "Wie heißt du?"
+  },
+  "fecha de nacimiento": {
+    "en": "Date of birth",
+    "de": "Geburtsdatum"
+  },
+  "se muestra tu edad, nunca tu fecha de nacimiento.": {
+    "en": "Your age is shown, never your date of birth.",
+    "de": "Angezeigt wird dein Alter, niemals dein Geburtsdatum."
+  },
+  "escribe tu fecha de nacimiento completa.": {
+    "en": "Enter your full date of birth.",
+    "de": "Gib dein vollständiges Geburtsdatum ein."
+  },
+  "escribe una fecha de nacimiento válida.": {
+    "en": "Enter a valid date of birth.",
+    "de": "Gib ein gültiges Geburtsdatum ein."
+  },
+  "debes tener al menos 18 años.": {
+    "en": "You must be at least 18 years old.",
+    "de": "Du musst mindestens 18 Jahre alt sein."
+  },
+  "revisa tu año de nacimiento. debes tener entre 18 y 100 años.": {
+    "en": "Check your birth year. You must be between 18 and 100 years old.",
+    "de": "Prüfe dein Geburtsjahr. Du musst zwischen 18 und 100 Jahre alt sein."
+  },
+  "debes tener entre 18 y 100 años.": {
+    "en": "You must be between 18 and 100 years old.",
+    "de": "Du musst zwischen 18 und 100 Jahre alt sein."
+  },
+  "¿dónde vives?": {
+    "en": "Where do you live?",
+    "de": "Wo wohnst du?"
+  },
+  "en chile": {
+    "en": "In Chile",
+    "de": "In Chile"
+  },
+  "región": {
+    "en": "Region",
+    "de": "Region"
+  },
+  "seleccionar": {
+    "en": "Select",
+    "de": "Auswählen"
+  },
+  "ciudad": {
+    "en": "City",
+    "de": "Stadt"
+  },
+  "tu ciudad": {
+    "en": "Your city",
+    "de": "Deine Stadt"
+  },
+  "ej.: madrid, buenos aires, berlín…": {
+    "en": "E.g. Madrid, Buenos Aires, Berlin…",
+    "de": "Z. B. Madrid, Buenos Aires, Berlin…"
+  },
+  "escribe la ciudad donde vives, en cualquier país.": {
+    "en": "Enter the city you live in, in any country.",
+    "de": "Gib deinen Wohnort ein, egal in welchem Land."
+  },
+  "nacionalidad (opcional)": {
+    "en": "Nationality (optional)",
+    "de": "Staatsangehörigkeit (optional)"
+  },
+  "segunda nacionalidad": {
+    "en": "Second nationality",
+    "de": "Zweite Staatsangehörigkeit"
+  },
+  "+ tengo doble nacionalidad": {
+    "en": "+ I have dual nationality",
+    "de": "+ Ich habe zwei Staatsangehörigkeiten"
+  },
+  "quitar segunda nacionalidad": {
+    "en": "Remove second nationality",
+    "de": "Zweite Staatsangehörigkeit entfernen"
+  },
+  "sexo": {
+    "en": "Sex",
+    "de": "Geschlecht"
+  },
+  "mujer": {
+    "en": "Woman",
+    "de": "Frau"
+  },
+  "hombre": {
+    "en": "Man",
+    "de": "Mann"
+  },
+  "otro": {
+    "en": "Other",
+    "de": "Andere"
+  },
+  "quiero conocer": {
+    "en": "I'd like to meet",
+    "de": "Ich möchte kennenlernen"
+  },
+  "todas las personas": {
+    "en": "Everyone",
+    "de": "Alle"
+  },
+  "mujeres": {
+    "en": "Women",
+    "de": "Frauen"
+  },
+  "hombres": {
+    "en": "Men",
+    "de": "Männer"
+  },
+  "otras identidades": {
+    "en": "Other identities",
+    "de": "Andere Identitäten"
+  },
+  "¿estudias o trabajas?": {
+    "en": "Do you study or work?",
+    "de": "Studierst oder arbeitest du?"
+  },
+  "trabajo": {
+    "en": "I work",
+    "de": "Ich arbeite"
+  },
+  "estudio": {
+    "en": "I study",
+    "de": "Ich studiere"
+  },
+  "ambos": {
+    "en": "Both",
+    "de": "Beides"
+  },
+  "emprendo": {
+    "en": "I'm an entrepreneur",
+    "de": "Ich bin selbstständig"
+  },
+  "qué haces y dónde": {
+    "en": "What you do and where",
+    "de": "Was du machst und wo"
+  },
+  "lo que haces, en tus palabras": {
+    "en": "What you do, in your own words",
+    "de": "Was du machst, in deinen Worten"
+  },
+  "bio": {
+    "en": "Bio",
+    "de": "Über mich"
+  },
+  "algo que te defina en dos líneas. prohibido poner ‘me gusta viajar’.": {
+    "en": "Describe yourself in two lines. Be more specific than “I like travelling”.",
+    "de": "Beschreibe dich in zwei Zeilen. Sei genauer als „Ich reise gern“."
+  },
+  "hablemos de": {
+    "en": "Let's talk about",
+    "de": "Lass uns darüber reden"
+  },
+  "debate me on": {
+    "en": "Let's talk about",
+    "de": "Lass uns darüber reden"
+  },
+  "una idea para romper el hielo…": {
+    "en": "An idea to break the ice…",
+    "de": "Ein Thema zum Eisbrechen…"
+  },
+  "artistas y cantantes": {
+    "en": "Artists and singers",
+    "de": "Bands und Musiker"
+  },
+  "streamers que ves": {
+    "en": "Streamers you watch",
+    "de": "Streamer, die du schaust"
+  },
+  "influencers": {
+    "en": "Content creators",
+    "de": "Influencer"
+  },
+  "escritores y pensadores": {
+    "en": "Writers and thinkers",
+    "de": "Autoren und Denker"
+  },
+  "busca o añade el tuyo…": {
+    "en": "Search or add your own…",
+    "de": "Suchen oder selbst hinzufügen…"
+  },
+  "+ añadir «": {
+    "en": "+ Add “",
+    "de": "+ „"
+  },
+  "todos estos campos son opcionales. puedes dejarlos vacíos o cambiarlos después.": {
+    "en": "All these fields are optional. You can leave them blank or change them later.",
+    "de": "Alle diese Felder sind freiwillig. Du kannst sie leer lassen oder später ändern."
+  },
+  "¿perteneces o simpatizas con algún partido?": {
+    "en": "Do you belong to or support a political party?",
+    "de": "Gehörst du einer Partei an oder unterstützt du eine?"
+  },
+  "milito": {
+    "en": "Party member",
+    "de": "Parteimitglied"
+  },
+  "simpatizo": {
+    "en": "Supporter",
+    "de": "Sympathisant"
+  },
+  "ninguno": {
+    "en": "None",
+    "de": "Keine"
+  },
+  "¿con cuál?": {
+    "en": "Which one?",
+    "de": "Welche?"
+  },
+  "otro partido (opcional)": {
+    "en": "Other party (optional)",
+    "de": "Andere Partei (optional)"
+  },
+  "¿hace cuánto eres de derecha?": {
+    "en": "How long have you been right-leaning?",
+    "de": "Seit wann bist du rechtsorientiert?"
+  },
+  "desde siempre": {
+    "en": "Always",
+    "de": "Schon immer"
+  },
+  "+10 años": {
+    "en": "Over 10 years",
+    "de": "Über 10 Jahre"
+  },
+  "5 a 10 años": {
+    "en": "5 to 10 years",
+    "de": "5 bis 10 Jahre"
+  },
+  "1 a 5 años": {
+    "en": "1 to 5 years",
+    "de": "1 bis 5 Jahre"
+  },
+  "recién despertando": {
+    "en": "Just discovering it",
+    "de": "Erst seit Kurzem"
+  },
+  "corriente": {
+    "en": "Political outlook",
+    "de": "Politische Richtung"
+  },
+  "conservador": {
+    "en": "Conservative",
+    "de": "Konservativ"
+  },
+  "conservadora": {
+    "en": "Conservative",
+    "de": "Konservativ"
+  },
+  "libertario": {
+    "en": "Libertarian",
+    "de": "Libertär"
+  },
+  "libertaria": {
+    "en": "Libertarian",
+    "de": "Libertär"
+  },
+  "liberal clásico": {
+    "en": "Classical liberal",
+    "de": "Klassisch liberal"
+  },
+  "liberal clásica": {
+    "en": "Classical liberal",
+    "de": "Klassisch liberal"
+  },
+  "anarcocapitalista": {
+    "en": "Anarcho-capitalist",
+    "de": "Anarchokapitalistisch"
+  },
+  "patriota": {
+    "en": "Patriot",
+    "de": "Patriotisch"
+  },
+  "minarquista": {
+    "en": "Minarchist",
+    "de": "Minarchistisch"
+  },
+  "gremialista": {
+    "en": "Gremialist",
+    "de": "Gremialistisch"
+  },
+  "indeciso": {
+    "en": "Undecided",
+    "de": "Unentschlossen"
+  },
+  "¿eres creyente?": {
+    "en": "Are you religious?",
+    "de": "Bist du gläubig?"
+  },
+  "sí": {
+    "en": "Yes",
+    "de": "Ja"
+  },
+  "no": {
+    "en": "No",
+    "de": "Nein"
+  },
+  "en búsqueda": {
+    "en": "Still exploring",
+    "de": "Noch auf der Suche"
+  },
+  "¿cuál? (opcional)": {
+    "en": "Which denomination? (optional)",
+    "de": "Welche Konfession? (optional)"
+  },
+  "católica": {
+    "en": "Catholic",
+    "de": "Katholisch"
+  },
+  "evangélica": {
+    "en": "Evangelical",
+    "de": "Evangelikal"
+  },
+  "no denominational": {
+    "en": "Non-denominational",
+    "de": "Konfessionslos christlich"
+  },
+  "protestante": {
+    "en": "Protestant",
+    "de": "Protestantisch"
+  },
+  "ortodoxa": {
+    "en": "Orthodox",
+    "de": "Orthodox"
+  },
+  "bautista": {
+    "en": "Baptist",
+    "de": "Baptistisch"
+  },
+  "pentecostal": {
+    "en": "Pentecostal",
+    "de": "Pfingstkirchlich"
+  },
+  "anglicana": {
+    "en": "Anglican",
+    "de": "Anglikanisch"
+  },
+  "mormona": {
+    "en": "Latter-day Saint",
+    "de": "Mormonisch"
+  },
+  "judía": {
+    "en": "Jewish",
+    "de": "Jüdisch"
+  },
+  "otra": {
+    "en": "Other",
+    "de": "Andere"
+  },
+  "¿quieres tener hijos?": {
+    "en": "Would you like children?",
+    "de": "Möchtest du Kinder haben?"
+  },
+  "ya tengo": {
+    "en": "I already have children",
+    "de": "Ich habe bereits Kinder"
+  },
+  "algún día": {
+    "en": "Someday",
+    "de": "Irgendwann"
+  },
+  "idioma": {
+    "en": "Language",
+    "de": "Sprache"
+  },
+  "nivel del idioma": {
+    "en": "Language proficiency",
+    "de": "Sprachniveau"
+  },
+  "quitar idioma": {
+    "en": "Remove language",
+    "de": "Sprache entfernen"
+  },
+  "nativo": {
+    "en": "Native",
+    "de": "Muttersprache"
+  },
+  "avanzado": {
+    "en": "Advanced",
+    "de": "Fortgeschritten"
+  },
+  "intermedio": {
+    "en": "Intermediate",
+    "de": "Mittelstufe"
+  },
+  "básico": {
+    "en": "Basic",
+    "de": "Grundkenntnisse"
+  },
+  "+ agregar idioma": {
+    "en": "+ Add language",
+    "de": "+ Sprache hinzufügen"
+  },
+  "¿has viajado?": {
+    "en": "Have you travelled?",
+    "de": "Bist du schon gereist?"
+  },
+  "países que conoces": {
+    "en": "Countries you've visited",
+    "de": "Besuchte Länder"
+  },
+  "menos países": {
+    "en": "Fewer countries",
+    "de": "Weniger Länder"
+  },
+  "más países": {
+    "en": "More countries",
+    "de": "Mehr Länder"
+  },
+  "países (opcional)": {
+    "en": "Countries (optional)",
+    "de": "Länder (optional)"
+  },
+  "quiero mostrar los datos de política y religión que elegí y usarlos para encontrar coincidencias. al desmarcar, se eliminan los referentes y los datos de política y religión de este formulario. no se envían a anunciantes.": {
+    "en": "I want to display the political and religious information I selected and use it to find connections. Unchecking removes these preferences, references and beliefs from this form. They are not sent to advertisers.",
+    "de": "Ich möchte meine ausgewählten politischen und religiösen Angaben anzeigen und für passende Kontakte verwenden. Beim Abwählen werden diese Angaben und Vorbilder aus diesem Formular entfernt. Sie werden nicht an Werbetreibende gesendet."
+  },
+  "tengo 18 años o más y acepto los": {
+    "en": "I am 18 or older and accept the",
+    "de": "Ich bin mindestens 18 Jahre alt und akzeptiere die"
+  },
+  "acepto publicar los datos de mi perfil y usarlos para sugerir conexiones.": {
+    "en": "I agree to publish my profile information and use it to suggest connections.",
+    "de": "Ich stimme der Veröffentlichung meiner Profilangaben und ihrer Nutzung für Kontaktvorschläge zu."
+  },
+  "ver privacidad": {
+    "en": "View privacy policy",
+    "de": "Datenschutzerklärung ansehen"
+  },
+  "siguiente": {
+    "en": "Next",
+    "de": "Weiter"
+  },
+  "guardar mi perfil": {
+    "en": "Save my profile",
+    "de": "Mein Profil speichern"
+  },
+  "entrar a la comunidad": {
+    "en": "Join the community",
+    "de": "Der Community beitreten"
+  },
+  "añade al menos dos fotos propias antes de continuar.": {
+    "en": "Add at least two photos of yourself before continuing.",
+    "de": "Füge mindestens zwei eigene Fotos hinzu, bevor du fortfährst."
+  },
+  "confirma las condiciones del perfil para continuar.": {
+    "en": "Confirm the profile conditions to continue.",
+    "de": "Bestätige die Profilbedingungen, um fortzufahren."
+  },
+  "elige una foto jpg, png o webp.": {
+    "en": "Choose a JPG, PNG or WebP photo.",
+    "de": "Wähle ein Foto im Format JPG, PNG oder WebP."
+  },
+  "la foto original debe pesar menos de 12 mb.": {
+    "en": "The original photo must be smaller than 12 MB.",
+    "de": "Das Originalfoto muss kleiner als 12 MB sein."
+  },
+  "la foto está vacía. elige otra imagen.": {
+    "en": "The photo is empty. Choose another image.",
+    "de": "Die Fotodatei ist leer. Wähle ein anderes Bild."
+  },
+  "no pudimos abrir esta foto. puede estar dañada o tener un formato distinto. prueba con otra jpg, png o webp.": {
+    "en": "We couldn't open this photo. It may be damaged or use a different format. Try another JPG, PNG or WebP.",
+    "de": "Dieses Foto konnte nicht geöffnet werden. Es ist möglicherweise beschädigt oder hat ein anderes Format. Versuche ein anderes JPG, PNG oder WebP."
+  },
+  "abrir ajustes": {
+    "en": "Open settings",
+    "de": "Einstellungen öffnen"
+  },
+  "editar perfil": {
+    "en": "Edit profile",
+    "de": "Profil bearbeiten"
+  },
+  "cómo me ven": {
+    "en": "How others see me",
+    "de": "So sehen mich andere"
+  },
+  "tu perfil está al": {
+    "en": "Your profile is",
+    "de": "Dein Profil ist zu"
+  },
+  "una bio, tus fotos y tu «hablemos de» ayudan a romper el hielo. los datos de política y religión son opcionales.": {
+    "en": "A bio, photos and your conversation starter help break the ice. Political and religious information is optional.",
+    "de": "Eine Bio, Fotos und dein Gesprächsthema helfen, das Eis zu brechen. Politische und religiöse Angaben sind freiwillig."
+  },
+  "visitas": {
+    "en": "Views",
+    "de": "Besuche"
+  },
+  "citas": {
+    "en": "Dates",
+    "de": "Dates"
+  },
+  "conoce onlyfachos pro": {
+    "en": "Discover OnlyFachos PRO",
+    "de": "Entdecke OnlyFachos PRO"
+  },
+  "estamos preparando lo que viene. sin cobros en la beta.": {
+    "en": "More is on the way. No charges in the beta.",
+    "de": "Mehr ist in Vorbereitung. Die Beta ist kostenlos."
+  },
+  "mis fotos ·": {
+    "en": "My photos ·",
+    "de": "Meine Fotos ·"
+  },
+  "ordenar": {
+    "en": "Reorder",
+    "de": "Sortieren"
+  },
+  "editar foto": {
+    "en": "Edit photo",
+    "de": "Foto bearbeiten"
+  },
+  "mi foto": {
+    "en": "My photo",
+    "de": "Mein Foto"
+  },
+  "nombre, bio, ciudad, sexo, trabajo": {
+    "en": "Name, bio, city, sex, work",
+    "de": "Name, Bio, Stadt, Geschlecht, Arbeit"
+  },
+  "streamers, pensadores, artistas": {
+    "en": "Streamers, thinkers, artists",
+    "de": "Streamer, Denker, Musiker"
+  },
+  "corriente, fe, hijos, idiomas, viajes": {
+    "en": "Outlook, faith, children, languages, travel",
+    "de": "Ansichten, Glaube, Kinder, Sprachen, Reisen"
+  },
+  "pausar perfil": {
+    "en": "Pause profile",
+    "de": "Profil pausieren"
+  },
+  "nadie nuevo te ve; tus chats siguen": {
+    "en": "Hidden from new people; your chats stay active",
+    "de": "Für neue Personen unsichtbar; deine Chats bleiben aktiv"
+  },
+  "onlyfachos · beta 1 · mayores de 18 años": {
+    "en": "OnlyFachos · Beta 1 · Adults 18+",
+    "de": "OnlyFachos · Beta 1 · Ab 18 Jahren"
+  },
+  "volver a mi perfil": {
+    "en": "Back to my profile",
+    "de": "Zurück zu meinem Profil"
+  },
+  "verificación": {
+    "en": "Verification",
+    "de": "Verifizierung"
+  },
+  "sin verificar": {
+    "en": "Not verified",
+    "de": "Nicht verifiziert"
+  },
+  "suscripción": {
+    "en": "Subscription",
+    "de": "Abonnement"
+  },
+  "gratis": {
+    "en": "Free",
+    "de": "Kostenlos"
+  },
+  "notificaciones": {
+    "en": "Notifications",
+    "de": "Benachrichtigungen"
+  },
+  "mensajes nuevos": {
+    "en": "New messages",
+    "de": "Neue Nachrichten"
+  },
+  "avisos de cita": {
+    "en": "Date notifications",
+    "de": "Date-Benachrichtigungen"
+  },
+  "novedades de onlyfachos": {
+    "en": "OnlyFachos news",
+    "de": "Neuigkeiten von OnlyFachos"
+  },
+  "guardamos tus preferencias. los avisos se muestran dentro de la app; las notificaciones push aún no están activadas.": {
+    "en": "We save your preferences. Notifications appear in the app; push notifications are not available yet.",
+    "de": "Wir speichern deine Einstellungen. Hinweise erscheinen in der App; Push-Benachrichtigungen sind noch nicht verfügbar."
+  },
+  "privacidad": {
+    "en": "Privacy",
+    "de": "Datenschutz"
+  },
+  "ocultar mi partido": {
+    "en": "Hide my political party",
+    "de": "Meine Partei verbergen"
+  },
+  "se oculta también en las sugerencias": {
+    "en": "Also hidden from suggestions",
+    "de": "Auch in Vorschlägen verborgen"
+  },
+  "ocultar mi fe": {
+    "en": "Hide my faith",
+    "de": "Meinen Glauben verbergen"
+  },
+  "nadie la ve en tu perfil público": {
+    "en": "Hidden from your public profile",
+    "de": "Im öffentlichen Profil verborgen"
+  },
+  "distancia y ubicación": {
+    "en": "Distance and location",
+    "de": "Entfernung und Standort"
+  },
+  "en esta beta se usa tu ciudad. no recogemos gps.": {
+    "en": "This beta uses your city. We don't collect GPS data.",
+    "de": "Diese Beta nutzt deinen Wohnort. Wir erfassen keine GPS-Daten."
+  },
+  "usuarios bloqueados": {
+    "en": "Blocked profiles",
+    "de": "Blockierte Profile"
+  },
+  "tu control": {
+    "en": "You're in control",
+    "de": "Du hast die Kontrolle"
+  },
+  "datos y soporte": {
+    "en": "Data and support",
+    "de": "Daten und Support"
+  },
+  "descargar mis datos": {
+    "en": "Download my data",
+    "de": "Meine Daten herunterladen"
+  },
+  "contactar soporte": {
+    "en": "Contact support",
+    "de": "Support kontaktieren"
+  },
+  "cerrar sesión": {
+    "en": "Log out",
+    "de": "Abmelden"
+  },
+  "eliminar mi cuenta": {
+    "en": "Delete my account",
+    "de": "Mein Konto löschen"
+  },
+  "tu privacidad": {
+    "en": "Your privacy",
+    "de": "Deine Privatsphäre"
+  },
+  "normas de comunidad": {
+    "en": "Community guidelines",
+    "de": "Community-Regeln"
+  },
+  "tú pones los límites": {
+    "en": "You set the boundaries",
+    "de": "Du setzt die Grenzen"
+  },
+  "tu tranquilidad va primero. bloquear un perfil cierra la conversación y evita que vuelvan a encontrarse.": {
+    "en": "Your peace of mind comes first. Blocking closes the conversation and prevents you from finding each other again.",
+    "de": "Dein Wohlbefinden geht vor. Blockieren schließt das Gespräch und verhindert, dass ihr euch erneut findet."
+  },
+  "bloquear a": {
+    "en": "Block",
+    "de": "Blockieren:"
+  },
+  "reportar un problema": {
+    "en": "Report a problem",
+    "de": "Ein Problem melden"
+  },
+  "¿qué ocurrió?": {
+    "en": "What happened?",
+    "de": "Was ist passiert?"
+  },
+  "perfil falso": {
+    "en": "Fake profile",
+    "de": "Gefälschtes Profil"
+  },
+  "acoso o amenazas": {
+    "en": "Harassment or threats",
+    "de": "Belästigung oder Drohungen"
+  },
+  "contenido inapropiado": {
+    "en": "Inappropriate content",
+    "de": "Unangemessene Inhalte"
+  },
+  "persona menor de edad": {
+    "en": "Underage person",
+    "de": "Minderjährige Person"
+  },
+  "estafa o solicitud de dinero": {
+    "en": "Scam or request for money",
+    "de": "Betrug oder Geldforderung"
+  },
+  "algo más que debamos saber (opcional)": {
+    "en": "Anything else we should know? (optional)",
+    "de": "Was sollten wir noch wissen? (optional)"
+  },
+  "bloquear también a": {
+    "en": "Also block",
+    "de": "Auch blockieren:"
+  },
+  "la denuncia es privada. no compartimos tu identidad ni tu mensaje con el perfil denunciado.": {
+    "en": "Your report is private. We don't share your identity or message with the reported profile.",
+    "de": "Deine Meldung ist vertraulich. Wir teilen weder deine Identität noch deine Nachricht mit dem gemeldeten Profil."
+  },
+  "enviar denuncia": {
+    "en": "Send report",
+    "de": "Meldung senden"
+  },
+  "denuncia registrada": {
+    "en": "Report received",
+    "de": "Meldung gespeichert"
+  },
+  "la beta registra denuncias para revisión manual, sin prometer un plazo de respuesta. si hay peligro inmediato, contacta a los servicios de emergencia de tu país.": {
+    "en": "Reports in this beta are reviewed manually; no response time is guaranteed. If there is immediate danger, contact your country's emergency services.",
+    "de": "Meldungen werden in dieser Beta manuell geprüft; eine Antwortfrist ist nicht garantiert. Wende dich bei unmittelbarer Gefahr an die Rettungsdienste deines Landes."
+  },
+  "perfil bloqueado. ya no podrán verse ni conversar.": {
+    "en": "Profile blocked. You can no longer see or message each other.",
+    "de": "Profil blockiert. Ihr könnt euch nicht mehr sehen oder schreiben."
+  },
+  "denuncia guardada para revisión del equipo.": {
+    "en": "Report saved for review by the team.",
+    "de": "Meldung zur Prüfung durch das Team gespeichert."
+  },
+  "perfil guardado. ya tiene tu toque.": {
+    "en": "Profile saved. It's all yours.",
+    "de": "Profil gespeichert. Mit deiner persönlichen Note."
+  },
+  "bienvenido a la comunidad.": {
+    "en": "Welcome to the community.",
+    "de": "Willkommen in der Community."
+  },
+  ". no mostramos disponibilidad compartida porque aún no la han declarado.": {
+    "en": ". Shared availability isn't shown because you haven't provided it yet.",
+    "de": ". Gemeinsame Verfügbarkeit wird nicht angezeigt, da ihr sie noch nicht angegeben habt."
+  },
+  ". puedes reintentar sin perder los perfiles que ya cargaron.": {
+    "en": ". You can retry without losing profiles already loaded.",
+    "de": ". Du kannst es erneut versuchen, ohne geladene Profile zu verlieren."
+  },
+  "01 / conexiones con ideas": {
+    "en": "01 / MEANINGFUL CONNECTIONS",
+    "de": "01 / KONTAKTE MIT ÜBERZEUGUNG"
+  },
+  "a tu medida": {
+    "en": "Tailored to you",
+    "de": "Passend für dich"
+  },
+  "aceptar": {
+    "en": "Accept",
+    "de": "Annehmen"
+  },
+  "ahora": {
+    "en": "Now",
+    "de": "Jetzt"
+  },
+  "alerta basada": {
+    "en": "Heads up",
+    "de": "Hinweis"
+  },
+  "algo por descubrir": {
+    "en": "Something to discover",
+    "de": "Etwas zu entdecken"
+  },
+  "aquí empieza la conversación": {
+    "en": "The conversation starts here",
+    "de": "Hier beginnt das Gespräch"
+  },
+  "así funciona": {
+    "en": "How it works",
+    "de": "So funktioniert's"
+  },
+  "así te ven": {
+    "en": "How others see you",
+    "de": "So sehen dich andere"
+  },
+  "ayuda y legal": {
+    "en": "Help and legal",
+    "de": "Hilfe und Rechtliches"
+  },
+  "abrir stickers": {
+    "en": "Open stickers",
+    "de": "Sticker öffnen"
+  },
+  "acuerden un lugar público. incluye nombre, dirección y ciudad para que no haya dudas.": {
+    "en": "Agree on a public place. Include its name, address and city to avoid confusion.",
+    "de": "Vereinbart einen öffentlichen Ort. Gib Namen, Adresse und Stadt an, damit alles klar ist."
+  },
+  "ahora no lleguen tarde.": {
+    "en": "Now don't be late.",
+    "de": "Jetzt nur nicht zu spät kommen."
+  },
+  "ajustar mis filtros": {
+    "en": "Adjust my filters",
+    "de": "Meine Filter anpassen"
+  },
+  "ambos verán estos detalles en el chat. confirmen juntos cualquier cambio.": {
+    "en": "Both of you will see these details in the chat. Confirm any changes together.",
+    "de": "Ihr seht diese Details beide im Chat. Bestätigt Änderungen gemeinsam."
+  },
+  "anuncios admob": {
+    "en": "AdMob ads",
+    "de": "AdMob-Werbung"
+  },
+  "aparecerán aquí cuando estén activas.": {
+    "en": "They'll appear here when available.",
+    "de": "Sobald verfügbar, erscheinen sie hier."
+  },
+  "años": {
+    "en": "Years",
+    "de": "Jahre"
+  },
+  "aún no hay verificación activa en esta beta": {
+    "en": "Verification is not available in this beta yet",
+    "de": "In dieser Beta ist noch keine Verifizierung verfügbar"
+  },
+  "basados": {
+    "en": "Like-minded people",
+    "de": "Gleichgesinnte"
+  },
+  "beta 1": {
+    "en": "Beta 1",
+    "de": "Beta 1"
+  },
+  "beta pública de prueba. el operador y el contacto de privacidad todavía deben configurarse para el lanzamiento.": {
+    "en": "Public test beta. Operator and privacy contact details still need to be set up for launch.",
+    "de": "Öffentliche Test-Beta. Betreiber- und Datenschutzkontaktdaten müssen zum Start noch ergänzt werden."
+  },
+  "bloquear o denunciar perfil": {
+    "en": "Block or report profile",
+    "de": "Profil blockieren oder melden"
+  },
+  "busca por streamer, autor, ciudad…": {
+    "en": "Search by streamer, author, city…",
+    "de": "Nach Streamer, Autor oder Stadt suchen…"
+  },
+  "busca una persona o ciudad…": {
+    "en": "Search for a person or city…",
+    "de": "Person oder Stadt suchen…"
+  },
+  "buscar conversaciones": {
+    "en": "Search conversations",
+    "de": "Gespräche suchen"
+  },
+  "buscar conversación…": {
+    "en": "Search conversations…",
+    "de": "Gespräche suchen…"
+  },
+  "buscar en el mapa": {
+    "en": "Search on the map",
+    "de": "Auf der Karte suchen"
+  },
+  "buscar en la comunidad": {
+    "en": "Search the community",
+    "de": "Community durchsuchen"
+  },
+  "buscar personas o ciudad": {
+    "en": "Search people or city",
+    "de": "Personen oder Stadt suchen"
+  },
+  "chat simulado": {
+    "en": "Simulated chat",
+    "de": "Simulierter Chat"
+  },
+  "cita con": {
+    "en": "Date with",
+    "de": "Date mit"
+  },
+  "cita!": {
+    "en": "Date!",
+    "de": "Date!"
+  },
+  "con algo que decir.": {
+    "en": "With something to say.",
+    "de": "Die etwas zu sagen haben."
+  },
+  "contigo": {
+    "en": "With you",
+    "de": "Mit dir"
+  },
+  "coordinar en el chat": {
+    "en": "Arrange it in the chat",
+    "de": "Im Chat abstimmen"
+  },
+  "coordinen el plan": {
+    "en": "Plan it together",
+    "de": "Plant gemeinsam"
+  },
+  "cosas en común": {
+    "en": "Things in common",
+    "de": "Gemeinsamkeiten"
+  },
+  "café, dirección y ciudad": {
+    "en": "Café, address and city",
+    "de": "Café, Adresse und Stadt"
+  },
+  "calendario": {
+    "en": "Calendar",
+    "de": "Kalender"
+  },
+  "cambiar": {
+    "en": "Change",
+    "de": "Ändern"
+  },
+  "cancelar": {
+    "en": "Cancel",
+    "de": "Abbrechen"
+  },
+  "cargando perfiles…": {
+    "en": "Loading profiles…",
+    "de": "Profile werden geladen…"
+  },
+  "cargar más perfiles": {
+    "en": "Load more profiles",
+    "de": "Weitere Profile laden"
+  },
+  "cerrar": {
+    "en": "Close",
+    "de": "Schließen"
+  },
+  "cerrar aviso": {
+    "en": "Dismiss notification",
+    "de": "Hinweis schließen"
+  },
+  "cerrar stickers": {
+    "en": "Close stickers",
+    "de": "Sticker schließen"
+  },
+  "chat directo y citas": {
+    "en": "Direct chat and dates",
+    "de": "Direkte Chats und Dates"
+  },
+  "compartir plan": {
+    "en": "Share plan",
+    "de": "Plan teilen"
+  },
+  "conecta con cuidado": {
+    "en": "Connect safely",
+    "de": "Sicher kennenlernen"
+  },
+  "continuar con apple": {
+    "en": "Continue with Apple",
+    "de": "Mit Apple fortfahren"
+  },
+  "conversación": {
+    "en": "Conversation",
+    "de": "Gespräch"
+  },
+  "conversación abierta": {
+    "en": "Open conversation",
+    "de": "Offenes Gespräch"
+  },
+  "crea tu cuenta": {
+    "en": "Create your account",
+    "de": "Erstelle dein Konto"
+  },
+  "cualquier ciudad": {
+    "en": "Any city",
+    "de": "Beliebige Stadt"
+  },
+  "cualquiera": {
+    "en": "Any",
+    "de": "Beliebig"
+  },
+  "cuando una conversación se convierta en un plan, lo verás aquí.": {
+    "en": "When a conversation turns into a plan, you'll see it here.",
+    "de": "Wenn aus einem Gespräch ein Treffen wird, siehst du es hier."
+  },
+  "cuéntanos el problema o una idea. tu mensaje queda en la bandeja privada del operador. no adjuntes contraseñas ni documentos.": {
+    "en": "Tell us about a problem or idea. Your message is saved in the operator's private inbox. Don't include passwords or documents.",
+    "de": "Beschreibe dein Problem oder deine Idee. Deine Nachricht landet im privaten Postfach des Betreibers. Füge keine Passwörter oder Dokumente hinzu."
+  },
+  "cómo llegar": {
+    "en": "Get directions",
+    "de": "Route anzeigen"
+  },
+  "demo · perfiles ficticios y respuestas simuladas.": {
+    "en": "DEMO · Fictional profiles and simulated replies.",
+    "de": "DEMO · Fiktive Profile und simulierte Antworten."
+  },
+  "demo · perfiles ficticios, fotos ilustrativas y respuestas simuladas.": {
+    "en": "DEMO · Fictional profiles, illustrative photos and simulated replies.",
+    "de": "DEMO · Fiktive Profile, Beispielfotos und simulierte Antworten."
+  },
+  "después la cita.": {
+    "en": "Then the date.",
+    "de": "Dann das Date."
+  },
+  "dar luz verde": {
+    "en": "Give the green light",
+    "de": "Grünes Licht geben"
+  },
+  "desbloquear": {
+    "en": "Unblock",
+    "de": "Blockierung aufheben"
+  },
+  "desde": {
+    "en": "From",
+    "de": "Von"
+  },
+  "detener y enviar audio": {
+    "en": "Stop and send audio",
+    "de": "Aufnahme stoppen und senden"
+  },
+  "di hola. lo demás se conversa.": {
+    "en": "Say hello. The rest is a conversation.",
+    "de": "Sag Hallo. Alles Weitere ergibt sich im Gespräch."
+  },
+  "días": {
+    "en": "Days",
+    "de": "Tage"
+  },
+  "días hablando.": {
+    "en": "Days chatting.",
+    "de": "Tage im Gespräch."
+  },
+  "día por elegir": {
+    "en": "Day to be chosen",
+    "de": "Tag noch offen"
+  },
+  "día y hora": {
+    "en": "Day and time",
+    "de": "Tag und Uhrzeit"
+  },
+  "edad ·": {
+    "en": "Age ·",
+    "de": "Alter ·"
+  },
+  "el hola": {
+    "en": "The hello",
+    "de": "Das Hallo"
+  },
+  "el plan": {
+    "en": "The plan",
+    "de": "Der Plan"
+  },
+  "elegir lugar": {
+    "en": "Choose a place",
+    "de": "Ort auswählen"
+  },
+  "elige una conversación.": {
+    "en": "Choose a conversation.",
+    "de": "Wähle ein Gespräch."
+  },
+  "en la demo": {
+    "en": "In the demo",
+    "de": "In der Demo"
+  },
+  "enviar invitación": {
+    "en": "Send invitation",
+    "de": "Einladung senden"
+  },
+  "enviar mensaje": {
+    "en": "Send message",
+    "de": "Nachricht senden"
+  },
+  "enviar propuesta": {
+    "en": "Send proposal",
+    "de": "Vorschlag senden"
+  },
+  "escribirle a": {
+    "en": "Message",
+    "de": "Nachricht an"
+  },
+  "estás al día.": {
+    "en": "You're all caught up.",
+    "de": "Du bist auf dem neuesten Stand."
+  },
+  "explorar la comunidad": {
+    "en": "Explore the community",
+    "de": "Community entdecken"
+  },
+  "elegir día y lugar": {
+    "en": "Choose day and place",
+    "de": "Tag und Ort auswählen"
+  },
+  "en línea en la demo": {
+    "en": "Online in demo",
+    "de": "In der Demo online"
+  },
+  "enviar foto": {
+    "en": "Send photo",
+    "de": "Foto senden"
+  },
+  "escribe algo basado…": {
+    "en": "Write something…",
+    "de": "Schreib etwas…"
+  },
+  "escribe un mensaje": {
+    "en": "Write a message",
+    "de": "Schreib eine Nachricht"
+  },
+  "esperando respuesta. la cita aún no está confirmada.": {
+    "en": "Waiting for a reply. The date is not confirmed yet.",
+    "de": "Antwort ausstehend. Das Date ist noch nicht bestätigt."
+  },
+  "esperando una respuesta. todavía no hay una cita confirmada.": {
+    "en": "Waiting for a reply. There is no confirmed date yet.",
+    "de": "Antwort ausstehend. Es gibt noch kein bestätigtes Date."
+  },
+  "esta vez no": {
+    "en": "Not this time",
+    "de": "Diesmal nicht"
+  },
+  "estamos preparando una verificación segura. todavía no hay proveedor activo: no pedimos selfies ni documentos y no concedemos insignias. puedes seguir usando la app.": {
+    "en": "We're preparing secure verification. No provider is active yet: we don't request selfies or documents or issue badges. You can keep using the app.",
+    "de": "Wir bereiten eine sichere Verifizierung vor. Noch ist kein Anbieter aktiv: Wir fordern keine Selfies oder Dokumente an und vergeben keine Abzeichen. Du kannst die App weiter nutzen."
+  },
+  "este chat es directo. conversa con respeto y comparte a tu ritmo.": {
+    "en": "This is a direct chat. Be respectful and share at your own pace.",
+    "de": "Dies ist ein direkter Chat. Bleib respektvoll und teile in deinem Tempo."
+  },
+  "estás explorando la demo. para conectar con personas reales, cierra esta sesión y crea tu propia cuenta.": {
+    "en": "You're exploring the demo. To connect with real people, log out and create your own account.",
+    "de": "Du erkundest die Demo. Um echte Menschen kennenzulernen, melde dich ab und erstelle dein eigenes Konto."
+  },
+  "explorar la demostración": {
+    "en": "Explore the demo",
+    "de": "Demo erkunden"
+  },
+  "filtrar comunidad": {
+    "en": "Filter community",
+    "de": "Community filtern"
+  },
+  "filtrar perfiles": {
+    "en": "Filter profiles",
+    "de": "Profile filtern"
+  },
+  "foto compartida por": {
+    "en": "Photo shared by",
+    "de": "Foto geteilt von"
+  },
+  "g": {
+    "en": "G",
+    "de": "G"
+  },
+  "gifs · próximamente": {
+    "en": "GIFs · coming soon",
+    "de": "GIFs · demnächst"
+  },
+  "guardar el plan": {
+    "en": "Save the plan",
+    "de": "Plan speichern"
+  },
+  "google se usa únicamente para verificar tu identidad y obtener tu correo y nombre. no guardamos sus tokens de acceso. admob se ofrece solo en móvil, con consentimiento y anuncios no personalizados. no enviamos valores, opiniones políticas, mensajes ni datos del perfil a admob. la web no tiene publicidad ni analítica.": {
+    "en": "Google is used only to verify your identity and obtain your email and name. We don't store its access tokens. AdMob is offered only on mobile, with consent and non-personalized ads. We don't send values, political views, messages or profile data to AdMob. The website has no advertising or analytics.",
+    "de": "Google wird nur verwendet, um deine Identität zu bestätigen und E-Mail-Adresse und Namen zu erhalten. Wir speichern keine Zugriffstokens. AdMob wird nur mobil mit Einwilligung und nicht personalisierter Werbung angeboten. Wir senden keine Werte, politischen Ansichten, Nachrichten oder Profildaten an AdMob. Die Website enthält keine Werbung oder Analysedienste."
+  },
+  "google y publicidad": {
+    "en": "Google and advertising",
+    "de": "Google und Werbung"
+  },
+  "grabando · máximo 60 segundos…": {
+    "en": "Recording · up to 60 seconds…",
+    "de": "Aufnahme läuft · maximal 60 Sekunden…"
+  },
+  "grabar mensaje de voz": {
+    "en": "Record voice message",
+    "de": "Sprachnachricht aufnehmen"
+  },
+  "hablando con": {
+    "en": "Chatting with",
+    "de": "Im Gespräch mit"
+  },
+  "hasta": {
+    "en": "To",
+    "de": "Bis"
+  },
+  "hora personalizada": {
+    "en": "Custom time",
+    "de": "Andere Uhrzeit"
+  },
+  "horario de": {
+    "en": "Time zone of",
+    "de": "Zeitzone von"
+  },
+  "horario mostrado en tu zona ·": {
+    "en": "Time shown in your time zone ·",
+    "de": "Uhrzeit in deiner Zeitzone ·"
+  },
+  "invita a salir": {
+    "en": "Ask them out",
+    "de": "Zu einem Date einladen"
+  },
+  "invitación a una cita": {
+    "en": "Date invitation",
+    "de": "Einladung zu einem Date"
+  },
+  "ideas claras. respeto siempre.": {
+    "en": "Clear ideas. Always respectful.",
+    "de": "Klare Ideen. Immer respektvoll."
+  },
+  "incluido en beta": {
+    "en": "Included in beta",
+    "de": "In der Beta enthalten"
+  },
+  "inicia sesión": {
+    "en": "Log in",
+    "de": "Melde dich an"
+  },
+  "interés registrado. gracias por ayudarnos a definir lo que viene.": {
+    "en": "Interest saved. Thanks for helping us shape what's next.",
+    "de": "Interesse gespeichert. Danke, dass du uns bei der Weiterentwicklung hilfst."
+  },
+  "invitación pendiente": {
+    "en": "Invitation pending",
+    "de": "Einladung ausstehend"
+  },
+  "invitar": {
+    "en": "Invite",
+    "de": "Einladen"
+  },
+  "invitar a salir": {
+    "en": "Ask out",
+    "de": "Zum Date einladen"
+  },
+  "ir a la comunidad": {
+    "en": "Go to community",
+    "de": "Zur Community"
+  },
+  "la conversación sigue": {
+    "en": "The conversation continues",
+    "de": "Das Gespräch geht weiter"
+  },
+  "llevan": {
+    "en": "You've spent",
+    "de": "Ihr schreibt seit"
+  },
+  "lo pones tú.": {
+    "en": "You decide.",
+    "de": "Entscheidest du."
+  },
+  "lo que consume": {
+    "en": "Their interests",
+    "de": "Die Interessen"
+  },
+  "lo que está pasando": {
+    "en": "What's happening",
+    "de": "Was gibt's Neues"
+  },
+  "los dos dijeron que sí": {
+    "en": "You both said yes",
+    "de": "Ihr habt beide Ja gesagt"
+  },
+  "la beta es gratuita. estamos evaluando filtros avanzados, estadísticas y personalización. aún no hay planes, pagos ni suscripciones activas.": {
+    "en": "The beta is free. We're exploring advanced filters, statistics and customization. There are no active paid plans, payments or subscriptions yet.",
+    "de": "Die Beta ist kostenlos. Wir prüfen erweiterte Filter, Statistiken und Anpassungen. Es gibt noch keine kostenpflichtigen Tarife, Zahlungen oder aktiven Abonnements."
+  },
+  "la beta no tiene locales aliados ni descuentos. el mapa abre una búsqueda con el texto que escribas.": {
+    "en": "This beta has no partner venues or discounts. The map opens a search using the text you enter.",
+    "de": "Diese Beta hat keine Partnerlokale oder Rabatte. Die Karte öffnet eine Suche mit deinem eingegebenen Text."
+  },
+  "la beta recibe consultas privadas en ajustes → contactar soporte y denuncias en cada perfil. el operador debe revisar ambas bandejas y completar sus políticas y datos de contacto antes de una explotación comercial.": {
+    "en": "The beta accepts private enquiries in Settings → Contact support and reports on each profile. The operator must review both inboxes and complete policies and contact details before commercial operation.",
+    "de": "Die Beta nimmt private Anfragen unter Einstellungen → Support kontaktieren und Meldungen in jedem Profil entgegen. Der Betreiber muss beide Postfächer prüfen und vor einer kommerziellen Nutzung Richtlinien und Kontaktdaten vervollständigen."
+  },
+  "la cita queda confirmada cuando la otra persona acepta día y lugar.": {
+    "en": "The date is confirmed when the other person accepts the day and place.",
+    "de": "Das Date ist bestätigt, wenn die andere Person Tag und Ort annimmt."
+  },
+  "la señal no acepta una cita por ti. ambos deben confirmar la invitación.": {
+    "en": "The signal doesn't accept a date for you. Both people must confirm the invitation.",
+    "de": "Das Signal nimmt kein Date für dich an. Ihr müsst die Einladung beide bestätigen."
+  },
+  "las buenas ideas merecen una buena compañía.": {
+    "en": "Good ideas deserve good company.",
+    "de": "Gute Ideen verdienen gute Gesellschaft."
+  },
+  "le mandaremos una señal discreta de que te gustaría recibir una invitación. no compartiremos disponibilidad que no hayas indicado.": {
+    "en": "We'll discreetly let them know you'd like an invitation. We won't share availability you haven't provided.",
+    "de": "Wir geben diskret weiter, dass du dich über eine Einladung freuen würdest. Wir teilen keine Verfügbarkeit, die du nicht angegeben hast."
+  },
+  "lo que verá": {
+    "en": "What they'll see",
+    "de": "Was die andere Person sieht"
+  },
+  "los perfiles del modo demo son ficticios y sus respuestas están simuladas. las cuentas reales están separadas de la demo. no hay verificación de identidad, cobros ni suscripciones activas. las denuncias quedan registradas para que el operador las revise.": {
+    "en": "Demo profiles are fictional and their replies are simulated. Real accounts are separate from the demo. There is no identity verification, billing or active subscription. Reports are saved for the operator to review.",
+    "de": "Demo-Profile sind fiktiv und ihre Antworten simuliert. Echte Konten sind von der Demo getrennt. Es gibt keine Identitätsprüfung, Gebühren oder aktiven Abonnements. Meldungen werden zur Prüfung durch den Betreiber gespeichert."
+  },
+  "los valores, referentes, afiliación política y religión son opcionales. tú decides cuáles publicar y aceptas su uso para sugerir conexiones. puedes cambiarlos, descargar tus datos o eliminar tu cuenta en mi perfil. puedes ocultar fe y partido, pausar tu perfil y gestionar bloqueos en ajustes. no recogemos ubicación gps; «cerca» usa tu ciudad declarada. solo mostramos tu edad, no tu fecha de nacimiento ni tu correo.": {
+    "en": "Values, influences, political affiliation and religion are optional. You choose what to publish and consent to its use for suggesting connections. You can change these, download your data or delete your account in My profile. In Settings you can hide faith and party, pause your profile and manage blocks. We don't collect GPS location; Nearby uses your stated city. We show only your age, not your date of birth or email.",
+    "de": "Werte, Vorbilder, Parteizugehörigkeit und Religion sind freiwillig. Du bestimmst, was du veröffentlichst, und stimmst der Nutzung für Kontaktvorschläge zu. Unter Mein Profil kannst du Angaben ändern, Daten herunterladen oder dein Konto löschen. In den Einstellungen kannst du Glauben und Partei verbergen, dein Profil pausieren und Blockierungen verwalten. Wir erfassen keinen GPS-Standort; In der Nähe nutzt deinen angegebenen Wohnort. Wir zeigen nur dein Alter, nicht dein Geburtsdatum oder deine E-Mail-Adresse."
+  },
+  "lugar": {
+    "en": "Place",
+    "de": "Ort"
+  },
+  "lugar de encuentro": {
+    "en": "Meeting place",
+    "de": "Treffpunkt"
+  },
+  "lugar por elegir": {
+    "en": "Place to be chosen",
+    "de": "Ort noch offen"
+  },
+  "match · los dos dijeron que sí": {
+    "en": "Match · You both said yes",
+    "de": "Match · Ihr habt beide Ja gesagt"
+  },
+  "me interesa": {
+    "en": "I'm interested",
+    "de": "Ich bin interessiert"
+  },
+  "menos deslizar.": {
+    "en": "Less swiping.",
+    "de": "Weniger Swipen."
+  },
+  "mensajes": {
+    "en": "Messages",
+    "de": "Nachrichten"
+  },
+  "misma ciudad ·": {
+    "en": "Same city ·",
+    "de": "Gleiche Stadt ·"
+  },
+  "mensaje de voz": {
+    "en": "Voice message",
+    "de": "Sprachnachricht"
+  },
+  "mensaje registrado. puedes cerrar esta ventana.": {
+    "en": "Message saved. You can close this window.",
+    "de": "Nachricht gespeichert. Du kannst dieses Fenster schließen."
+  },
+  "mi cuenta · beta 1": {
+    "en": "My account · Beta 1",
+    "de": "Mein Konto · Beta 1"
+  },
+  "mi perfil → ajustes → descargar mis datos / eliminar mi cuenta. al eliminarla, borramos los registros asociados de la base activa. el operador debe gestionar también la eliminación de copias de seguridad y publicar su contacto y plazos antes de abrir el servicio al público.": {
+    "en": "My profile → Settings → Download my data / Delete my account. Deleting your account removes associated records from the active database. The operator must also manage backup deletion and publish contact details and retention periods before opening the service to the public.",
+    "de": "Mein Profil → Einstellungen → Meine Daten herunterladen / Mein Konto löschen. Beim Löschen werden zugehörige Datensätze aus der aktiven Datenbank entfernt. Der Betreiber muss auch die Löschung von Sicherungskopien regeln und vor dem öffentlichen Start Kontaktdaten und Fristen veröffentlichen."
+  },
+  "más conexiones. más tú.": {
+    "en": "More connections. More you.",
+    "de": "Mehr Kontakte. Mehr du."
+  },
+  "más hablar.": {
+    "en": "More conversation.",
+    "de": "Mehr Gespräche."
+  },
+  "no se concretó esta vez.": {
+    "en": "It didn't work out this time.",
+    "de": "Diesmal hat es nicht geklappt."
+  },
+  "navegación móvil": {
+    "en": "Mobile navigation",
+    "de": "Mobile Navigation"
+  },
+  "navegación principal": {
+    "en": "Main navigation",
+    "de": "Hauptnavigation"
+  },
+  "no necesitas un match para empezar. encuentra un perfil en la comunidad y pulsa «escribir».": {
+    "en": "You don't need a match to start. Find a profile in the community and tap Message.",
+    "de": "Du brauchst kein Match, um anzufangen. Finde ein Profil in der Community und tippe auf Nachricht."
+  },
+  "no pudimos cargar el feed.": {
+    "en": "We couldn't load the feed.",
+    "de": "Der Feed konnte nicht geladen werden."
+  },
+  "no se cierra el chat. pueden seguir conversando sin presión.": {
+    "en": "The chat stays open. You can keep talking without pressure.",
+    "de": "Der Chat bleibt offen. Ihr könnt ohne Druck weiterschreiben."
+  },
+  "no solo por una foto. comparte tus referentes, tus planes y lo que te hace tú.": {
+    "en": "More than just a photo. Share your influences, plans and what makes you you.",
+    "de": "Mehr als ein Foto. Teile deine Vorbilder, Pläne und das, was dich ausmacht."
+  },
+  "no tienes perfiles bloqueados.": {
+    "en": "You haven't blocked anyone.",
+    "de": "Du hast keine Profile blockiert."
+  },
+  "normas y condiciones": {
+    "en": "Guidelines and terms",
+    "de": "Regeln und Bedingungen"
+  },
+  "onlyfachos es una comunidad de citas para personas mayores de 18 años, inspirada en la libertad, la familia y los valores compartidos.": {
+    "en": "OnlyFachos is a dating community for people aged 18 and over, inspired by freedom, family and shared values.",
+    "de": "OnlyFachos ist eine Dating-Community für Menschen ab 18 Jahren, inspiriert von Freiheit, Familie und gemeinsamen Werten."
+  },
+  "onlyfachos guarda tu nombre, correo, fecha de nacimiento, ciudad, foto, perfil, valores, intereses, datos opcionales de política y religión, invitaciones, propuestas de citas, visitas al perfil, preferencias y mensajes en el servidor de la aplicación.": {
+    "en": "OnlyFachos stores your name, email, date of birth, city, photo, profile, values, interests, optional political and religious information, invitations, date proposals, profile visits, preferences and messages on the application server.",
+    "de": "OnlyFachos speichert deinen Namen, deine E-Mail-Adresse, dein Geburtsdatum, deinen Wohnort, dein Foto, dein Profil, deine Werte, Interessen, freiwilligen politischen und religiösen Angaben, Einladungen, Date-Vorschläge, Profilbesuche, Einstellungen und Nachrichten auf dem App-Server."
+  },
+  "onlyfachos inicio": {
+    "en": "OnlyFachos home",
+    "de": "OnlyFachos Startseite"
+  },
+  "opcional; requiere configuración nativa": {
+    "en": "Optional; requires native setup",
+    "de": "Optional; erfordert native Einrichtung"
+  },
+  "opciones de seguridad": {
+    "en": "Safety options",
+    "de": "Sicherheitsoptionen"
+  },
+  "otra fecha": {
+    "en": "Another day",
+    "de": "Anderer Tag"
+  },
+  "perfil de": {
+    "en": "Profile of",
+    "de": "Profil von"
+  },
+  "perfil de demostración": {
+    "en": "Demo profile",
+    "de": "Demo-Profil"
+  },
+  "perfil ficticio · demo": {
+    "en": "Fictional profile · Demo",
+    "de": "Fiktives Profil · Demo"
+  },
+  "perfiles": {
+    "en": "Profiles",
+    "de": "Profile"
+  },
+  "perfiles con algo que decir": {
+    "en": "Profiles with something to say",
+    "de": "Profile, die etwas zu sagen haben"
+  },
+  "plan anterior": {
+    "en": "Previous plan",
+    "de": "Vorheriger Plan"
+  },
+  "primero el hola.": {
+    "en": "First, say hello.",
+    "de": "Zuerst ein Hallo."
+  },
+  "pro · próximamente": {
+    "en": "PRO · Coming soon",
+    "de": "PRO · Demnächst"
+  },
+  "propuesta cerrada": {
+    "en": "Proposal closed",
+    "de": "Vorschlag abgeschlossen"
+  },
+  "propuesta de cita": {
+    "en": "Date proposal",
+    "de": "Date-Vorschlag"
+  },
+  "publicidad en móvil": {
+    "en": "Mobile advertising",
+    "de": "Mobile Werbung"
+  },
+  "para una primera cita, recomendamos de día y en un lugar público.": {
+    "en": "For a first date, we recommend daytime in a public place.",
+    "de": "Für ein erstes Date empfehlen wir tagsüber einen öffentlichen Ort."
+  },
+  "perfil demo · beta 1": {
+    "en": "Demo profile · Beta 1",
+    "de": "Demo-Profil · Beta 1"
+  },
+  "perfiles de la comunidad": {
+    "en": "Community profiles",
+    "de": "Community-Profile"
+  },
+  "perfiles ficticios · mensajes y respuestas simulados": {
+    "en": "Fictional profiles · simulated messages and replies",
+    "de": "Fiktive Profile · simulierte Nachrichten und Antworten"
+  },
+  "personas en línea": {
+    "en": "People online",
+    "de": "Personen online"
+  },
+  "pregúntale qué le mueve. no hace falta pensar igual en todo.": {
+    "en": "Ask what matters to them. You don't have to agree on everything.",
+    "de": "Frag, was die Person bewegt. Ihr müsst nicht in allem einer Meinung sein."
+  },
+  "privacidad de anuncios": {
+    "en": "Ad privacy",
+    "de": "Datenschutz bei Werbung"
+  },
+  "propuesto en": {
+    "en": "Proposed in",
+    "de": "Vorgeschlagen in"
+  },
+  "propón un momento para verse.": {
+    "en": "Suggest a time to meet.",
+    "de": "Schlage einen Zeitpunkt für ein Treffen vor."
+  },
+  "prueba otra ciudad, amplía tus filtros o sigue una buena conversación.": {
+    "en": "Try another city, widen your filters or keep a good conversation going.",
+    "de": "Versuche eine andere Stadt, erweitere deine Filter oder führe ein gutes Gespräch weiter."
+  },
+  "pueden seguir conversando": {
+    "en": "You can keep chatting",
+    "de": "Ihr könnt weiterschreiben"
+  },
+  "puedes bloquear y denunciar.": {
+    "en": "You can block and report.",
+    "de": "Du kannst blockieren und melden."
+  },
+  "puedes iniciar una conversación desde el feed. una cita requiere que ambos acepten. no compartas dinero, documentos ni tu dirección con personas desconocidas. puedes denunciar o bloquear desde el perfil o la conversación.": {
+    "en": "You can start a conversation from the feed. A date requires both people to accept. Don't share money, documents or your address with strangers. You can report or block from a profile or conversation.",
+    "de": "Du kannst im Feed ein Gespräch beginnen. Für ein Date müssen beide zustimmen. Teile kein Geld, keine Dokumente oder deine Adresse mit Unbekannten. Du kannst Profile direkt im Profil oder im Gespräch melden oder blockieren."
+  },
+  "queda": {
+    "en": "Meet",
+    "de": "Treffen"
+  },
+  "qué consumes": {
+    "en": "Your interests",
+    "de": "Deine Interessen"
+  },
+  "racha ·": {
+    "en": "Streak ·",
+    "de": "Serie ·"
+  },
+  "referentes en común": {
+    "en": "Shared influences",
+    "de": "Gemeinsame Vorbilder"
+  },
+  "reintentar": {
+    "en": "Retry",
+    "de": "Erneut versuchen"
+  },
+  "reaccionar": {
+    "en": "React",
+    "de": "Reagieren"
+  },
+  "referentes compartidos": {
+    "en": "Shared influences",
+    "de": "Gemeinsame Vorbilder"
+  },
+  "restablecer filtros": {
+    "en": "Reset filters",
+    "de": "Filter zurücksetzen"
+  },
+  "retirar propuesta": {
+    "en": "Withdraw proposal",
+    "de": "Vorschlag zurückziehen"
+  },
+  "se acabaron los fachos por hoy.": {
+    "en": "That's everyone for today.",
+    "de": "Das waren alle für heute."
+  },
+  "si te invita, preferirías…": {
+    "en": "If they asked you out, you'd prefer…",
+    "de": "Wenn du eingeladen wirst, wäre dir lieber…"
+  },
+  "simular respuesta · solo demo": {
+    "en": "Simulate reply · Demo only",
+    "de": "Antwort simulieren · Nur Demo"
+  },
+  "sin match previo": {
+    "en": "No match needed",
+    "de": "Ohne vorheriges Match"
+  },
+  "sin rodeos": {
+    "en": "Straight to the point",
+    "de": "Ohne Umwege"
+  },
+  "su lado del espectro": {
+    "en": "Their beliefs and outlook",
+    "de": "Die Werte und Ansichten"
+  },
+  "sugerir otro": {
+    "en": "Suggest another",
+    "de": "Anderen Vorschlag machen"
+  },
+  "se eliminarán tu perfil, fotos, conversaciones e invitaciones de la base activa. esta acción no se puede deshacer.": {
+    "en": "Your profile, photos, conversations and invitations will be deleted from the active database. This cannot be undone.",
+    "de": "Dein Profil, deine Fotos, Gespräche und Einladungen werden aus der aktiven Datenbank gelöscht. Dies kann nicht rückgängig gemacht werden."
+  },
+  "seguir explorando": {
+    "en": "Keep exploring",
+    "de": "Weiter entdecken"
+  },
+  "segunda foto de": {
+    "en": "Second photo of",
+    "de": "Zweites Foto von"
+  },
+  "si acepta, es una cita. si rechaza, el chat sigue abierto y nadie más lo ve.": {
+    "en": "If they accept, it's a date. If they decline, the chat stays open and nobody else sees it.",
+    "de": "Bei einer Zusage ist es ein Date. Bei einer Absage bleibt der Chat offen, und niemand sonst sieht es."
+  },
+  "simular aceptación": {
+    "en": "Simulate acceptance",
+    "de": "Zusage simulieren"
+  },
+  "simular aceptación · solo demo": {
+    "en": "Simulate acceptance · Demo only",
+    "de": "Zusage simulieren · Nur Demo"
+  },
+  "simular rechazo": {
+    "en": "Simulate decline",
+    "de": "Absage simulieren"
+  },
+  "sin actividad en 14 días: pasan a archivados. un mensaje nuevo las recupera.": {
+    "en": "Inactive for 14 days: moved to Archived. A new message brings them back.",
+    "de": "Nach 14 Tagen ohne Aktivität werden Gespräche archiviert. Eine neue Nachricht holt sie zurück."
+  },
+  "sobre esta versión": {
+    "en": "About this version",
+    "de": "Über diese Version"
+  },
+  "solo verificados": {
+    "en": "Verified only",
+    "de": "Nur verifizierte Profile"
+  },
+  "sí, eliminar mi cuenta": {
+    "en": "Yes, delete my account",
+    "de": "Ja, mein Konto löschen"
+  },
+  "sí, me sumo": {
+    "en": "Yes, I'm in",
+    "de": "Ja, ich bin dabei"
+  },
+  "sí, que me invite": {
+    "en": "Yes, I'd like an invitation",
+    "de": "Ja, ich möchte eingeladen werden"
+  },
+  "te invita a salir.": {
+    "en": "Asked you out.",
+    "de": "Lädt dich zum Date ein."
+  },
+  "te leemos.": {
+    "en": "We're listening.",
+    "de": "Wir hören zu."
+  },
+  "todavía no hay invitaciones.": {
+    "en": "No invitations yet.",
+    "de": "Noch keine Einladungen."
+  },
+  "tu comunidad, a tu manera": {
+    "en": "Your community, your way",
+    "de": "Deine Community, dein Weg"
+  },
+  "tu invitación está en camino.": {
+    "en": "Your invitation is on its way.",
+    "de": "Deine Einladung ist unterwegs."
+  },
+  "tu próxima conversación": {
+    "en": "Your next conversation",
+    "de": "Dein nächstes Gespräch"
+  },
+  "tus chats": {
+    "en": "Your chats",
+    "de": "Deine Chats"
+  },
+  "todavía no": {
+    "en": "Not yet",
+    "de": "Noch nicht"
+  },
+  "tu espacio, tus límites.": {
+    "en": "Your space, your boundaries.",
+    "de": "Dein Raum, deine Grenzen."
+  },
+  "tu mensaje": {
+    "en": "Your message",
+    "de": "Deine Nachricht"
+  },
+  "tu próximo plan puede empezar con un mensaje.": {
+    "en": "Your next plan can start with a message.",
+    "de": "Dein nächstes Treffen kann mit einer Nachricht beginnen."
+  },
+  "términos": {
+    "en": "Terms",
+    "de": "Bedingungen"
+  },
+  "tú eliges qué publicar. política y religión son opcionales.": {
+    "en": "You choose what to publish. Politics and religion are optional.",
+    "de": "Du entscheidest, was du veröffentlichst. Politik und Religion sind freiwillig."
+  },
+  "un buen plan empieza aquí": {
+    "en": "A good plan starts here",
+    "de": "Ein guter Plan beginnt hier"
+  },
+  "un lugar que les acomode": {
+    "en": "A place that suits you both",
+    "de": "Ein Ort, der für euch beide passt"
+  },
+  "una buena conversación merece un buen plan.": {
+    "en": "A good conversation deserves a good plan.",
+    "de": "Ein gutes Gespräch verdient einen guten Plan."
+  },
+  "un lugar público que les acomode": {
+    "en": "A public place that suits you both",
+    "de": "Ein öffentlicher Ort, der euch beiden passt"
+  },
+  "una buena conversación empieza con un hola.": {
+    "en": "A good conversation starts with hello.",
+    "de": "Ein gutes Gespräch beginnt mit einem Hallo."
+  },
+  "una buena conversación puede empezar más arriba.": {
+    "en": "A good conversation might be waiting further up.",
+    "de": "Ein gutes Gespräch wartet vielleicht weiter oben."
+  },
+  "usa tu identidad, publica fotos propias y trata a los demás con respeto. no se permiten acoso, amenazas, discriminación, odio, estafas, suplantación, pornografía, explotación sexual ni contenido relacionado con abuso o explotación de menores.": {
+    "en": "Use your own identity and photos and treat others with respect. Harassment, threats, discrimination, hate, scams, impersonation, pornography, sexual exploitation and content involving abuse or exploitation of minors are prohibited.",
+    "de": "Nutze deine eigene Identität und eigene Fotos und begegne anderen mit Respekt. Belästigung, Drohungen, Diskriminierung, Hass, Betrug, Identitätsdiebstahl, Pornografie, sexuelle Ausbeutung sowie Inhalte mit Missbrauch oder Ausbeutung Minderjähriger sind verboten."
+  },
+  "ver": {
+    "en": "View",
+    "de": "Ansehen"
+  },
+  "ver toda la comunidad": {
+    "en": "View the whole community",
+    "de": "Die ganze Community ansehen"
+  },
+  "verifica que eres tú": {
+    "en": "Verify it's you",
+    "de": "Bestätige deine Identität"
+  },
+  "valores que eliges compartir": {
+    "en": "Values you choose to share",
+    "de": "Werte, die du teilen möchtest"
+  },
+  "ver invitaciones y actividad": {
+    "en": "View invitations and activity",
+    "de": "Einladungen und Aktivitäten ansehen"
+  },
+  "ver nuestra cita": {
+    "en": "View our date",
+    "de": "Unser Date ansehen"
+  },
+  "visitas a tu perfil": {
+    "en": "Profile views",
+    "de": "Profilbesuche"
+  },
+  "volver": {
+    "en": "Back",
+    "de": "Zurück"
+  },
+  "volver a conversaciones": {
+    "en": "Back to conversations",
+    "de": "Zurück zu den Gesprächen"
+  },
+  "volver a mis chats": {
+    "en": "Back to my chats",
+    "de": "Zurück zu meinen Chats"
+  },
+  "volver al feed": {
+    "en": "Back to feed",
+    "de": "Zurück zum Feed"
+  },
+  "volver al inicio ↑": {
+    "en": "Back to top ↑",
+    "de": "Nach oben ↑"
+  },
+  "al mensaje": {
+    "en": "to the message",
+    "de": "auf die Nachricht"
+  },
+  "al proponer": {
+    "en": "when proposing",
+    "de": "beim Vorschlagen"
+  },
+  "días de racha": {
+    "en": "day streak",
+    "de": "Tage in Folge"
+  },
+  "mensajes sin leer": {
+    "en": "unread messages",
+    "de": "ungelesene Nachrichten"
+  },
+  "podrá aceptar o sugerir otro.": {
+    "en": "can accept or suggest another time.",
+    "de": "kann zusagen oder einen anderen Zeitpunkt vorschlagen."
+  },
+  "te propone este plan.": {
+    "en": "suggests this plan.",
+    "de": "schlägt dir diesen Plan vor."
+  },
+  "ti": {
+    "en": "you",
+    "de": "dir"
+  },
+  "tiene ganas de compartir un plan contigo.": {
+    "en": "would like to make a plan with you.",
+    "de": "möchte etwas mit dir unternehmen."
+  },
+  "tu@correo.com": {
+    "en": "you@example.com",
+    "de": "du@beispiel.de"
+  },
+  "y": {
+    "en": "and",
+    "de": "und"
+  },
+  "¡es una": {
+    "en": "It's a",
+    "de": "Es ist ein"
+  },
+  "¡es una cita!": {
+    "en": "It's a date!",
+    "de": "Es ist ein Date!"
+  },
+  "¡tienen una cita!": {
+    "en": "You have a date!",
+    "de": "Ihr habt ein Date!"
+  },
+  "«cerca» usa tu misma ciudad. la distancia en kilómetros todavía no está disponible.": {
+    "en": "Nearby uses your city. Distance in kilometres is not available yet.",
+    "de": "In der Nähe nutzt deine Stadt. Entfernungen in Kilometern sind noch nicht verfügbar."
+  },
+  "· se muestra en tu horario": {
+    "en": "· Shown in your time zone",
+    "de": "· In deiner Zeitzone angezeigt"
+  },
+  "¿a qué hora?": {
+    "en": "What time?",
+    "de": "Um wie viel Uhr?"
+  },
+  "¿a qué le invitas?": {
+    "en": "What's your plan?",
+    "de": "Was schwebt dir vor?"
+  },
+  "¿dónde?": {
+    "en": "Where?",
+    "de": "Wo?"
+  },
+  "¿le das luz verde?": {
+    "en": "Give them the green light?",
+    "de": "Gibst du grünes Licht?"
+  },
+  "¿lo llevan a un café?": {
+    "en": "Take it to a café?",
+    "de": "Lust auf einen Kaffee?"
+  },
+  "¿qué día?": {
+    "en": "Which day?",
+    "de": "An welchem Tag?"
+  },
+  "¿te animas a invitar?": {
+    "en": "Ready to ask them out?",
+    "de": "Traust du dich einzuladen?"
+  },
+  "● en línea": {
+    "en": "● Online",
+    "de": "● Online"
+  },
+  "☕ cita confirmada": {
+    "en": "☕ Date confirmed",
+    "de": "☕ Date bestätigt"
+  },
+  "un café": {
+    "en": "A coffee",
+    "de": "Ein Kaffee"
+  },
+  "una cena": {
+    "en": "Dinner",
+    "de": "Ein Abendessen"
+  },
+  "un asado": {
+    "en": "A barbecue",
+    "de": "Ein Grillabend"
+  },
+  "un paseo": {
+    "en": "A walk",
+    "de": "Ein Spaziergang"
+  },
+  "sorpréndeme": {
+    "en": "Surprise me",
+    "de": "Überrasch mich"
+  },
+  "una relación": {
+    "en": "A relationship",
+    "de": "Eine Beziehung"
+  },
+  "conocer personas": {
+    "en": "Meet people",
+    "de": "Menschen kennenlernen"
+  },
+  "ver qué pasa": {
+    "en": "See what happens",
+    "de": "Mal sehen, was passiert"
+  },
+  "streamers": {
+    "en": "Streamers",
+    "de": "Streamer"
+  },
+  "creadores": {
+    "en": "Creators",
+    "de": "Content-Creator"
+  },
+  "español": {
+    "en": "Spanish",
+    "de": "Spanisch"
+  },
+  "inglés": {
+    "en": "English",
+    "de": "Englisch"
+  },
+  "alemán": {
+    "en": "German",
+    "de": "Deutsch"
+  },
+  "portugués": {
+    "en": "Portuguese",
+    "de": "Portugiesisch"
+  },
+  "francés": {
+    "en": "French",
+    "de": "Französisch"
+  },
+  "italiano": {
+    "en": "Italian",
+    "de": "Italienisch"
+  },
+  "lee a": {
+    "en": "Reads",
+    "de": "Liest"
+  },
+  "sigue a": {
+    "en": "Follows",
+    "de": "Folgt"
+  },
+  "hijos:": {
+    "en": "Children:",
+    "de": "Kinder:"
+  },
+  "quiere hijos": {
+    "en": "Would like children",
+    "de": "Kinderwunsch"
+  },
+  "no pudimos conectar con el servidor.": {
+    "en": "We couldn't connect to the server.",
+    "de": "Die Verbindung zum Server ist fehlgeschlagen."
+  },
+  "correo o contraseña incorrectos.": {
+    "en": "Incorrect email or password.",
+    "de": "E-Mail-Adresse oder Passwort falsch."
+  },
+  "no se pudo crear la cuenta. prueba iniciar sesión o usa otro correo.": {
+    "en": "Couldn't create the account. Try logging in or use another email.",
+    "de": "Das Konto konnte nicht erstellt werden. Versuche dich anzumelden oder verwende eine andere E-Mail-Adresse."
+  },
+  "origen no permitido.": {
+    "en": "Origin not allowed.",
+    "de": "Herkunft nicht erlaubt."
+  },
+  "demasiadas solicitudes. espera un minuto.": {
+    "en": "Too many requests. Wait a minute.",
+    "de": "Zu viele Anfragen. Warte eine Minute."
+  },
+  "demasiados intentos. prueba de nuevo en 15 minutos.": {
+    "en": "Too many attempts. Try again in 15 minutes.",
+    "de": "Zu viele Versuche. Versuche es in 15 Minuten erneut."
+  },
+  "google aún no está habilitado. puedes continuar con tu correo.": {
+    "en": "Google sign-in is not enabled yet. You can continue with your email.",
+    "de": "Die Google-Anmeldung ist noch nicht aktiviert. Du kannst mit deiner E-Mail-Adresse fortfahren."
+  },
+  "la recuperación automática por correo aún no está habilitada en la beta. conserva tu contraseña para volver a entrar.": {
+    "en": "Automatic password recovery by email is not available in the beta yet. Keep your password to log in again.",
+    "de": "Die automatische Passwortwiederherstellung per E-Mail ist in der Beta noch nicht verfügbar. Bewahre dein Passwort auf, um dich erneut anzumelden."
+  },
+  "plan copiado. tú eliges con quién compartirlo.": {
+    "en": "Plan copied. You choose who to share it with.",
+    "de": "Plan kopiert. Du entscheidest, mit wem du ihn teilst."
+  },
+  "no pudimos compartir el plan.": {
+    "en": "We couldn't share the plan.",
+    "de": "Der Plan konnte nicht geteilt werden."
+  },
+  "perfil desbloqueado. los mensajes borrados por el bloqueo no se recuperan.": {
+    "en": "Profile unblocked. Messages deleted by blocking are not restored.",
+    "de": "Blockierung aufgehoben. Durch das Blockieren gelöschte Nachrichten werden nicht wiederhergestellt."
+  },
+  "onlyfachos — sin swipes. solo conversación": {
+    "en": "OnlyFachos — No swiping. Just conversation",
+    "de": "OnlyFachos — Kein Swipen. Echte Gespräche"
+  },
+  "inicia sesión para continuar.": {
+    "en": "Log in to continue.",
+    "de": "Melde dich an, um fortzufahren."
+  },
+  "la demostración está desactivada.": {
+    "en": "The demo is disabled.",
+    "de": "Die Demo ist deaktiviert."
+  },
+  "el rango de edad no es válido.": {
+    "en": "The age range is invalid.",
+    "de": "Der Altersbereich ist ungültig."
+  },
+  "ese perfil no está disponible.": {
+    "en": "That profile is unavailable.",
+    "de": "Dieses Profil ist nicht verfügbar."
+  },
+  "ya reaccionaste a este perfil.": {
+    "en": "You've already reacted to this profile.",
+    "de": "Du hast bereits auf dieses Profil reagiert."
+  },
+  "no hay nada que deshacer.": {
+    "en": "There's nothing to undo.",
+    "de": "Es gibt nichts rückgängig zu machen."
+  },
+  "un match no se puede deshacer aquí. puedes bloquear el perfil en el chat.": {
+    "en": "A match can't be undone here. You can block the profile in the chat.",
+    "de": "Ein Match kann hier nicht rückgängig gemacht werden. Du kannst das Profil im Chat blockieren."
+  },
+  "ruta no encontrada.": {
+    "en": "Page not found.",
+    "de": "Seite nicht gefunden."
+  },
+  "el archivo es demasiado grande.": {
+    "en": "The file is too large.",
+    "de": "Die Datei ist zu groß."
+  },
+  "este perfil está pausado.": {
+    "en": "This profile is paused.",
+    "de": "Dieses Profil ist pausiert."
+  },
+  "elige una fecha futura.": {
+    "en": "Choose a future date.",
+    "de": "Wähle ein zukünftiges Datum."
+  },
+  "responde o retira la propuesta pendiente antes de crear otra.": {
+    "en": "Respond to or withdraw the pending proposal before creating another.",
+    "de": "Beantworte den offenen Vorschlag oder ziehe ihn zurück, bevor du einen neuen erstellst."
+  },
+  "propuesta no disponible.": {
+    "en": "Proposal unavailable.",
+    "de": "Vorschlag nicht verfügbar."
+  },
+  "solo la otra persona puede aceptar. en demo usa la simulación.": {
+    "en": "Only the other person can accept. In the demo, use the simulation.",
+    "de": "Nur die andere Person kann zusagen. Nutze in der Demo die Simulation."
+  },
+  "esta propuesta ya fue respondida.": {
+    "en": "This proposal has already been answered.",
+    "de": "Dieser Vorschlag wurde bereits beantwortet."
+  },
+  "solo puedes retirar tu propuesta pendiente.": {
+    "en": "You can only withdraw your own pending proposal.",
+    "de": "Du kannst nur deinen eigenen offenen Vorschlag zurückziehen."
+  },
+  "añade fotos válidas.": {
+    "en": "Add valid photos.",
+    "de": "Füge gültige Fotos hinzu."
+  },
+  "confirma que quieres publicar tus datos opcionales de política y religión, o déjalos vacíos.": {
+    "en": "Confirm that you want to publish your optional political and religious information, or leave it blank.",
+    "de": "Bestätige die Veröffentlichung deiner freiwilligen politischen und religiösen Angaben oder lasse sie leer."
+  },
+  "escribe entre 1 y 1000 caracteres.": {
+    "en": "Write between 1 and 1,000 characters.",
+    "de": "Schreibe zwischen 1 und 1000 Zeichen."
+  },
+  "sticker no válido.": {
+    "en": "Invalid sticker.",
+    "de": "Ungültiger Sticker."
+  },
+  "el audio debe ser webm, ogg o mp4 y pesar menos de 1,5 mb.": {
+    "en": "Audio must be WebM, Ogg or MP4 and smaller than 1.5 MB.",
+    "de": "Audio muss im Format WebM, Ogg oder MP4 sein und kleiner als 1,5 MB."
+  },
+  "mensaje no disponible.": {
+    "en": "Message unavailable.",
+    "de": "Nachricht nicht verfügbar."
+  },
+  "ya hay una invitación pendiente en esta conversación.": {
+    "en": "There is already a pending invitation in this conversation.",
+    "de": "In diesem Gespräch gibt es bereits eine offene Einladung."
+  },
+  "solo la otra persona puede responder.": {
+    "en": "Only the other person can respond.",
+    "de": "Nur die andere Person kann antworten."
+  },
+  "esta invitación ya fue respondida.": {
+    "en": "This invitation has already been answered.",
+    "de": "Diese Einladung wurde bereits beantwortet."
+  },
+  "solo disponible en tu demostración.": {
+    "en": "Available only in your demo.",
+    "de": "Nur in deiner Demo verfügbar."
+  },
+  "primero deben aceptar la invitación.": {
+    "en": "First, both people must accept the invitation.",
+    "de": "Zuerst müsst ihr die Einladung beide annehmen."
+  },
+  "usa una propuesta de cita: el día y el lugar requieren aceptación de la otra persona.": {
+    "en": "Use a date proposal: the day and place require the other person's acceptance.",
+    "de": "Verwende einen Date-Vorschlag: Tag und Ort müssen von der anderen Person bestätigt werden."
+  },
+  "configura google_client_id, google_client_secret y google_redirect_uri en el servidor para activar google.": {
+    "en": "Google sign-in has not been configured on the server yet.",
+    "de": "Die Google-Anmeldung wurde auf dem Server noch nicht eingerichtet."
+  },
+  "falta el comprobante de acceso móvil.": {
+    "en": "Mobile sign-in proof is missing.",
+    "de": "Der Nachweis für die mobile Anmeldung fehlt."
+  },
+  "la solicitud de google expiró o no coincide con este navegador. vuelve a iniciar sesión.": {
+    "en": "The Google request expired or doesn't match this browser. Log in again.",
+    "de": "Die Google-Anfrage ist abgelaufen oder gehört nicht zu diesem Browser. Melde dich erneut an."
+  },
+  "el enlace de acceso no es válido o expiró.": {
+    "en": "The sign-in link is invalid or expired.",
+    "de": "Der Anmeldelink ist ungültig oder abgelaufen."
+  },
+  "la cuenta ya no está disponible.": {
+    "en": "The account is no longer available.",
+    "de": "Das Konto ist nicht mehr verfügbar."
+  },
+  "el registro con google expiró.": {
+    "en": "Google registration expired.",
+    "de": "Die Google-Registrierung ist abgelaufen."
+  },
+  "vuelve a iniciar sesión con google.": {
+    "en": "Log in with Google again.",
+    "de": "Melde dich erneut mit Google an."
+  },
+  "ese correo ya tiene una cuenta. vuelve a iniciar sesión.": {
+    "en": "That email already has an account. Log in again.",
+    "de": "Für diese E-Mail-Adresse gibt es bereits ein Konto. Melde dich an."
+  },
+  "elige una fecha y hora futuras.": {
+    "en": "Choose a future date and time.",
+    "de": "Wähle ein zukünftiges Datum und eine zukünftige Uhrzeit."
+  }
+}

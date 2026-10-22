@@ -3,6 +3,64 @@
   margin: 0 auto;
   padding: 28px 24px 50px;
 }
+.language-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+}
+.language-picker select {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 28px 8px 10px;
+  min-height: 42px;
+  font-size: 13px;
+}
+.access-language {
+  position: absolute;
+  top: 16px;
+  right: 65px;
+  z-index: 5;
+}
+.onboarding-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .onboarding-brand {
+    display: flex !important;
+    position: static;
+    padding: 0 0 18px;
+    width: 100%;
+  }
+  .onboarding-brand .wordmark {
+    font-size: 20px;
+  }
+  .access-language {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 62px 0 16px;
+  }
+  .access-layout {
+    padding-top: 12px;
+  }
+  .access-language .language-picker > svg {
+    display: none;
+  }
+}
 .beta-heading {
   display: flex;
   align-items: center;
@@ -25,14 +83,16 @@
 .beta-identity {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 22px;
+  margin-bottom: 24px;
 }
 .beta-identity > img,
 .beta-identity > .photo-fallback {
-  width: 85px;
-  height: 95px;
-  border-radius: 18px;
+  width: 132px;
+  height: 132px;
+  flex: 0 0 132px;
+  aspect-ratio: 1;
+  border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--gold);
 }
@@ -43,7 +103,7 @@
 }
 .beta-identity p {
   font-size: 12px;
-  margin: 0;
+  margin: 7px 0 0;
   color: var(--muted);
 }
 .beta-identity small {
@@ -678,19 +738,46 @@ progress::-webkit-progress-value {
   padding: 0;
   margin: 0;
 }
-.report-reasons label {
-  display: flex;
+.safety-form .report-reasons label {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
   align-items: center;
-  flex-direction: row;
   gap: 12px;
-  padding: 13px 0;
+  padding: 12px;
+  min-height: 48px;
+  text-align: left;
   border-bottom: 1px solid var(--border);
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
 }
-.report-reasons input {
+.safety-form .report-reasons label:has(:checked) {
+  background: color-mix(in srgb, var(--gold) 10%, var(--bg));
+  border-radius: 8px;
+}
+.safety-form .report-reasons input {
   width: 18px;
+  height: 18px;
+  padding: 0;
+  margin: 0;
   min-height: 18px;
   accent-color: var(--gold);
+}
+.report-reasons legend {
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+.account-identity-copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.field-error {
+  color: var(--danger);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.form input[aria-invalid='true'] {
+  border-color: var(--danger);
 }
 .beta-version-badge {
   font: 9px var(--font);
@@ -714,8 +801,14 @@ progress::-webkit-progress-value {
   }
   .beta-identity > img,
   .beta-identity > .photo-fallback {
-    width: 75px;
-    height: 85px;
+    width: 136px;
+    height: 136px;
+    flex-basis: 136px;
+  }
+  .beta-identity {
+    flex-direction: column;
+    text-align: center;
+    gap: 14px;
   }
   .account-beta .beta-photos {
     margin-bottom: 15px;

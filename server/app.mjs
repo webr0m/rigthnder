@@ -11,6 +11,7 @@ import { ageOf, publicProfile, ownProfile, settingsOf, VALUES, INTERESTS } from 
 import { mountBeta } from './beta.mjs';
 import { mountGoogleAuth } from './google.mjs';
 import { makeCommunitySchema, mountCommunity } from './community.mjs';
+import { birthdateError } from './birthdate.mjs';
 
 const scryptAsync = promisify(scrypt);
 const hash = (text) => createHash('sha256').update(text).digest('hex');
@@ -18,13 +19,7 @@ const validBirthdate = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
   .refine((value) => {
-    const date = new Date(value + 'T00:00:00Z');
-    return (
-      !isNaN(date) &&
-      date.toISOString().slice(0, 10) === value &&
-      ageOf(value) >= 18 &&
-      ageOf(value) <= 100
-    );
+    return !birthdateError(value);
   }, 'Debes tener entre 18 y 100 años.');
 const photoSchema = z
   .string()
@@ -113,6 +108,20 @@ export function createApp(db, options = {}) {
       credentials: true,
     }),
   );
+  // Keep the legacy API available to installed mobile clients; redirect web pages permanently.
+  const canonicalHost = options.canonicalHost ?? process.env.CANONICAL_HOST;
+  const legacyHost = options.legacyHost ?? process.env.LEGACY_HOST;
+  if (canonicalHost && legacyHost)
+    app.use((req, res, next) => {
+      if (
+        req.hostname === legacyHost &&
+        ['GET', 'HEAD'].includes(req.method) &&
+        req.path !== '/api' &&
+        !req.path.startsWith('/api/')
+      )
+        return res.redirect(301, 'https://' + canonicalHost + req.originalUrl);
+      next();
+    });
   app.use('/api', (req, res, next) => {
     res.set('Cache-Control', 'no-store');
     if (
@@ -237,7 +246,7 @@ export function createApp(db, options = {}) {
   }
 
   app.get('/api/health', (_req, res) =>
-    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.2', demoEnabled }),
+    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.3', demoEnabled }),
   );
   const googleEnabled = mountGoogleAuth(app, db, {
     production,
@@ -321,6 +330,8 @@ export function createApp(db, options = {}) {
         occupation: z.string().trim().max(80).default(''),
         lookingFor: z.enum(['mujer', 'hombre', 'otro', 'todos']).default('todos'),
         birthdate: validBirthdate,
+        appearance: z.enum(['light', 'dark', 'auto']).default('auto'),
+        language: z.enum(['es', 'en', 'de']).default('es'),
         terms: z.literal(true),
         valuesConsent: z.literal(true),
         name: z.string().trim().min(2).max(40),
@@ -369,6 +380,10 @@ export function createApp(db, options = {}) {
         '[]',
         id,
       );
+    db.prepare('UPDATE users SET settings_json=? WHERE id=?').run(
+      JSON.stringify({ appearance: data.appearance, language: data.language }),
+      id,
+    );
     res.status(201).json(session(res, getUser(id)));
   });
   app.post('/api/auth/login', async (req, res) => {

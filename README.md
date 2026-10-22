@@ -1,10 +1,12 @@
 # OnlyFachos
 
-**Beta 1 · web `1.0.0-beta.1.2`**. Nuevo perfil, ajustes, filtros, chats por estado y citas con día/lugar de aceptación bilateral. [Probar la beta y compilar apps](docs/BETA-1.md). [Descargar APK Android y app iOS Simulator](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1).
+**Beta 1 · web `1.0.0-beta.1.3`**. Nuevo perfil, ajustes, filtros, chats por estado y citas con día/lugar de aceptación bilateral. [Probar la beta y compilar apps](docs/BETA-1.md). [Descargar APK Android y app iOS Simulator](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1).
 
 **Sin swipes. Solo conversación.** Comunidad de citas para mayores de 18 años: feed vertical, perfiles con referentes, chat directo y citas aceptadas por ambas personas. Rediseño de Rigthnder a partir de los mockups claro/oscuro aportados por el usuario. MIT.
 
-Web: **https://rigthnder.webrom.lat**. El nombre visible cambió; dominio, repositorios e identificador móvil se conservan para no romper enlaces ni el acceso con Google.
+Web: **https://onlyfachos.webrom.lat**. El dominio anterior redirige las páginas web al nuevo con HTTP 301. La API anterior sigue disponible para las apps ya instaladas. Los repositorios y el identificador móvil se conservan.
+
+Interfaz en español, inglés y alemán: selector antes y durante el registro y en Ajustes. Se guardan idioma y apariencia en la cuenta. Los mensajes, biografías, nombres y etiquetas personales mantienen su texto original.
 
 ## Probar
 

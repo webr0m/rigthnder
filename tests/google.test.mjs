@@ -61,6 +61,8 @@ test('Google OAuth: state binding, verified identity, adult onboarding, one-use 
       city: 'Santiago',
       terms: true,
       valuesConsent: true,
+      appearance: 'light',
+      language: 'en',
     };
     const complete = (b) =>
       fetch(base + '/complete', {
@@ -71,7 +73,10 @@ test('Google OAuth: state binding, verified identity, adult onboarding, one-use 
     assert.equal((await complete(body)).status, 400);
     const registered = await complete({ ...body, birthdate: '1999-01-01' });
     assert.equal(registered.status, 201);
-    assert.ok((await registered.json()).token);
+    const result = await registered.json();
+    assert.ok(result.token);
+    assert.equal(result.user.settings.appearance, 'light');
+    assert.equal(result.user.settings.language, 'en');
     assert.equal((await complete({ ...body, birthdate: '1999-01-01' })).status, 401);
     assert.equal(
       (

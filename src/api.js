@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import { t } from './locale.mjs';
 export const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 let bearer = '';
 export const setToken = (token) => {
@@ -16,6 +17,6 @@ export async function api(path, options = {}) {
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
   const result = await response.json();
-  if (!response.ok) throw new Error(result.error || 'No pudimos conectar con el servidor.');
+  if (!response.ok) throw new Error(t(result.error || 'No pudimos conectar con el servidor.'));
   return result;
 }

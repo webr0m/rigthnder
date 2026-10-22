@@ -1,3 +1,4 @@
+import { t, getLanguage } from './locale.mjs';
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Calendar, MapPin, Shield, Share2 } from 'lucide-react';
 import { Button, Modal } from './Shared';
@@ -38,7 +39,7 @@ export function DatePlanner({ detail, onClose, run }) {
   }
   return (
     <Modal
-      title={'CITA CON ' + detail.profile.name.toUpperCase()}
+      title={t('CITA CON ') + detail.profile.name.toUpperCase()}
       className="date-planner"
       onClose={onClose}
     >
@@ -47,7 +48,7 @@ export function DatePlanner({ detail, onClose, run }) {
           <button
             type="button"
             className="icon-button"
-            aria-label="Volver"
+            aria-label={t('Volver')}
             onClick={() => (step === 1 ? onClose() : setStep(1))}
           >
             <ArrowLeft />
@@ -56,11 +57,15 @@ export function DatePlanner({ detail, onClose, run }) {
           <i className={step === 2 ? 'done' : ''} />
           <small>{step}/2</small>
         </div>
-        <span className="label-strip">UN BUEN PLAN EMPIEZA AQUÍ</span>
-        <h1>{step === 1 ? '¿QUÉ DÍA?' : '¿DÓNDE?'}</h1>
+        <span className="label-strip">{t('UN BUEN PLAN EMPIEZA AQUÍ')}</span>
+        <h1>{step === 1 ? t('¿QUÉ DÍA?') : t('¿DÓNDE?')}</h1>
         {step === 1 ? (
           <>
-            <p>Propón un momento para verse. {detail.profile.name} podrá aceptar o sugerir otro.</p>
+            <p>
+              {t('Propón un momento para verse. ')}
+              {detail.profile.name}
+              {t(' podrá aceptar o sugerir otro.')}
+            </p>
             <div className="day-tiles">
               {days.map((d) => (
                 <button
@@ -69,13 +74,13 @@ export function DatePlanner({ detail, onClose, run }) {
                   className={day === localDate(d) ? 'selected' : ''}
                   onClick={() => setDay(localDate(d))}
                 >
-                  <small>{d.toLocaleDateString('es', { weekday: 'short' })}</small>
+                  <small>{d.toLocaleDateString(getLanguage(), { weekday: 'short' })}</small>
                   <b>{d.getDate()}</b>
                 </button>
               ))}
             </div>
             <label>
-              Otra fecha
+              {t('Otra fecha')}
               <input
                 type="date"
                 required
@@ -84,7 +89,7 @@ export function DatePlanner({ detail, onClose, run }) {
                 onChange={(e) => setDay(e.target.value)}
               />
             </label>
-            <h4>¿A QUÉ HORA?</h4>
+            <h4>{t('¿A QUÉ HORA?')}</h4>
             <div className="time-tiles">
               {['10:00', '11:00', '12:30', '16:00', '17:30'].map((t) => (
                 <button
@@ -98,38 +103,41 @@ export function DatePlanner({ detail, onClose, run }) {
               ))}
             </div>
             <label>
-              Hora personalizada
+              {t('Hora personalizada')}
               <input required type="time" value={hour} onChange={(e) => setHour(e.target.value)} />
             </label>
             <small className="hint">
-              Horario de {zone}. No mostramos disponibilidad compartida porque aún no la han
-              declarado.
+              {t('Horario de ')}
+              {zone}
+              {t('. No mostramos disponibilidad compartida porque aún no la han declarado.')}
             </small>
             <div className="beta-panel safety-note">
               <Shield size={20} />
-              Para una primera cita, recomendamos de día y en un lugar público.
+              {t('Para una primera cita, recomendamos de día y en un lugar público.')}
             </div>
           </>
         ) : (
           <>
             <div className="proposal-summary">
               <Calendar />
-              {new Date(day + 'T' + hour).toLocaleString('es-CL')}
+              {new Date(day + 'T' + hour).toLocaleString(getLanguage())}
               <small>{zone}</small>
             </div>
-            <h3>UN LUGAR QUE LES ACOMODE</h3>
+            <h3>{t('UN LUGAR QUE LES ACOMODE')}</h3>
             <p>
-              Acuerden un lugar público. Incluye nombre, dirección y ciudad para que no haya dudas.
+              {t(
+                'Acuerden un lugar público. Incluye nombre, dirección y ciudad para que no haya dudas.',
+              )}
             </p>
             <label>
-              Lugar de encuentro
+              {t('Lugar de encuentro')}
               <input
                 required
                 minLength={3}
                 maxLength={160}
                 value={place}
                 onChange={(e) => setPlace(e.target.value)}
-                placeholder="Café, dirección y ciudad"
+                placeholder={t('Café, dirección y ciudad')}
               />
             </label>
             <a
@@ -142,30 +150,32 @@ export function DatePlanner({ detail, onClose, run }) {
               rel="noreferrer"
             >
               <MapPin size={18} />
-              Buscar en el mapa
+              {t('Buscar en el mapa')}
             </a>
             <p className="hint">
-              La beta no tiene locales aliados ni descuentos. El mapa abre una búsqueda con el texto
-              que escribas.
+              {t(
+                'La beta no tiene locales aliados ni descuentos. El mapa abre una búsqueda con el texto que escribas.',
+              )}
             </p>
           </>
         )}
         {error && (
           <p className="form-error" role="alert">
-            {error}
+            {t(error)}
           </p>
         )}
         <Button disabled={busy}>
           {step === 1 ? (
             <>
-              ELEGIR LUGAR <ArrowRight size={18} />
+              {t('ELEGIR LUGAR ')}
+              <ArrowRight size={18} />
             </>
           ) : (
-            'ENVIAR PROPUESTA'
+            t('ENVIAR PROPUESTA')
           )}
         </Button>
         <small className="hint">
-          La cita queda confirmada cuando la otra persona acepta día y lugar.
+          {t('La cita queda confirmada cuando la otra persona acepta día y lugar.')}
         </small>
       </form>
     </Modal>
@@ -198,7 +208,7 @@ function calendar(plan) {
 }
 export function ConfirmedPlan({ plan, peer, onChange, notify }) {
   async function share() {
-    const text = `Mi plan: ${new Date(plan.day).toLocaleString('es-CL')} · ${plan.place}. Cita con ${peer.name}.`;
+    const text = `Mi plan: ${new Date(plan.day).toLocaleString(getLanguage())} · ${plan.place}. Cita con ${peer.name}.`;
     try {
       if (navigator.share) await navigator.share({ title: 'Mi plan de cita', text });
       else {
@@ -211,15 +221,19 @@ export function ConfirmedPlan({ plan, peer, onChange, notify }) {
   }
   return (
     <section className="confirmed-plan">
-      <b>☕ CITA CONFIRMADA</b>
+      <b>{t('☕ CITA CONFIRMADA')}</b>
       <p>
-        {new Date(plan.day).toLocaleString('es-CL')} · {plan.place}
+        {new Date(plan.day).toLocaleString(getLanguage())} · {plan.place}
       </p>
-      <small>Horario mostrado en tu zona · {plan.timezone} al proponer</small>
+      <small>
+        {t('Horario mostrado en tu zona · ')}
+        {plan.timezone}
+        {t(' al proponer')}
+      </small>
       <div>
         <button onClick={() => calendar(plan)}>
           <Calendar size={14} />
-          Calendario
+          {t('Calendario')}
         </button>
         <a
           href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(plan.place)}
@@ -227,12 +241,12 @@ export function ConfirmedPlan({ plan, peer, onChange, notify }) {
           rel="noreferrer"
         >
           <MapPin size={14} />
-          Cómo llegar
+          {t('Cómo llegar')}
         </a>
-        <button onClick={onChange}>Cambiar</button>
+        <button onClick={onChange}>{t('Cambiar')}</button>
         <button onClick={share}>
           <Share2 size={14} />
-          Compartir plan
+          {t('Compartir plan')}
         </button>
       </div>
     </section>

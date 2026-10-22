@@ -44,6 +44,35 @@ const image =
   'data:image/jpeg;base64,' +
   readFileSync(new URL('../public/photos/cafe.jpg', import.meta.url)).toString('base64');
 
+test('registration retains appearance and language through login and settings updates', async () => {
+  const data = {
+    name: 'LocaleBeta',
+    email: 'locale@example.com',
+    password: 'Locale-test-2026!',
+    birthdate: '1996-03-10',
+    gender: 'otro',
+    city: 'Berlin',
+    terms: true,
+    valuesConsent: true,
+    appearance: 'light',
+    language: 'de',
+  };
+  const created = await req('/auth/register', null, data);
+  assert.equal(created.status, 201);
+  assert.equal(created.data.user.settings.appearance, 'light');
+  assert.equal(created.data.user.settings.language, 'de');
+  const login = await req('/auth/login', null, { email: data.email, password: data.password });
+  assert.equal(login.data.user.settings.appearance, 'light');
+  assert.equal(login.data.user.settings.language, 'de');
+  const saved = await req('/me/settings', created.data.token, { language: 'en' }, 'PUT');
+  assert.equal(saved.data.settings.language, 'en');
+  assert.equal(saved.data.settings.appearance, 'light');
+  assert.equal(
+    (await req('/me/settings', created.data.token, { language: 'xx' }, 'PUT')).status,
+    400,
+  );
+});
+
 test('privacy settings hide faith and party in every public profile but retain editable own data', async () => {
   const a = await account('PrivacyBetaA'),
     b = await account('PrivacyBetaB');

@@ -25,10 +25,13 @@ import { Button, Modal, Photo, Safety, Legal, locationLabel } from './Shared';
 import Onboarding from './Onboarding';
 import Conversations from './Conversations';
 import { BetaAccount, BetaSettings, BetaService, BetaFilters, ProfileDetail } from './BetaPages';
+import LanguagePicker, { useLanguage } from './LanguagePicker';
+import { getLanguage, setLanguage, t, translateCommon } from './locale.mjs';
 export function Wordmark() {
   return (
     <span className="wordmark">
-      ONLY<span>FACHOS</span>
+      {t('ONLY')}
+      <span>{t('FACHOS')}</span>
     </span>
   );
 }
@@ -58,12 +61,16 @@ export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
   const c = p.community || {},
     photos = c.photos?.length ? c.photos : p.photo ? [p.photo] : [];
   const facts = [
-    ['DE DERECHA', c.years],
+    ['DE DERECHA', t(c.years)],
     [
       'FE',
-      c.faith === 'Sí' ? c.denomination || 'Creyente' : c.faith === 'No' ? 'No creyente' : c.faith,
+      c.faith === 'Sí'
+        ? t(c.denomination) || t('Creyente')
+        : c.faith === 'No'
+          ? t('No creyente')
+          : t(c.faith),
     ],
-    ['HIJOS', c.children === 'Sí' ? 'Quiere' : c.children],
+    ['HIJOS', c.children === 'Sí' ? t('Quiere') : t(c.children)],
     [
       'IDIOMAS',
       c.languages
@@ -80,38 +87,39 @@ export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
         )
         .join(' · '),
     ],
-    ['VIAJÓ', c.countryCount ? c.countryCount + ' países' : ''],
-    ['PARTIDO', c.party ? c.partyStance + ' ' + c.party : c.partyStance],
+    ['VIAJÓ', c.countryCount ? c.countryCount + ' ' + t('países') : ''],
+    ['PARTIDO', c.party ? t(c.partyStance) + ' ' + c.party : t(c.partyStance)],
   ];
   return (
     <article className="profile-card" id={'person-' + p.id} aria-labelledby={'name-' + p.id}>
       <header className="profile-card-heading">
         <span className={'profile-avatar' + (p.online ? ' is-online' : '')}>
           <Photo profile={p} className="avatar" />
-          {p.online && <i aria-label={p.demo ? 'En línea en la demo' : 'En línea'} />}
+          {p.online && <i aria-label={p.demo ? t('En línea en la demo') : t('En línea')} />}
         </span>
         <div className="profile-name">
           <h2 id={'name-' + p.id}>
             <button className="profile-open" onClick={() => onOpen?.(p)}>
               {p.name}, {p.age}
-              {p.demo && <small>DEMO</small>}
+              {p.demo && <small>{t('DEMO')}</small>}
             </button>
           </h2>
-          <span className="current-tag">{c.current || 'Ideas propias'}</span>
+          <span className="current-tag">{t(c.current) || t('Ideas propias')}</span>
           <p>
-            {p.occupation || 'Con ganas de conversar'} · {locationLabel(p)}
+            {p.occupation || t('Con ganas de conversar')} · {locationLabel(p)}
           </p>
         </div>
         <Button
           className="write-button"
-          aria-label={'Escribir a ' + p.name}
+          aria-label={t('Escribir a ') + p.name}
           onClick={() => onWrite(p)}
         >
-          <MessageCircle size={14} /> Escribir
+          <MessageCircle size={14} />
+          {t(' Escribir')}
         </Button>
         <button
           className="icon-button card-options"
-          aria-label={'Opciones de ' + p.name}
+          aria-label={t('Opciones de ') + p.name}
           onClick={() => onSafety(p)}
         >
           <MoreHorizontal size={18} />
@@ -128,8 +136,8 @@ export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
                 src={photo}
                 alt={
                   p.demo && i
-                    ? 'Plan ilustrativo de ' + p.name
-                    : 'Foto ' + (i + 1) + ' de ' + p.name
+                    ? t('Plan ilustrativo de ') + p.name
+                    : t('Foto ') + (i + 1) + t(' de ') + p.name
                 }
               />
             ))
@@ -139,23 +147,26 @@ export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
       </div>
       <div className="profile-card-body">
         <p className="profile-bio">
-          {p.bio || 'Todavía está preparando su presentación. Rompe el hielo con un hola.'}
+          {p.bio || t('Todavía está preparando su presentación. Rompe el hielo con un hola.')}
         </p>
         {!!p.common?.length && (
           <div className="common-row">
-            <strong>{p.common.length} EN COMÚN</strong>
+            <strong>
+              {p.common.length}
+              {t('EN COMÚN')}
+            </strong>
             <div>
               {p.common.slice(0, 4).map((v) => (
-                <span key={v}>{v}</span>
+                <span key={v}>{translateCommon(v)}</span>
               ))}
             </div>
           </div>
         )}
         <dl className="profile-facts">
           {facts.map(([label, value]) => (
-            <div key={label}>
-              <dt>{label}</dt>
-              <dd>{value || 'Sin compartir'}</dd>
+            <div key={t(label)}>
+              <dt>{t(label)}</dt>
+              <dd>{value || t('Sin compartir')}</dd>
             </div>
           ))}
         </dl>
@@ -168,8 +179,8 @@ export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
           ]
             .filter(([, v]) => v?.length)
             .map(([label, items]) => (
-              <div key={label}>
-                <strong>{label}</strong>
+              <div key={t(label)}>
+                <strong>{t(label)}</strong>
                 <div>
                   {items.map((v) => (
                     <span key={v}>{v}</span>
@@ -213,43 +224,46 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
         <Wordmark />
         <div className="access-copy">
           <p className="eyebrow">
-            <i /> +18 · SIN SWIPES · SOLO CONVERSACIÓN
+            <i />
+            {t(' +18 · SIN SWIPES · SOLO CONVERSACIÓN')}
           </p>
           <h1>
-            CONOCE GENTE
+            {t('CONOCE GENTE')}
             <br />
-            <mark>BASADA</mark>
+            <mark>{t('BASADA')}</mark>
             <span className="red-asterisk">✳</span>
           </h1>
           <p>
-            Scrollea perfiles, mira a quién ve, qué lee y qué piensa. Si te convence, escríbele.
+            {t(
+              'Scrollea perfiles, mira a quién ve, qué lee y qué piensa. Si te convence, escríbele.',
+            )}
           </p>
           <div className="access-steps">
             <span>
-              01 <b>SCROLLEA</b>
+              01 <b>{t('SCROLLEA')}</b>
             </span>
             <span>
-              02 <b>CONVERSA</b>
+              02 <b>{t('CONVERSA')}</b>
             </span>
             <span>
-              03 <b>QUEDA</b>
+              03 <b>{t('QUEDA')}</b>
             </span>
           </div>
         </div>
-        <span className="access-note">Las buenas ideas merecen una buena compañía.</span>
+        <span className="access-note">{t('Las buenas ideas merecen una buena compañía.')}</span>
       </section>
       <section className="access-form">
         <span className="label-strip">
-          {login ? 'TU COMUNIDAD TE ESPERA' : 'AQUÍ EMPIEZA LA CONVERSACIÓN'}
+          {login ? t('TU COMUNIDAD TE ESPERA') : t('AQUÍ EMPIEZA LA CONVERSACIÓN')}
         </span>
-        <h2>{login ? 'VOLVISTE, BASADO.' : 'SIN RODEOS.'}</h2>
+        <h2>{login ? t('VOLVISTE, BASADO.') : t('SIN RODEOS.')}</h2>
         <form className="form" onSubmit={submit}>
           <button
             type="button"
             className="social-login"
             onClick={() => notify('Apple aún no está habilitado. Puedes continuar con tu correo.')}
           >
-            ● <span>Continuar con Apple</span>
+            ● <span>{t('Continuar con Apple')}</span>
           </button>
           <button
             type="button"
@@ -264,33 +278,34 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
               }
             }}
           >
-            <b>G</b>
-            <span>Continuar con Google</span>
+            <b>{t('G')}</b>
+            <span>{t('Continuar con Google')}</span>
           </button>
           <div className="form-divider">
-            <span />O CON CORREO
+            <span />
+            {t('O CON CORREO')}
             <span />
           </div>
           <label>
-            Correo
+            {t('Correo')}
             <input
               name="email"
               type="email"
               required
               maxLength={160}
-              placeholder="tu@correo.com"
+              placeholder={t('tu@correo.com')}
               autoComplete="email"
             />
           </label>
           <label>
-            Contraseña
+            {t('Contraseña')}
             <input
               name="password"
               type="password"
               required
               minLength={login ? 1 : 10}
               maxLength={128}
-              placeholder={login ? 'Tu contraseña' : 'Mínimo 10 caracteres'}
+              placeholder={login ? t('Tu contraseña') : t('Mínimo 10 caracteres')}
               autoComplete={login ? 'current-password' : 'new-password'}
             />
           </label>
@@ -304,19 +319,25 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
                 )
               }
             >
-              Olvidé mi contraseña
+              {t('Olvidé mi contraseña')}
             </button>
           )}
           {error && (
             <p className="form-error" role="alert">
-              {error}
+              {t(error)}
             </p>
           )}
           <Button disabled={busy}>
-            {busy ? <LoaderCircle className="spin" /> : login ? 'INICIAR SESIÓN' : 'CREAR CUENTA'}
+            {busy ? (
+              <LoaderCircle className="spin" />
+            ) : login ? (
+              t('INICIAR SESIÓN')
+            ) : (
+              t('CREAR CUENTA')
+            )}
           </Button>
           <p className="auth-switch">
-            {login ? '¿Primera vez por aquí?' : '¿Ya tienes cuenta?'}{' '}
+            {login ? t('¿Primera vez por aquí?') : t('¿Ya tienes cuenta?')}{' '}
             <button
               type="button"
               onClick={() => {
@@ -324,17 +345,17 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
                 setError('');
               }}
             >
-              {login ? 'Crea tu cuenta' : 'Inicia sesión'}
+              {login ? t('Crea tu cuenta') : t('Inicia sesión')}
             </button>
           </p>
           <p className="hint">
-            Solo mayores de 18 años. Revisa los{' '}
+            {t('Solo mayores de 18 años. Revisa los')}{' '}
             <button type="button" className="inline-link" onClick={() => onLegal('terms')}>
-              Términos
+              {t('Términos')}
             </button>{' '}
-            y la{' '}
+            {t('y la')}{' '}
             <button type="button" className="inline-link" onClick={() => onLegal('privacy')}>
-              Política de privacidad
+              {t('Política de privacidad')}
             </button>
             .
           </p>
@@ -354,7 +375,8 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
               }
             }}
           >
-            Explorar la demostración <ArrowRight size={16} />
+            {t('Explorar la demostración ')}
+            <ArrowRight size={16} />
           </button>
         )}
       </section>
@@ -362,6 +384,11 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
   );
 }
 export default function App() {
+  const language = useLanguage();
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.title = t('OnlyFachos — Sin swipes. Solo conversación');
+  }, [language]);
   const [user, setUser] = useState(null),
     [options, setOptions] = useState({}),
     [ready, setReady] = useState(false),
@@ -411,6 +438,11 @@ export default function App() {
       return 'auto';
     }
   });
+  function toggleTheme() {
+    const appearance = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    setTheme(appearance);
+    if (user) saveSettings({ appearance });
+  }
   const sentinel = useRef(null),
     version = useRef(0),
     toastTimer = useRef(),
@@ -418,13 +450,14 @@ export default function App() {
     chatOrigin = useRef('chat');
   function notify(message, error = false) {
     clearTimeout(toastTimer.current);
-    setToast({ message, error });
+    setToast({ message: t(message), error });
     toastTimer.current = setTimeout(() => setToast(null), 5000);
   }
   function signedIn(r) {
     setToken(r.token);
     setUser(r.user);
     if (r.user.settings?.appearance) setTheme(r.user.settings.appearance);
+    if (r.user.settings?.language) setLanguage(r.user.settings.language);
     setTab('community');
     setWizard(null);
     setFilters({ ...DEFAULT, gender: r.user.lookingFor });
@@ -465,6 +498,7 @@ export default function App() {
             if (alive) {
               setUser(me);
               if (me.settings?.appearance) setTheme(me.settings.appearance);
+              if (me.settings?.language) setLanguage(me.settings.language);
               setFilters({ ...DEFAULT, gender: me.lookingFor });
               if (location.pathname === '/eliminar-cuenta') setTab('profile');
             }
@@ -625,6 +659,8 @@ export default function App() {
             body: {
               ...wizard.credentials,
               ...data,
+              appearance: theme,
+              language: getLanguage(),
               ...(wizard.ticket ? { ticket: wizard.ticket } : {}),
             },
           }),
@@ -670,12 +706,12 @@ export default function App() {
         {initError ? (
           <>
             <p>{initError}</p>
-            <Button onClick={() => location.reload()}>Volver a intentar</Button>
+            <Button onClick={() => location.reload()}>{t('Volver a intentar')}</Button>
           </>
         ) : (
           <>
             <LoaderCircle className="spin" />
-            <p>Preparando buenas conversaciones…</p>
+            <p>{t('Preparando buenas conversaciones…')}</p>
           </>
         )}
       </div>
@@ -686,10 +722,13 @@ export default function App() {
     >
       {!user && !wizard ? (
         <>
+          <div className="access-language">
+            <LanguagePicker />
+          </div>
           <button
             className="theme-access icon-button"
-            aria-label="Cambiar tema"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label={t('Cambiar tema')}
+            onClick={toggleTheme}
           >
             {theme === 'dark' ? <Sun /> : <Moon />}
           </button>
@@ -705,6 +744,7 @@ export default function App() {
         <div className="onboarding-shell">
           <div className="onboarding-brand">
             <Wordmark />
+            <LanguagePicker />
           </div>
           <Onboarding
             key={wizard.type}
@@ -716,31 +756,35 @@ export default function App() {
             busy={busy}
           />
           <aside className="onboarding-aside">
-            <span className="eyebrow">TU PERFIL. TUS REGLAS.</span>
+            <span className="eyebrow">{t('TU PERFIL. TUS REGLAS.')}</span>
             <h2>
-              QUE TE CONOZCAN
+              {t('QUE TE CONOZCAN')}
               <br />
-              POR LO QUE
+              {t('POR LO QUE')}
               <br />
-              <mark>PIENSAS.</mark>
+              <mark>{t('PIENSAS.')}</mark>
             </h2>
-            <p>No solo por una foto. Comparte tus referentes, tus planes y lo que te hace tú.</p>
+            <p>
+              {t('No solo por una foto. Comparte tus referentes, tus planes y lo que te hace tú.')}
+            </p>
             <ShieldCheck />
-            <p className="hint">Tú eliges qué publicar. Política y religión son opcionales.</p>
+            <p className="hint">
+              {t('Tú eliges qué publicar. Política y religión son opcionales.')}
+            </p>
           </aside>
         </div>
       ) : (
         <>
           <aside className="desktop-nav">
-            <button onClick={() => navigate('community')} aria-label="OnlyFachos inicio">
+            <button onClick={() => navigate('community')} aria-label={t('OnlyFachos inicio')}>
               <Wordmark />
             </button>
             <p className="sidebar-tagline">
-              SIN SWIPES.
+              {t('SIN SWIPES.')}
               <br />
-              CON ALGO QUE DECIR.
+              {t('CON ALGO QUE DECIR.')}
             </p>
-            <nav aria-label="Navegación principal">
+            <nav aria-label={t('Navegación principal')}>
               {NAV.map(([id, Icon, label]) => (
                 <button
                   key={id}
@@ -748,7 +792,7 @@ export default function App() {
                   onClick={() => navigate(id)}
                 >
                   <Icon size={20} />
-                  {label}
+                  {t(label)}
                   {id === 'chat' && conversations.some((c) => c.unread) && (
                     <small>{conversations.reduce((n, c) => n + c.unread, 0)}</small>
                   )}
@@ -756,18 +800,18 @@ export default function App() {
               ))}
             </nav>
             <div className="sidebar-manifesto">
-              <span>01 / CONEXIONES CON IDEAS</span>
+              <span>{t('01 / CONEXIONES CON IDEAS')}</span>
               <p>
-                MENOS DESLIZAR.
+                {t('MENOS DESLIZAR.')}
                 <br />
-                <mark>MÁS HABLAR.</mark>
+                <mark>{t('MÁS HABLAR.')}</mark>
               </p>
             </div>
             <button className="sidebar-account" onClick={() => navigate('profile')}>
               <Photo profile={user} className="avatar" />
               <span>
                 {user.name}
-                <small>{user.demo ? 'Perfil demo · Beta 1' : 'Mi cuenta · Beta 1'}</small>
+                <small>{user.demo ? t('Perfil demo · Beta 1') : t('Mi cuenta · Beta 1')}</small>
               </span>
             </button>
           </aside>
@@ -775,7 +819,7 @@ export default function App() {
             <header className="community-header">
               <button
                 className="brand-button"
-                aria-label="Ir a la comunidad"
+                aria-label={t('Ir a la comunidad')}
                 onClick={() => navigate('community')}
               >
                 <Wordmark />
@@ -783,8 +827,8 @@ export default function App() {
               <div className="header-search">
                 <Search size={16} />
                 <input
-                  aria-label="Buscar personas o ciudad"
-                  placeholder="Busca una persona o ciudad…"
+                  aria-label={t('Buscar personas o ciudad')}
+                  placeholder={t('Busca una persona o ciudad…')}
                   value={search}
                   maxLength={60}
                   onChange={(e) => {
@@ -796,15 +840,15 @@ export default function App() {
               <div className="header-actions">
                 <button
                   className="icon-button theme-toggle"
-                  aria-label="Cambiar tema"
-                  title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  aria-label={t('Cambiar tema')}
+                  title={theme === 'dark' ? t('Modo claro') : t('Modo oscuro')}
+                  onClick={toggleTheme}
                 >
                   {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
                 <button
                   className="icon-button activity-button"
-                  aria-label="Ver invitaciones y actividad"
+                  aria-label={t('Ver invitaciones y actividad')}
                   onClick={() => setModal('activity')}
                 >
                   <Bell size={20} />
@@ -814,9 +858,12 @@ export default function App() {
             </header>
             {user.demo && (
               <div className="demo-banner">
-                <span>DEMO · Perfiles ficticios, fotos ilustrativas y respuestas simuladas.</span>
+                <span>
+                  {t('DEMO · Perfiles ficticios, fotos ilustrativas y respuestas simuladas.')}
+                </span>
                 <button onClick={() => setModal('create')}>
-                  Crear mi cuenta <ArrowRight size={12} />
+                  {t('Crear mi cuenta ')}
+                  <ArrowRight size={12} />
                 </button>
               </div>
             )}
@@ -826,8 +873,8 @@ export default function App() {
                   <div className="mobile-search">
                     <Search size={17} />
                     <input
-                      aria-label="Buscar en la comunidad"
-                      placeholder="Busca por streamer, autor, ciudad…"
+                      aria-label={t('Buscar en la comunidad')}
+                      placeholder={t('Busca por streamer, autor, ciudad…')}
                       maxLength={60}
                       value={search}
                       onChange={(e) => {
@@ -837,7 +884,7 @@ export default function App() {
                     />
                   </div>
                   <div className="feed-toolbar">
-                    <div className="feed-tabs" role="tablist" aria-label="Filtrar comunidad">
+                    <div className="feed-tabs" role="tablist" aria-label={t('Filtrar comunidad')}>
                       {MODES.map(([id, label]) => (
                         <button
                           key={id}
@@ -851,23 +898,24 @@ export default function App() {
                             window.scrollTo({ top: 0 });
                           }}
                         >
-                          {label}
+                          {t(label)}
                           {id === 'online' && <i />}
                         </button>
                       ))}
                     </div>
                     <button
                       className="icon-button"
-                      aria-label="Filtrar perfiles"
+                      aria-label={t('Filtrar perfiles')}
                       onClick={() => setModal('filters')}
                     >
                       <SlidersHorizontal size={18} />
                     </button>
                   </div>
-                  <section className="online-section" aria-label="Personas en línea">
+                  <section className="online-section" aria-label={t('Personas en línea')}>
                     <div className="online-title">
-                      <i /> EN LÍNEA {user.demo ? 'EN LA DEMO' : 'AHORA'}{' '}
-                      <b>· {feed.online.length}</b>
+                      <i />
+                      {t(' EN LÍNEA ')}
+                      {user.demo ? t('EN LA DEMO') : t('AHORA')} <b>· {feed.online.length}</b>
                     </div>
                     <div className="online-people">
                       {feed.online.map((p) => (
@@ -888,36 +936,41 @@ export default function App() {
                         </button>
                       ))}
                       {!feed.online.length && (
-                        <p className="hint">Aparecerán aquí cuando estén activas.</p>
+                        <p className="hint">{t('Aparecerán aquí cuando estén activas.')}</p>
                       )}
                     </div>
                   </section>
                   {user.demo && (
                     <p className="mobile-demo-note">
-                      DEMO · Perfiles ficticios y respuestas simuladas.
+                      {t('DEMO · Perfiles ficticios y respuestas simuladas.')}
                     </p>
                   )}
                   <div className="feed-caption">
                     <span>
                       {mode === 'near'
-                        ? 'MISMA CIUDAD · ' + user.city
+                        ? t('MISMA CIUDAD · ') + user.city
                         : mode === 'shared'
-                          ? 'REFERENTES EN COMÚN'
-                          : 'PERFILES CON ALGO QUE DECIR'}
+                          ? t('REFERENTES EN COMÚN')
+                          : t('PERFILES CON ALGO QUE DECIR')}
                     </span>
-                    <small>{feed.total || 0} perfiles</small>
+                    <small>
+                      {feed.total || 0}
+                      {t(' perfiles')}
+                    </small>
                   </div>
                   {feedError ? (
                     <div className="empty-state">
-                      <h2>No pudimos cargar el feed.</h2>
+                      <h2>{t('No pudimos cargar el feed.')}</h2>
                       <p>{feedError}</p>
-                      <Button onClick={() => setReload((v) => v + 1)}>VOLVER A INTENTAR</Button>
+                      <Button onClick={() => setReload((v) => v + 1)}>
+                        {t('VOLVER A INTENTAR')}
+                      </Button>
                     </div>
                   ) : (
                     <>
                       <section
                         className="profile-feed"
-                        aria-label="Perfiles de la comunidad"
+                        aria-label={t('Perfiles de la comunidad')}
                         aria-busy={feedBusy}
                       >
                         {feed.profiles.map((p) => (
@@ -932,22 +985,25 @@ export default function App() {
                       </section>
                       {feedBusy && (
                         <div className="loading">
-                          <LoaderCircle className="spin" /> Cargando perfiles…
+                          <LoaderCircle className="spin" />
+                          {t(' Cargando perfiles…')}
                         </div>
                       )}
                       {!feedBusy && !feed.profiles.length && (
                         <div className="empty-state">
                           <Search size={28} />
-                          <h2>SE ACABARON LOS FACHOS POR HOY.</h2>
+                          <h2>{t('SE ACABARON LOS FACHOS POR HOY.')}</h2>
                           <p>
-                            Prueba otra ciudad, amplía tus filtros o sigue una buena conversación.
+                            {t(
+                              'Prueba otra ciudad, amplía tus filtros o sigue una buena conversación.',
+                            )}
                           </p>
                           <button className="text-link" onClick={() => setModal('filters')}>
-                            Ajustar mis filtros
+                            {t('Ajustar mis filtros')}
                           </button>
                           {conversations.length > 0 && (
                             <button className="text-link" onClick={() => navigate('chat')}>
-                              Volver a mis chats
+                              {t('Volver a mis chats')}
                             </button>
                           )}
                           <Button
@@ -957,31 +1013,32 @@ export default function App() {
                               setFilters({ ...DEFAULT });
                             }}
                           >
-                            VER TODA LA COMUNIDAD
+                            {t('VER TODA LA COMUNIDAD')}
                           </Button>
                         </div>
                       )}
                       <div ref={sentinel} />
                       {pageError && (
                         <p className="form-error" role="alert">
-                          {pageError}. Puedes reintentar sin perder los perfiles que ya cargaron.
+                          {pageError}
+                          {t('. Puedes reintentar sin perder los perfiles que ya cargaron.')}
                         </p>
                       )}
                       {feed.hasMore && (
                         <button className="load-more" disabled={feedBusy} onClick={more}>
-                          Cargar más perfiles
+                          {t('Cargar más perfiles')}
                         </button>
                       )}
                       {!feedBusy && !feed.hasMore && feed.profiles.length > 0 && (
                         <div className="feed-end">
                           <span>✳</span>
-                          <strong>ESTÁS AL DÍA.</strong>
-                          <p>Una buena conversación puede empezar más arriba.</p>
+                          <strong>{t('ESTÁS AL DÍA.')}</strong>
+                          <p>{t('Una buena conversación puede empezar más arriba.')}</p>
                           <button
                             className="text-link"
                             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                           >
-                            Volver al inicio ↑
+                            {t('Volver al inicio ↑')}
                           </button>
                         </div>
                       )}
@@ -989,11 +1046,11 @@ export default function App() {
                   )}
                 </div>
                 <aside className="feed-aside">
-                  <span className="label-strip">ASÍ FUNCIONA</span>
+                  <span className="label-strip">{t('ASÍ FUNCIONA')}</span>
                   <h1>
-                    PRIMERO EL HOLA.
+                    {t('PRIMERO EL HOLA.')}
                     <br />
-                    <mark>DESPUÉS LA CITA.</mark>
+                    <mark>{t('DESPUÉS LA CITA.')}</mark>
                   </h1>
                   <ol>
                     {[
@@ -1010,10 +1067,10 @@ export default function App() {
                         'Solo es una cita cuando la otra persona acepta tu invitación.',
                       ],
                     ].map(([title, text], i) => (
-                      <li key={title}>
+                      <li key={t(title)}>
                         <b>0{i + 1}</b>
                         <div>
-                          <strong>{title}</strong>
+                          <strong>{t(title)}</strong>
                           <p>{text}</p>
                         </div>
                       </li>
@@ -1022,15 +1079,18 @@ export default function App() {
                   <div className="aside-safety">
                     <ShieldCheck size={20} />
                     <p>
-                      Tu espacio, tus límites.
+                      {t('Tu espacio, tus límites.')}
                       <br />
-                      Puedes bloquear y denunciar.
+                      {t('Puedes bloquear y denunciar.')}
                     </p>
                   </div>
                   <div className="community-footnotes">
-                    <button onClick={() => setModal('privacy')}>Privacidad</button>
-                    <button onClick={() => setModal('terms')}>Términos</button>
-                    <small>ONLYFACHOS © {new Date().getFullYear()}</small>
+                    <button onClick={() => setModal('privacy')}>{t('Privacidad')}</button>
+                    <button onClick={() => setModal('terms')}>{t('Términos')}</button>
+                    <small>
+                      {t('ONLYFACHOS © ')}
+                      {new Date().getFullYear()}
+                    </small>
                   </div>
                 </aside>
               </div>
@@ -1096,7 +1156,7 @@ export default function App() {
                 ))}
             </main>
           </div>
-          <nav className="bottom-nav" aria-label="Navegación móvil">
+          <nav className="bottom-nav" aria-label={t('Navegación móvil')}>
             {NAV.map(([id, Icon, label]) => (
               <button
                 key={id}
@@ -1114,7 +1174,7 @@ export default function App() {
                     <small>{conversations.reduce((n, c) => n + c.unread, 0)}</small>
                   )}
                 </span>
-                {label}
+                {t(label)}
               </button>
             ))}
           </nav>
@@ -1137,7 +1197,7 @@ export default function App() {
         />
       )}
       {modal === 'filters' && (
-        <Modal title="TU COMUNIDAD, A TU MANERA" onClose={() => setModal(null)}>
+        <Modal title={t('TU COMUNIDAD, A TU MANERA')} onClose={() => setModal(null)}>
           <BetaFilters
             filters={filters}
             onApply={(v) => {
@@ -1149,14 +1209,14 @@ export default function App() {
       )}
       {(modal === 'privacy' || modal === 'terms') && (
         <Modal
-          title={modal === 'privacy' ? 'TU PRIVACIDAD' : 'NORMAS DE COMUNIDAD'}
+          title={modal === 'privacy' ? t('TU PRIVACIDAD') : t('NORMAS DE COMUNIDAD')}
           onClose={() => setModal(null)}
         >
           <Legal type={modal} />
         </Modal>
       )}
       {modal?.type === 'safety' && (
-        <Modal title="TÚ PONES LOS LÍMITES" onClose={() => setModal(null)}>
+        <Modal title={t('TÚ PONES LOS LÍMITES')} onClose={() => setModal(null)}>
           <Safety
             profile={modal.profile}
             notify={notify}
@@ -1170,10 +1230,11 @@ export default function App() {
         </Modal>
       )}
       {modal === 'create' && (
-        <Modal title="TU PRÓXIMA CONVERSACIÓN" onClose={() => setModal(null)}>
+        <Modal title={t('TU PRÓXIMA CONVERSACIÓN')} onClose={() => setModal(null)}>
           <p>
-            Estás explorando la demo. Para conectar con personas reales, cierra esta sesión y crea
-            tu propia cuenta.
+            {t(
+              'Estás explorando la demo. Para conectar con personas reales, cierra esta sesión y crea tu propia cuenta.',
+            )}
           </p>
           <Button
             onClick={async () => {
@@ -1181,12 +1242,12 @@ export default function App() {
               setModal(null);
             }}
           >
-            CREAR MI CUENTA
+            {t('CREAR MI CUENTA')}
           </Button>
         </Modal>
       )}
       {modal === 'activity' && (
-        <Modal title="LO QUE ESTÁ PASANDO" onClose={() => setModal(null)}>
+        <Modal title={t('LO QUE ESTÁ PASANDO')} onClose={() => setModal(null)}>
           <div className="activity-list">
             {conversations
               .filter((c) => c.invitations.length || c.proposals?.length)
@@ -1204,10 +1265,10 @@ export default function App() {
                     {c.profile.name}
                     <small>
                       {(c.proposals?.[0] || c.invitations[0]).status === 'accepted'
-                        ? '¡Tienen una cita!'
+                        ? t('¡Tienen una cita!')
                         : (c.proposals?.[0] || c.invitations[0]).status === 'pending'
-                          ? 'Invitación pendiente'
-                          : 'Pueden seguir conversando'}
+                          ? t('Invitación pendiente')
+                          : t('Pueden seguir conversando')}
                     </small>
                   </span>
                   <ArrowRight size={18} />
@@ -1216,18 +1277,19 @@ export default function App() {
             {!conversations.some((c) => c.invitations.length || c.proposals?.length) && (
               <div className="empty-state">
                 <Coffee size={30} />
-                <h3>TODAVÍA NO HAY INVITACIONES.</h3>
-                <p>Cuando una conversación se convierta en un plan, lo verás aquí.</p>
+                <h3>{t('TODAVÍA NO HAY INVITACIONES.')}</h3>
+                <p>{t('Cuando una conversación se convierta en un plan, lo verás aquí.')}</p>
               </div>
             )}
           </div>
         </Modal>
       )}
       {modal === 'delete' && (
-        <Modal title="ELIMINAR MI CUENTA" onClose={() => setModal(null)}>
+        <Modal title={t('ELIMINAR MI CUENTA')} onClose={() => setModal(null)}>
           <p>
-            Se eliminarán tu perfil, fotos, conversaciones e invitaciones de la base activa. Esta
-            acción no se puede deshacer.
+            {t(
+              'Se eliminarán tu perfil, fotos, conversaciones e invitaciones de la base activa. Esta acción no se puede deshacer.',
+            )}
           </p>
           <Button
             className="danger"
@@ -1248,7 +1310,7 @@ export default function App() {
               }
             }}
           >
-            SÍ, ELIMINAR MI CUENTA
+            {t('SÍ, ELIMINAR MI CUENTA')}
           </Button>
         </Modal>
       )}
@@ -1259,7 +1321,7 @@ export default function App() {
         >
           {toast.error ? <X size={18} /> : <Check size={18} />}
           <span>{toast.message}</span>
-          <button aria-label="Cerrar aviso" onClick={() => setToast(null)}>
+          <button aria-label={t('Cerrar aviso')} onClick={() => setToast(null)}>
             <X size={15} />
           </button>
         </div>

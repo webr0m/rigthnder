@@ -190,6 +190,8 @@ export function mountGoogleAuth(
       z.object({
         name: z.string().trim().min(2).max(40),
         birthdate: validBirthdate,
+        appearance: z.enum(['light', 'dark', 'auto']).default('auto'),
+        language: z.enum(['es', 'en', 'de']).default('es'),
         gender: z.enum(['mujer', 'hombre', 'otro']),
         city: z.string().trim().min(2).max(60),
         terms: z.literal(true),
@@ -238,6 +240,10 @@ export function mountGoogleAuth(
         id,
       );
     db.prepare('DELETE FROM oauth_pending WHERE ticket_hash=?').run(hash(ticket));
+    db.prepare('UPDATE users SET settings_json=? WHERE id=?').run(
+      JSON.stringify({ appearance: p.appearance, language: p.language }),
+      id,
+    );
     res.clearCookie('rigthnder_google_pending', cookieOptions);
     res.status(201).json(session(res, db.prepare('SELECT * FROM users WHERE id=?').get(id)));
   });
