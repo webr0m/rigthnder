@@ -12,6 +12,7 @@ import { mountBeta } from './beta.mjs';
 import { mountGoogleAuth } from './google.mjs';
 import { makeCommunitySchema, mountCommunity } from './community.mjs';
 import { birthdateError } from './birthdate.mjs';
+import { mountRecovery } from './recovery.mjs';
 
 const scryptAsync = promisify(scrypt);
 const hash = (text) => createHash('sha256').update(text).digest('hex');
@@ -246,7 +247,7 @@ export function createApp(db, options = {}) {
   }
 
   app.get('/api/health', (_req, res) =>
-    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.3', demoEnabled }),
+    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.4', demoEnabled }),
   );
   const googleEnabled = mountGoogleAuth(app, db, {
     production,
@@ -258,8 +259,19 @@ export function createApp(db, options = {}) {
     fetch: options.fetch,
   });
   app.get('/api/options', (_req, res) =>
-    res.json({ values: VALUES, interests: INTERESTS, demoEnabled, googleEnabled }),
+    res.json({
+      values: VALUES,
+      interests: INTERESTS,
+      demoEnabled,
+      googleEnabled,
+      passwordRecoveryEnabled,
+    }),
   );
+  const passwordRecoveryEnabled = mountRecovery(app, db, {
+    production,
+    parse,
+    recoveryMailer: options.recoveryMailer,
+  });
   app.post('/api/auth/demo', (_req, res) => {
     if (!demoEnabled) return res.status(403).json({ error: 'La demostración está desactivada.' });
     const id = randomUUID(),
@@ -401,7 +413,11 @@ export function createApp(db, options = {}) {
     const [salt, stored] = (user?.password || 'invalid:00'.repeat(1)).split(':');
     const calculated = await scryptAsync(data.password, salt, 64);
     const expected = stored?.length === 128 ? Buffer.from(stored, 'hex') : Buffer.alloc(64);
-    if (!user || !timingSafeEqual(expected, calculated))
+    if (
+      !user ||
+      !timingSafeEqual(expected, calculated) ||
+      getUser(user.id)?.password !== user.password
+    )
       return res.status(401).json({ error: 'Correo o contraseña incorrectos.' });
     res.json(session(res, user));
   });

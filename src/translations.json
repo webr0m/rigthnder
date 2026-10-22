@@ -2367,10 +2367,6 @@
     "en": "Google sign-in is not enabled yet. You can continue with your email.",
     "de": "Die Google-Anmeldung ist noch nicht aktiviert. Du kannst mit deiner E-Mail-Adresse fortfahren."
   },
-  "la recuperación automática por correo aún no está habilitada en la beta. conserva tu contraseña para volver a entrar.": {
-    "en": "Automatic password recovery by email is not available in the beta yet. Keep your password to log in again.",
-    "de": "Die automatische Passwortwiederherstellung per E-Mail ist in der Beta noch nicht verfügbar. Bewahre dein Passwort auf, um dich erneut anzumelden."
-  },
   "plan copiado. tú eliges con quién compartirlo.": {
     "en": "Plan copied. You choose who to share it with.",
     "de": "Plan kopiert. Du entscheidest, mit wem du ihn teilst."
@@ -2534,5 +2530,93 @@
   "elige una fecha y hora futuras.": {
     "en": "Choose a future date and time.",
     "de": "Wähle ein zukünftiges Datum und eine zukünftige Uhrzeit."
+  },
+  "tu cuenta, de vuelta": {
+    "en": "Your account, back in your hands",
+    "de": "Dein Konto wieder in deinen Händen"
+  },
+  "contraseña actualizada": {
+    "en": "Password updated",
+    "de": "Passwort aktualisiert"
+  },
+  "revisa tu correo": {
+    "en": "Check your email",
+    "de": "Prüfe dein E-Mail-Postfach"
+  },
+  "una nueva contraseña": {
+    "en": "A new password",
+    "de": "Ein neues Passwort"
+  },
+  "recupera tu cuenta": {
+    "en": "Recover your account",
+    "de": "Konto wiederherstellen"
+  },
+  "ya puedes iniciar sesión con tu nueva contraseña. por seguridad, cerramos las sesiones anteriores.": {
+    "en": "You can now sign in with your new password. For your security, previous sessions have been signed out.",
+    "de": "Du kannst dich jetzt mit deinem neuen Passwort anmelden. Aus Sicherheitsgründen wurden alle bisherigen Sitzungen beendet."
+  },
+  "si tienes una cuenta con contraseña, recibirás un enlace para recuperarla. revisa también el correo no deseado.": {
+    "en": "If you have an account with a password, you will receive a recovery link. Check your spam folder too.",
+    "de": "Wenn du ein Konto mit Passwort hast, erhältst du einen Link zur Wiederherstellung. Prüfe auch deinen Spam-Ordner."
+  },
+  "el enlace vence en 30 minutos. si usas google, entra con el botón de google.": {
+    "en": "The link expires in 30 minutes. If you use Google, sign in with the Google button.",
+    "de": "Der Link läuft in 30 Minuten ab. Wenn du Google nutzt, melde dich über die Google-Schaltfläche an."
+  },
+  "usa al menos 10 caracteres. el enlace solo se puede utilizar una vez.": {
+    "en": "Use at least 10 characters. This link can only be used once.",
+    "de": "Verwende mindestens 10 Zeichen. Der Link kann nur einmal verwendet werden."
+  },
+  "escribe el correo con el que te registraste. te enviaremos un enlace para elegir una contraseña nueva.": {
+    "en": "Enter the email you registered with. We will send you a link to choose a new password.",
+    "de": "Gib die E-Mail-Adresse ein, mit der du dich registriert hast. Wir senden dir einen Link, um ein neues Passwort festzulegen."
+  },
+  "el enlace no es válido o ya venció. solicita uno nuevo.": {
+    "en": "The link is invalid or has expired. Request a new one.",
+    "de": "Der Link ist ungültig oder abgelaufen. Fordere einen neuen an."
+  },
+  "nueva contraseña": {
+    "en": "New password",
+    "de": "Neues Passwort"
+  },
+  "repite la nueva contraseña": {
+    "en": "Confirm your new password",
+    "de": "Neues Passwort bestätigen"
+  },
+  "guardar contraseña": {
+    "en": "Save password",
+    "de": "Passwort speichern"
+  },
+  "enviar enlace": {
+    "en": "Send link",
+    "de": "Link senden"
+  },
+  "solicitar un enlace nuevo": {
+    "en": "Request a new link",
+    "de": "Neuen Link anfordern"
+  },
+  "volver a iniciar sesión": {
+    "en": "Back to sign in",
+    "de": "Zurück zur Anmeldung"
+  },
+  "las contraseñas no coinciden.": {
+    "en": "The passwords do not match.",
+    "de": "Die Passwörter stimmen nicht überein."
+  },
+  "escribe un correo válido.": {
+    "en": "Enter a valid email address.",
+    "de": "Gib eine gültige E-Mail-Adresse ein."
+  },
+  "la contraseña debe tener al menos 10 caracteres.": {
+    "en": "Your password must have at least 10 characters.",
+    "de": "Das Passwort muss mindestens 10 Zeichen lang sein."
+  },
+  "la contraseña no puede superar los 128 caracteres.": {
+    "en": "Your password cannot exceed 128 characters.",
+    "de": "Das Passwort darf höchstens 128 Zeichen lang sein."
+  },
+  "la recuperación por correo no está disponible ahora. inténtalo más tarde.": {
+    "en": "Email recovery is currently unavailable. Try again later.",
+    "de": "Die Wiederherstellung per E-Mail ist momentan nicht verfügbar. Versuche es später erneut."
   }
 }

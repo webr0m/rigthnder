@@ -143,6 +143,14 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
     CREATE TABLE IF NOT EXISTS sessions (
       token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, expires_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS password_resets (
+      token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      credential_hash TEXT NOT NULL, expires_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS password_resets_user ON password_resets(user_id);
+    CREATE TABLE IF NOT EXISTS password_reset_requests (
+      email_hash TEXT PRIMARY KEY, window_start INTEGER NOT NULL, last_sent_at INTEGER NOT NULL, count INTEGER NOT NULL
+    );
     CREATE TABLE IF NOT EXISTS swipes (
       user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       target_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

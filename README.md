@@ -30,6 +30,8 @@ Abre http://localhost:3000. Para desarrollar: `pnpm dev`, interfaz en http://loc
 6. **Quedar:** quien propone ya expresa su consentimiento. Solo la otra persona puede aceptar o rechazar. Se confirma la cita cuando acepta; ambos pueden coordinar día, hora y lugar en el chat. Rechazar conserva la conversación. Usuarios externos no pueden ver ni responder invitaciones.
 7. **Controlar:** bloquear y denunciar desde cualquier perfil/chat; editar el perfil, descargar datos o eliminar la cuenta desde «Perfil». El bloqueo retira la conversación y sus registros asociados.
 
+La recuperación por correo está en «Inicia sesión → Olvidé mi contraseña». El enlace vence en 30 minutos y cierra las sesiones anteriores al cambiar la contraseña. [Configurar el envío](docs/RECUPERACION.md).
+
 ## Demo y límites
 
 La demo se inicia con «Explorar la demostración». Sus perfiles, información política y religiosa, fotos ilustrativas y respuestas son ficticios; no atribuyen opiniones a las personas fotografiadas. Cada visitante tiene una sesión separada y las cuentas reales nunca ven la demo. Incluye una conversación ficticia de tres días y botones explícitos para simular aceptación/rechazo. Los contadores provienen de esos registros, no son cifras comerciales inventadas.
@@ -38,12 +40,12 @@ Los modos claro y oscuro se cambian con el sol/luna; se guarda únicamente la pr
 
 Apple, GIFs y PRO no están habilitados; no hay cobros ni suscripciones. Google requiere credenciales OAuth. AdMob conserva su integración nativa de prueba, con consentimiento, sin enviar perfiles ni opiniones a anunciantes. No hay anuncios web. Android/iOS requieren compilación, firma y pruebas en dispositivos; no se ha generado una versión de tienda.
 
-Este MVP todavía requiere moderación operativa, verificación/recuperación de correo, límites de abuso a escala, contacto y políticas definitivas del operador, respaldos y pruebas de dispositivos para un lanzamiento abierto. La edad es declarada y los mensajes no tienen cifrado de extremo a extremo. [Operación](docs/OPERACION.md).
+Este MVP todavía requiere moderación operativa, verificación del correo, límites de abuso a escala, contacto y políticas definitivas del operador, respaldos y pruebas de dispositivos para un lanzamiento abierto. La edad es declarada y los mensajes no tienen cifrado de extremo a extremo. [Operación](docs/OPERACION.md).
 
 ## Configuración y colaboración
 
 - Copia `.env.example` a `.env`. Secretos solo en el servidor; las variables `VITE_*` son públicas.
-- [Google](docs/GOOGLE.md), [móvil y AdMob](docs/MOVIL-Y-ADMOB.md), [Namecheap y Cloudflare](docs/DESPLIEGUE.md).
+- [Recuperación por correo](docs/RECUPERACION.md), [Google](docs/GOOGLE.md), [móvil y AdMob](docs/MOVIL-Y-ADMOB.md), [Namecheap y Cloudflare](docs/DESPLIEGUE.md).
 - [Diseñar con un amigo](docs/DISENO.md), [contribuir](CONTRIBUTING.md), [créditos](docs/CREDITOS.md).
 - GitHub principal: https://github.com/webr0m/rigthnder. GitLab: https://gitlab.com/ridrogo/rigthnder. Sincronizar con pushes normales; no hay espejo automático.
 
@@ -55,6 +57,6 @@ pnpm test
 pnpm build
 ```
 
-17 pruebas de servidor cubren cuentas, edad/consentimiento, OAuth simulado, aislamiento de demo, compatibilidad anterior, chat sin likes, participantes autorizados, estados de invitación, rechazos, bloqueo, fotos, audio inválido, stickers, reacciones, feed paginado y rachas. La grabación requiere un dispositivo con micrófono y permiso; no se comprobó con hardware Android/iOS.
+39 pruebas cubren cuentas, edad/consentimiento, OAuth simulado, recuperación por correo (caducidad, uso único, límites y revocación de sesiones), aislamiento de demo, compatibilidad anterior, chat sin likes, participantes autorizados, estados de invitación, rechazos, bloqueo, fotos, audio inválido, stickers, reacciones, feed paginado y rachas. La grabación requiere un dispositivo con micrófono y permiso; no se comprobó con hardware Android/iOS.
 
 La migración SQLite es aditiva y conserva usuarios y mensajes. La tabla histórica `matches` almacena las conversaciones; `date_invitations` representa las citas. Los endpoints `/api/swipes` y `/api/matches` permanecen como compatibilidad técnica y no se usan en la interfaz nueva. Antes de desplegar, crea un respaldo consistente de SQLite y conserva `.env` y el directorio de datos fuera del paquete.

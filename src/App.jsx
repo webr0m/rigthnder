@@ -27,6 +27,7 @@ import Conversations from './Conversations';
 import { BetaAccount, BetaSettings, BetaService, BetaFilters, ProfileDetail } from './BetaPages';
 import LanguagePicker, { useLanguage } from './LanguagePicker';
 import { getLanguage, setLanguage, t, translateCommon } from './locale.mjs';
+import PasswordRecovery from './PasswordRecovery';
 export function Wordmark() {
   return (
     <span className="wordmark">
@@ -200,8 +201,8 @@ export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
     </article>
   );
 }
-function Access({ options, notify, onLogin, onRegister, onLegal }) {
-  const [login, setLogin] = useState(false),
+function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, initialLogin }) {
+  const [login, setLogin] = useState(Boolean(initialLogin)),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
   async function submit(e) {
@@ -310,15 +311,7 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
             />
           </label>
           {login && (
-            <button
-              type="button"
-              className="text-link"
-              onClick={() =>
-                notify(
-                  'La recuperación automática por correo aún no está habilitada en la beta. Conserva tu contraseña para volver a entrar.',
-                )
-              }
-            >
+            <button type="button" className="text-link" onClick={onRecover}>
               {t('Olvidé mi contraseña')}
             </button>
           )}
@@ -384,6 +377,31 @@ function Access({ options, notify, onLogin, onRegister, onLegal }) {
   );
 }
 export default function App() {
+  const [recovery, setRecovery] = useState(() =>
+    location.pathname === '/recuperar-contrasena'
+      ? { token: new URLSearchParams(location.hash.slice(1)).get('token') ?? undefined }
+      : null,
+  );
+  const [loginRequested, setLoginRequested] = useState(false);
+  useEffect(() => {
+    const syncRecovery = () => {
+      if (location.pathname === '/recuperar-contrasena') {
+        const fragment = new URLSearchParams(location.hash.slice(1));
+        setRecovery({ token: fragment.get('token') ?? undefined });
+        const lang = fragment.get('lang');
+        if (['es', 'en', 'de'].includes(lang)) setLanguage(lang);
+      } else {
+        setRecovery(null);
+      }
+    };
+    syncRecovery();
+    window.addEventListener('hashchange', syncRecovery);
+    window.addEventListener('popstate', syncRecovery);
+    return () => {
+      window.removeEventListener('hashchange', syncRecovery);
+      window.removeEventListener('popstate', syncRecovery);
+    };
+  }, []);
   const language = useLanguage();
   useEffect(() => {
     document.documentElement.lang = language;
@@ -492,7 +510,7 @@ export default function App() {
         if (q.get('google') === 'complete') {
           const pending = await api('/auth/google/pending');
           if (alive) setWizard({ type: 'google', ...pending });
-        } else {
+        } else if (location.pathname !== '/recuperar-contrasena') {
           try {
             const me = await api('/me');
             if (alive) {
@@ -699,6 +717,28 @@ export default function App() {
     }
   }
   const safety = (p) => setModal({ type: 'safety', profile: p });
+  if (ready && !initError && recovery)
+    return (
+      <div className="recovery-shell">
+        <header className="recovery-header">
+          <Wordmark />
+          <LanguagePicker />
+          <button className="icon-button" aria-label={t('Cambiar tema')} onClick={toggleTheme}>
+            {theme === 'dark' ? <Sun /> : <Moon />}
+          </button>
+        </header>
+        <PasswordRecovery
+          key={recovery.token ?? 'request'}
+          token={recovery.token}
+          onReset={() => setUser(null)}
+          onBack={() => {
+            history.replaceState({}, '', '/');
+            setRecovery(null);
+            setLoginRequested(true);
+          }}
+        />
+      </div>
+    );
   if (!ready || initError)
     return (
       <div className="boot">
@@ -738,6 +778,11 @@ export default function App() {
             onLogin={signedIn}
             onRegister={(credentials) => setWizard({ type: 'create', credentials })}
             onLegal={setModal}
+            initialLogin={loginRequested}
+            onRecover={() => {
+              history.pushState({}, '', '/recuperar-contrasena');
+              setRecovery({});
+            }}
           />
         </>
       ) : wizard ? (
