@@ -1,3 +1,12 @@
+# Corrección de carga de fotos · 22 de octubre de 2026
+
+Web `1.0.0-beta.1.2`. La carga previa fallaba con «The source image cannot be decoded» incluso usando un JPG válido: el lector generaba una URL `blob:` incompatible con la política CSP de imágenes de producción. Se usa FileReader y una URL `data:` permitida por la política existente.
+
+- JPG, PNG y WebP comprobados con el build servido por Express/Helmet: salida JPEG de hasta 720 px y avance al siguiente paso del perfil.
+- Una selección mixta conserva las fotos válidas y señala en español el archivo dañado. Se procesan una a una para reducir el uso de memoria y se puede volver a seleccionar el mismo archivo.
+- La política CSP del servidor y la base de usuarios se conservan. El helper compartido también corrige la carga de fotos del chat.
+- Las 26 pruebas del servidor pasan. Los paquetes móviles publicados de la sección siguiente conservan su versión anterior; esta corrección se publica en la web y en el código fuente compartido.
+
 # OnlyFachos Beta 1 · 20 de octubre de 2026
 
 Versión `1.0.0-beta.1.1`. [Recorrido de prueba, apps y límites](BETA-1.md).

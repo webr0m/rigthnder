@@ -237,7 +237,7 @@ export function createApp(db, options = {}) {
   }
 
   app.get('/api/health', (_req, res) =>
-    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.1', demoEnabled }),
+    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.2', demoEnabled }),
   );
   const googleEnabled = mountGoogleAuth(app, db, {
     production,

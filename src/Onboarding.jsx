@@ -6,19 +6,29 @@ export async function compressPhoto(file) {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
     throw Error('Elige una foto JPG, PNG o WebP.');
   if (file.size > 12_000_000) throw Error('La foto original debe pesar menos de 12 MB.');
-  const url = URL.createObjectURL(file);
+  if (!file.size) throw Error('La foto está vacía. Elige otra imagen.');
   try {
+    // img-src already permits data: in production. blob: previews were blocked by CSP.
+    const source = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reader.onabort = () => reject(Error('No se pudo leer la foto.'));
+      reader.readAsDataURL(file);
+    });
     const image = new Image();
-    image.src = url;
+    image.src = source;
     await image.decode();
-    const scale = Math.min(1, 720 / Math.max(image.width, image.height));
+    if (!image.naturalWidth || !image.naturalHeight) throw Error('Imagen sin dimensiones.');
+    const scale = Math.min(1, 720 / Math.max(image.naturalWidth, image.naturalHeight));
     const canvas = document.createElement('canvas');
-    canvas.width = Math.round(image.width * scale);
-    canvas.height = Math.round(image.height * scale);
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
     canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL('image/jpeg', 0.78);
-  } finally {
-    URL.revokeObjectURL(url);
+  } catch {
+    throw Error(
+      'No pudimos abrir esta foto. Puede estar dañada o tener un formato distinto. Prueba con otra JPG, PNG o WebP.',
+    );
   }
 }
 export function Chips({ label, choices, value, onChange, multiple = false }) {
@@ -154,17 +164,29 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
   const update = (key, value) => setC((v) => ({ ...v, [key]: value }));
   const field = (key, value) => setDraft((v) => ({ ...v, [key]: value }));
   async function upload(e) {
+    const input = e.target;
     setUploading(true);
     setError('');
     try {
-      const files = [...e.target.files].slice(0, 6 - c.photos.length);
-      const photos = await Promise.all(files.map(compressPhoto));
-      update('photos', [...c.photos, ...photos]);
+      const files = [...input.files].slice(0, 6 - c.photos.length);
+      const photos = [],
+        errors = [];
+      // Decode one at a time to avoid holding several full-size photos in memory on phones.
+      for (const file of files) {
+        try {
+          photos.push(await compressPhoto(file));
+        } catch (error) {
+          errors.push(`«${file.name.slice(0, 100)}»: ${error.message}`);
+        }
+      }
+      if (photos.length)
+        setC((current) => ({ ...current, photos: [...current.photos, ...photos].slice(0, 6) }));
+      if (errors.length) setError(errors.join(' '));
     } catch (e) {
       setError(e.message);
     } finally {
       setUploading(false);
-      e.target.value = '';
+      input.value = '';
     }
   }
   async function submit(e) {
