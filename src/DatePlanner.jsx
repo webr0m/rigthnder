@@ -221,7 +221,7 @@ export function ConfirmedPlan({ plan, peer, onChange, notify }) {
   }
   return (
     <section className="confirmed-plan">
-      <b>{t('☕ CITA CONFIRMADA')}</b>
+      <b>{t('MATCH · CITA CONFIRMADA')}</b>
       <p>
         {new Date(plan.day).toLocaleString(getLanguage())} · {plan.place}
       </p>

@@ -9,7 +9,7 @@ El backend implementa el flujo de código OAuth de Google. Solicita solo `openid
 
 ```text
 http://localhost:3000/api/auth/google/callback
-https://onlyfachos.webrom.lat/api/auth/google/callback
+https://onlyfachos.webrom.cc/api/auth/google/callback
 ```
 
 5. En `.env` del servidor, configura:
@@ -17,8 +17,8 @@ https://onlyfachos.webrom.lat/api/auth/google/callback
 ```dotenv
 GOOGLE_CLIENT_ID=tu-cliente.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=tu-secreto
-GOOGLE_REDIRECT_URI=https://onlyfachos.webrom.lat/api/auth/google/callback
-PUBLIC_URL=https://onlyfachos.webrom.lat
+GOOGLE_REDIRECT_URI=https://onlyfachos.webrom.cc/api/auth/google/callback
+PUBLIC_URL=https://onlyfachos.webrom.cc
 ```
 
 En local usa las dos URLs `http://localhost:3000` equivalentes. Reinicia Node. El botón funciona cuando `/api/options` devuelve `googleEnabled: true`.

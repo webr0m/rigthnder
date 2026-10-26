@@ -42,7 +42,7 @@ const readData = (blob) =>
     reader.readAsDataURL(blob);
   });
 
-function DateDialog({ mode, invitationId, detail, user, onClose, run }) {
+function DateDialog({ mode, invitationId, proposalId, detail, user, onClose, run }) {
   const [plan, setPlan] = useState('Un café'),
     [day, setDay] = useState(
       detail.invitations.find(
@@ -56,9 +56,11 @@ function DateDialog({ mode, invitationId, detail, user, onClose, run }) {
     ),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
-  const accepted = detail.invitations.find(
-    (d) => d.status === 'accepted' && (!invitationId || d.id === invitationId),
-  );
+  const accepted = proposalId
+    ? detail.proposals?.find((p) => p.status === 'accepted' && p.id === proposalId)
+    : detail.invitations.find(
+        (d) => d.status === 'accepted' && (!invitationId || d.id === invitationId),
+      );
   async function submit(e) {
     e.preventDefault();
     setBusy(true);
@@ -107,7 +109,7 @@ function DateDialog({ mode, invitationId, detail, user, onClose, run }) {
           </strong>
           <div className="date-plan">
             <small>{t('EL PLAN')}</small>
-            <b>{t(accepted?.plan)}</b>
+            <b>{t(accepted?.plan || 'Un plan juntos')}</b>
             <p>
               {accepted?.day
                 ? new Date(accepted.day).toLocaleString(getLanguage())
@@ -369,6 +371,18 @@ export default function Conversations({
       setSending(false);
     }
   }
+  async function acceptProposal(proposal, demo = false) {
+    if (sending) return;
+    setSending(true);
+    try {
+      await run('/proposals/' + proposal.id + '/answer', 'POST', { accept: true, demo });
+      setDialog({ mode: 'celebrate', proposalId: proposal.id });
+    } catch (e) {
+      notify(e.message, true);
+    } finally {
+      setSending(false);
+    }
+  }
   async function upload(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -561,22 +575,6 @@ export default function Conversations({
               </div>
               <button
                 className="icon-button"
-                aria-label={t('Dar luz verde')}
-                onClick={() => setDialog('signal')}
-                disabled={!detail}
-              >
-                <Zap size={19} />
-              </button>
-              <button
-                className="icon-button"
-                aria-label={t('Invitar a salir')}
-                onClick={() => setDialog('plan')}
-                disabled={!detail}
-              >
-                <Coffee size={20} />
-              </button>
-              <button
-                className="icon-button"
                 aria-label={t('Opciones de seguridad')}
                 onClick={() => safety(peer)}
                 disabled={!peer}
@@ -584,6 +582,27 @@ export default function Conversations({
                 <MoreHorizontal size={22} />
               </button>
             </header>
+            <section className="chat-date-actions" aria-label={t('Citas recíprocas')}>
+              <p>
+                {t(
+                  'Tú también puedes dar el primer paso. La cita se confirma cuando ambos aceptan.',
+                )}
+              </p>
+              <div>
+                <Button disabled={!detail} onClick={() => setDialog('plan')}>
+                  <Coffee size={17} />
+                  {t('Invitar a salir')}
+                </Button>
+                <Button
+                  className="secondary"
+                  disabled={!detail}
+                  onClick={() => setDialog('signal')}
+                >
+                  <Zap size={17} />
+                  {t('Dar luz verde')}
+                </Button>
+              </div>
+            </section>
             {detail?.proposals?.find((p) => p.status === 'accepted') && (
               <ConfirmedPlan
                 plan={detail.proposals.find((p) => p.status === 'accepted')}
@@ -761,13 +780,7 @@ export default function Conversations({
                             <div className="beta-actions">
                               {p.senderId !== user.id ? (
                                 <>
-                                  <Button
-                                    onClick={() =>
-                                      run('/proposals/' + p.id + '/answer', 'POST', {
-                                        accept: true,
-                                      }).catch((e) => notify(e.message, true))
-                                    }
-                                  >
+                                  <Button disabled={sending} onClick={() => acceptProposal(p)}>
                                     {t('ACEPTAR')}
                                   </Button>
                                   <button
@@ -802,17 +815,21 @@ export default function Conversations({
                             {p.senderId === user.id && user.demo && (
                               <button
                                 className="text-link"
-                                onClick={() =>
-                                  run('/proposals/' + p.id + '/answer', 'POST', {
-                                    accept: true,
-                                    demo: true,
-                                  }).catch((e) => notify(e.message, true))
-                                }
+                                disabled={sending}
+                                onClick={() => acceptProposal(p, true)}
                               >
                                 {t('Simular aceptación · SOLO DEMO')}
                               </button>
                             )}
                           </>
+                        )}
+                        {p.status === 'accepted' && (
+                          <button
+                            className="text-link"
+                            onClick={() => setDialog({ mode: 'celebrate', proposalId: p.id })}
+                          >
+                            {t('Ver nuestro match')} <HeartIcon />
+                          </button>
                         )}
                       </div>
                     ))}
@@ -985,9 +1002,14 @@ export default function Conversations({
       )}
       {dialog && dialog !== 'plan' && detail && (
         <DateDialog
-          key={typeof dialog === 'string' ? dialog : dialog.mode + dialog.invitationId}
+          key={
+            typeof dialog === 'string'
+              ? dialog
+              : dialog.mode + (dialog.invitationId || dialog.proposalId)
+          }
           mode={typeof dialog === 'string' ? dialog : dialog.mode}
           invitationId={dialog.invitationId}
+          proposalId={dialog.proposalId}
           detail={detail}
           user={user}
           onClose={() => setDialog(null)}

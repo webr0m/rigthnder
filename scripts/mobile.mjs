@@ -10,7 +10,7 @@ function run(args) {
     stdio: 'inherit',
     env: {
       ...process.env,
-      VITE_API_URL: process.env.VITE_API_URL || 'https://onlyfachos.webrom.lat',
+      VITE_API_URL: process.env.VITE_API_URL || 'https://onlyfachos.webrom.cc',
     },
   });
   if (result.status !== 0) process.exit(result.status || 1);

@@ -39,7 +39,7 @@ async function account(name) {
         email: name.toLowerCase() + '@example.com',
         password: 'Rigthnder-test-2026',
         birthdate: '1998-04-15',
-        gender: 'otro',
+        gender: 'hombre',
         city: 'Santiago',
         terms: true,
         valuesConsent: true,
@@ -55,7 +55,7 @@ test('age gate uses exact birthday and rejects invalid dates, minors and missing
     email: 'edad@example.com',
     password: 'Rigthnder-test-2026',
     birthdate: '2026-02-31',
-    gender: 'otro',
+    gender: 'hombre',
     city: 'Santiago',
     terms: true,
     valuesConsent: true,
@@ -244,7 +244,7 @@ test('cross-origin mutations are rejected, stored strings remain data, invalid p
     ).status,
     403,
   );
-  const body = { ...a.user, bio: '<script>alert(1)</script>' };
+  const body = { ...a.user, gender: 'hombre', bio: '<script>alert(1)</script>' };
   delete body.photo;
   assert.equal((await request('/me', { token: a.token, method: 'PUT', body })).data.bio, body.bio);
   assert.equal(

@@ -9,7 +9,7 @@ pnpm mobile:android
 pnpm exec cap open android
 ```
 
-El script construye la interfaz, crea el proyecto si falta, registra el enlace de Google y el App ID de AdMob de prueba y sincroniza plugins. Se usa `https://onlyfachos.webrom.lat` como API por defecto; puedes reemplazarla con `VITE_API_URL`.
+El script construye la interfaz, crea el proyecto si falta, registra el enlace de Google y el App ID de AdMob de prueba y sincroniza plugins. Se usa `https://onlyfachos.webrom.cc` como API por defecto; puedes reemplazarla con `VITE_API_URL`.
 
 Abre Android Studio, instala el SDK y prueba en emulador y teléfono. Genera una firma de release y un AAB para Play Console. No subas claves de firma al repositorio.
 
@@ -39,7 +39,7 @@ La integración de `src/mobile.js`:
 Para probar, configura antes de compilar:
 
 ```dotenv
-VITE_API_URL=https://onlyfachos.webrom.lat
+VITE_API_URL=https://onlyfachos.webrom.cc
 VITE_ADMOB_ENABLED=true
 VITE_ADMOB_TEST_MODE=true
 ```
@@ -54,7 +54,7 @@ Google prohíbe segmentar publicidad personalizada con afiliación política. Ma
 
 ## Para las tiendas
 
-Antes de enviar: moderación y atención de denuncias, bloqueo, políticas del operador y contacto, restricciones de menores, eliminación desde la app y vía `https://onlyfachos.webrom.lat/eliminar-cuenta`, iconos de launcher, capturas, pruebas y revisión de privacidad. El acceso por Google puede requerir un acceso equivalente en iOS según [la guía de Apple](https://developer.apple.com/app-store/review/guidelines/#login-services); evaluar Sign in with Apple antes del envío. Apple pide una experiencia diferenciada para nuevas apps de citas, y la aprobación no está garantizada.
+Antes de enviar: moderación y atención de denuncias, bloqueo, políticas del operador y contacto, restricciones de menores, eliminación desde la app y vía `https://onlyfachos.webrom.cc/eliminar-cuenta`, iconos de launcher, capturas, pruebas y revisión de privacidad. El acceso por Google puede requerir un acceso equivalente en iOS según [la guía de Apple](https://developer.apple.com/app-store/review/guidelines/#login-services); evaluar Sign in with Apple antes del envío. Apple pide una experiencia diferenciada para nuevas apps de citas, y la aprobación no está garantizada.
 
 Referencias: [AdMob plugin](https://github.com/capacitor-community/admob), [consentimiento](https://github.com/capacitor-community/admob/blob/main/docs/consent.md), [seguridad de apps sociales y de citas en Play](https://support.google.com/googleplay/android-developer/answer/14747720), [eliminación de cuenta](https://support.google.com/googleplay/android-developer/answer/13327111).
 

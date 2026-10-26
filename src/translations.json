@@ -2618,5 +2618,93 @@
   "la recuperación por correo no está disponible ahora. inténtalo más tarde.": {
     "en": "Email recovery is currently unavailable. Try again later.",
     "de": "Die Wiederherstellung per E-Mail ist momentan nicht verfügbar. Versuche es später erneut."
+  },
+  "citas recíprocas": {
+    "en": "Dates go both ways",
+    "de": "Beide können einladen"
+  },
+  "tú también puedes dar el primer paso. la cita se confirma cuando ambos aceptan.": {
+    "en": "You can make the first move too. The date is confirmed when you both agree.",
+    "de": "Auch du kannst den ersten Schritt machen. Das Date steht fest, wenn ihr beide zustimmt."
+  },
+  "un plan juntos": {
+    "en": "A plan together",
+    "de": "Ein gemeinsamer Plan"
+  },
+  "ver nuestro match": {
+    "en": "See our match",
+    "de": "Unser Match ansehen"
+  },
+  "match · cita confirmada": {
+    "en": "MATCH · DATE CONFIRMED",
+    "de": "MATCH · DATE BESTÄTIGT"
+  },
+  "elige una opción": {
+    "en": "Choose an option",
+    "de": "Option auswählen"
+  },
+  "elige hombre o mujer en sexo.": {
+    "en": "Choose Man or Woman under Sex.",
+    "de": "Wähle unter Geschlecht Mann oder Frau."
+  },
+  "seguridad infantil": {
+    "en": "Child safety",
+    "de": "Kinderschutz"
+  },
+  "eliminar cuenta": {
+    "en": "Delete account",
+    "de": "Konto löschen"
+  },
+  "responsable:": {
+    "en": "Operator:",
+    "de": "Verantwortlich:"
+  },
+  "solo para mayores de 18 años": {
+    "en": "Adults 18 and over only",
+    "de": "Nur für Erwachsene ab 18 Jahren"
+  },
+  "denunciar y bloquear": {
+    "en": "Report and block",
+    "de": "Melden und blockieren"
+  },
+  "respuesta y contacto de seguridad infantil": {
+    "en": "Response and child safety contact",
+    "de": "Maßnahmen und Kinderschutzkontakt"
+  },
+  "onlyfachos prohíbe el abuso y la explotación sexual infantil (csae), el material de abuso sexual infantil (csam), la captación de menores y cualquier conducta que ponga a menores en riesgo. las personas menores de 18 años no pueden usar la app.": {
+    "en": "OnlyFachos prohibits child sexual abuse and exploitation (CSAE), child sexual abuse material (CSAM), grooming and any conduct that puts minors at risk. People under 18 may not use the app.",
+    "de": "OnlyFachos verbietet sexuellen Missbrauch und sexuelle Ausbeutung von Kindern (CSAE), entsprechende Missbrauchsdarstellungen (CSAM), Grooming und jedes Verhalten, das Minderjährige gefährdet. Personen unter 18 Jahren dürfen die App nicht nutzen."
+  },
+  "en el perfil o el chat, abre opciones de seguridad para denunciar y bloquear. puedes elegir persona menor de edad o contenido inapropiado y añadir detalles. también puedes informar al contacto de seguridad infantil por correo. no adjuntes ni reenvíes material de abuso.": {
+    "en": "Open Safety options in a profile or chat to report and block. Choose Underage person or Inappropriate content and add details. You can also email the child safety contact. Do not attach or forward abuse material.",
+    "de": "Öffne im Profil oder Chat die Sicherheitsoptionen, um Personen zu melden und zu blockieren. Wähle Minderjährige Person oder Unangemessener Inhalt und ergänze Details. Du kannst auch dem Kinderschutzkontakt schreiben. Missbrauchsmaterial darf nicht angehängt oder weitergeleitet werden."
+  },
+  "el responsable revisa las denuncias, retira el contenido infractor y restringe las cuentas implicadas cuando corresponde. los casos de explotación o abuso infantil se comunican a las autoridades competentes según la legislación aplicable.": {
+    "en": "The operator reviews reports, removes violating content and restricts involved accounts where appropriate. Child exploitation or abuse cases are reported to the competent authorities in accordance with applicable law.",
+    "de": "Der Verantwortliche prüft Meldungen, entfernt rechtswidrige Inhalte und schränkt betroffene Konten gegebenenfalls ein. Fälle von Kindesmissbrauch oder Ausbeutung werden nach geltendem Recht den zuständigen Behörden gemeldet."
+  },
+  "puedes eliminar tu cuenta onlyfachos desde perfil → ajustes → eliminar mi cuenta. la eliminación borra tu perfil, credenciales, mensajes y registros asociados de la base activa.": {
+    "en": "Delete your OnlyFachos account under Profile → Settings → Delete my account. This removes your profile, credentials, messages and related records from the active database.",
+    "de": "Lösche dein OnlyFachos-Konto unter Profil → Einstellungen → Mein Konto löschen. Dadurch werden Profil, Zugangsdaten, Nachrichten und zugehörige Einträge aus der aktiven Datenbank gelöscht."
+  },
+  "si no puedes entrar, solicita la eliminación escribiendo desde tu correo de registro a admin@webrom.cc con el asunto eliminar cuenta onlyfachos. confirmaremos que la cuenta es tuya antes de atender la solicitud. no envíes contraseñas ni documentos por correo.": {
+    "en": "If you cannot sign in, email admin@webrom.cc from your registered address with the subject Delete OnlyFachos account. We will verify account ownership before processing the request. Do not email passwords or identity documents.",
+    "de": "Wenn du dich nicht anmelden kannst, schreibe von deiner registrierten E-Mail-Adresse an admin@webrom.cc mit dem Betreff OnlyFachos-Konto löschen. Vor der Bearbeitung prüfen wir die Kontoinhaberschaft. Sende keine Passwörter oder Ausweisdokumente per E-Mail."
+  },
+  "las copias de seguridad de recuperación están separadas de la base activa. para consultas sobre la eliminación de datos en respaldos, contacta al responsable. no utilizamos esas copias para mostrar perfiles eliminados.": {
+    "en": "Recovery backups are separate from the active database. Contact the operator with questions about deleting backup data. We do not use these copies to display deleted profiles.",
+    "de": "Wiederherstellungssicherungen sind von der aktiven Datenbank getrennt. Fragen zur Löschung von Sicherungsdaten beantwortet der Verantwortliche. Gelöschte Profile werden aus diesen Sicherungen nicht angezeigt."
+  },
+  "mi perfil → ajustes → descargar mis datos / eliminar mi cuenta. al eliminarla, borramos los registros asociados de la base activa. puedes escribir al responsable para consultas de privacidad y eliminación de datos en respaldos.": {
+    "en": "My profile → Settings → Download my data / Delete my account. Deletion removes related records from the active database. Contact the operator about privacy or deletion of backup data.",
+    "de": "Mein Profil → Einstellungen → Meine Daten herunterladen / Mein Konto löschen. Die Löschung entfernt zugehörige Einträge aus der aktiven Datenbank. Bei Fragen zum Datenschutz oder zur Löschung von Sicherungsdaten kannst du den Verantwortlichen kontaktieren."
+  },
+  "conservamos los datos de tu cuenta mientras mantengas la cuenta activa. los correos de recuperación usan un enlace de un solo uso que vence en 30 minutos. el servidor del hosting procesa el correo y gmail recibe las consultas al soporte.": {
+    "en": "We retain your account data while your account is active. Recovery emails contain a one-use link that expires in 30 minutes. The hosting server processes email and Gmail receives support inquiries.",
+    "de": "Wir speichern deine Kontodaten, solange dein Konto aktiv ist. Wiederherstellungs-E-Mails enthalten einen einmaligen Link, der nach 30 Minuten abläuft. Der Hostingserver verarbeitet E-Mails; Supportanfragen werden in Gmail empfangen."
+  },
+  "la beta recibe consultas privadas en ajustes → contactar soporte y denuncias en cada perfil. también puedes escribir a admin@webrom.cc. rodrigo olmos es el responsable de la aplicación y de revisar las denuncias.": {
+    "en": "The beta receives private inquiries under Settings → Contact support and reports in each profile. You can also email admin@webrom.cc. Rodrigo Olmos operates the application and reviews reports.",
+    "de": "Die Beta nimmt private Anfragen unter Einstellungen → Support kontaktieren und Meldungen in jedem Profil entgegen. Du kannst auch an admin@webrom.cc schreiben. Rodrigo Olmos betreibt die Anwendung und prüft Meldungen."
   }
 }

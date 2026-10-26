@@ -1,10 +1,10 @@
 # OnlyFachos
 
-**Beta 1 · web `1.0.0-beta.1.3`**. Nuevo perfil, ajustes, filtros, chats por estado y citas con día/lugar de aceptación bilateral. [Probar la beta y compilar apps](docs/BETA-1.md). [Descargar APK Android y app iOS Simulator](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1).
+**Beta 1 · web `1.0.0-beta.1.5`**. Nuevo perfil, ajustes, filtros, chats por estado y citas con día/lugar de aceptación bilateral. [Probar la beta y compilar apps](docs/BETA-1.md). [Descargar APK Android y app iOS Simulator](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1).
 
 **Sin swipes. Solo conversación.** Comunidad de citas para mayores de 18 años: feed vertical, perfiles con referentes, chat directo y citas aceptadas por ambas personas. Rediseño de Rigthnder a partir de los mockups claro/oscuro aportados por el usuario. MIT.
 
-Web: **https://onlyfachos.webrom.lat**. El dominio anterior redirige las páginas web al nuevo con HTTP 301. La API anterior sigue disponible para las apps ya instaladas. Los repositorios y el identificador móvil se conservan.
+Web: **https://onlyfachos.webrom.cc**. Las nuevas compilaciones móviles usan este dominio; el dominio .lat anterior ya no se usa como API predeterminada. Los repositorios y el identificador móvil se conservan.
 
 Interfaz en español, inglés y alemán: selector antes y durante el registro y en Ajustes. Se guardan idioma y apariencia en la cuenta. Los mensajes, biografías, nombres y etiquetas personales mantienen su texto original.
 
@@ -57,6 +57,6 @@ pnpm test
 pnpm build
 ```
 
-39 pruebas cubren cuentas, edad/consentimiento, OAuth simulado, recuperación por correo (caducidad, uso único, límites y revocación de sesiones), aislamiento de demo, compatibilidad anterior, chat sin likes, participantes autorizados, estados de invitación, rechazos, bloqueo, fotos, audio inválido, stickers, reacciones, feed paginado y rachas. La grabación requiere un dispositivo con micrófono y permiso; no se comprobó con hardware Android/iOS.
+41 pruebas cubren cuentas, edad/consentimiento, OAuth simulado, recuperación por correo (caducidad, uso único, límites y revocación de sesiones), aislamiento de demo, compatibilidad anterior, chat sin likes, participantes autorizados, estados de invitación, rechazos, bloqueo, fotos, audio inválido, stickers, reacciones, feed paginado y rachas. La grabación requiere un dispositivo con micrófono y permiso; no se comprobó con hardware Android/iOS.
 
 La migración SQLite es aditiva y conserva usuarios y mensajes. La tabla histórica `matches` almacena las conversaciones; `date_invitations` representa las citas. Los endpoints `/api/swipes` y `/api/matches` permanecen como compatibilidad técnica y no se usan en la interfaz nueva. Antes de desplegar, crea un respaldo consistente de SQLite y conserva `.env` y el directorio de datos fuera del paquete.

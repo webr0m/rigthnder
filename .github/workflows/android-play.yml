@@ -1,0 +1,35 @@
+name: Build Android for Google Play
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check && pnpm test
+      - run: pnpm mobile:android
+        env:
+          VITE_API_URL: https://onlyfachos.webrom.cc
+          VITE_ADMOB_ENABLED: 'false'
+      - run: chmod +x android/gradlew && cd android && ./gradlew bundleRelease --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OnlyFachos-Play-unsigned
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 14

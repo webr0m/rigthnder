@@ -10,16 +10,16 @@ await writeFile(resolve(output,'package.json'),JSON.stringify(runtime,null,2)+'\
 await writeFile(resolve(output,'.env'),`NODE_ENV=production
 DEMO_ENABLED=true
 DATABASE_PATH=/home/jyscqqde/rigthnder-data/rigthnder.sqlite
-PUBLIC_URL=https://onlyfachos.webrom.lat
-ALLOWED_ORIGINS=https://onlyfachos.webrom.lat,https://rigthnder.webrom.lat,https://localhost,capacitor://localhost
+PUBLIC_URL=https://onlyfachos.webrom.cc
+ALLOWED_ORIGINS=https://onlyfachos.webrom.cc,https://rigthnder.webrom.lat,https://localhost,capacitor://localhost
 TRUST_PROXY=1
 MAIL_TRANSPORT=
 MAIL_FROM=
 SENDMAIL_PATH=/usr/sbin/sendmail
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
-GOOGLE_REDIRECT_URI=https://onlyfachos.webrom.lat/api/auth/google/callback
-CANONICAL_HOST=onlyfachos.webrom.lat
+GOOGLE_REDIRECT_URI=https://onlyfachos.webrom.cc/api/auth/google/callback
+CANONICAL_HOST=onlyfachos.webrom.cc
 LEGACY_HOST=rigthnder.webrom.lat
 `);
 console.log(output);

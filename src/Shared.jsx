@@ -192,6 +192,58 @@ function Safety({ profile, onDone, notify }) {
   );
 }
 function Legal({ type }) {
+  const contact = (
+    <p>
+      <b>{t('Responsable: ')}Rodrigo Olmos · OnlyFachos</b>
+      <br />
+      <a href="mailto:admin@webrom.cc">admin@webrom.cc</a>
+    </p>
+  );
+  if (type === 'child-safety')
+    return (
+      <div className="legal-copy">
+        <h3>{t('Solo para mayores de 18 años')}</h3>
+        <p>
+          {t(
+            'OnlyFachos prohíbe el abuso y la explotación sexual infantil (CSAE), el material de abuso sexual infantil (CSAM), la captación de menores y cualquier conducta que ponga a menores en riesgo. Las personas menores de 18 años no pueden usar la app.',
+          )}
+        </p>
+        <h3>{t('Denunciar y bloquear')}</h3>
+        <p>
+          {t(
+            'En el perfil o el chat, abre Opciones de seguridad para denunciar y bloquear. Puedes elegir Persona menor de edad o Contenido inapropiado y añadir detalles. También puedes informar al contacto de seguridad infantil por correo. No adjuntes ni reenvíes material de abuso.',
+          )}
+        </p>
+        <h3>{t('Respuesta y contacto de seguridad infantil')}</h3>
+        <p>
+          {t(
+            'El responsable revisa las denuncias, retira el contenido infractor y restringe las cuentas implicadas cuando corresponde. Los casos de explotación o abuso infantil se comunican a las autoridades competentes según la legislación aplicable.',
+          )}
+        </p>
+        {contact}
+      </div>
+    );
+  if (type === 'account-deletion')
+    return (
+      <div className="legal-copy">
+        <p>
+          {t(
+            'Puedes eliminar tu cuenta OnlyFachos desde Perfil → Ajustes → Eliminar mi cuenta. La eliminación borra tu perfil, credenciales, mensajes y registros asociados de la base activa.',
+          )}
+        </p>
+        <p>
+          {t(
+            'Si no puedes entrar, solicita la eliminación escribiendo desde tu correo de registro a admin@webrom.cc con el asunto Eliminar cuenta OnlyFachos. Confirmaremos que la cuenta es tuya antes de atender la solicitud. No envíes contraseñas ni documentos por correo.',
+          )}
+        </p>
+        <p>
+          {t(
+            'Las copias de seguridad de recuperación están separadas de la base activa. Para consultas sobre la eliminación de datos en respaldos, contacta al responsable. No utilizamos esas copias para mostrar perfiles eliminados.',
+          )}
+        </p>
+        {contact}
+      </div>
+    );
   if (type === 'privacy')
     return (
       <div className="legal-copy">
@@ -215,14 +267,15 @@ function Legal({ type }) {
         <h3>{t('Tu control')}</h3>
         <p>
           {t(
-            'Mi perfil → Ajustes → Descargar mis datos / Eliminar mi cuenta. Al eliminarla, borramos los registros asociados de la base activa. El operador debe gestionar también la eliminación de copias de seguridad y publicar su contacto y plazos antes de abrir el servicio al público.',
+            'Mi perfil → Ajustes → Descargar mis datos / Eliminar mi cuenta. Al eliminarla, borramos los registros asociados de la base activa. Puedes escribir al responsable para consultas de privacidad y eliminación de datos en respaldos.',
           )}
         </p>
         <p className="legal-status">
           {t(
-            'Beta pública de prueba. El operador y el contacto de privacidad todavía deben configurarse para el lanzamiento.',
+            'Conservamos los datos de tu cuenta mientras mantengas la cuenta activa. Los correos de recuperación usan un enlace de un solo uso que vence en 30 minutos. El servidor del hosting procesa el correo y Gmail recibe las consultas al soporte.',
           )}
         </p>
+        {contact}
       </div>
     );
   return (
@@ -252,7 +305,7 @@ function Legal({ type }) {
       </p>
       <p className="legal-status">
         {t(
-          'La beta recibe consultas privadas en Ajustes → Contactar soporte y denuncias en cada perfil. El operador debe revisar ambas bandejas y completar sus políticas y datos de contacto antes de una explotación comercial.',
+          'La beta recibe consultas privadas en Ajustes → Contactar soporte y denuncias en cada perfil. También puedes escribir a admin@webrom.cc. Rodrigo Olmos es el responsable de la aplicación y de revisar las denuncias.',
         )}
       </p>
     </div>

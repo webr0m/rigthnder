@@ -57,7 +57,7 @@ test('Google OAuth: state binding, verified identity, adult onboarding, one-use 
     const body = {
       name: 'Google Test',
       birthdate: '2020-01-01',
-      gender: 'otro',
+      gender: 'hombre',
       city: 'Santiago',
       terms: true,
       valuesConsent: true,

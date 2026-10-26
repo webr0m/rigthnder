@@ -192,7 +192,7 @@ export function mountGoogleAuth(
         birthdate: validBirthdate,
         appearance: z.enum(['light', 'dark', 'auto']).default('auto'),
         language: z.enum(['es', 'en', 'de']).default('es'),
-        gender: z.enum(['mujer', 'hombre', 'otro']),
+        gender: z.enum(['mujer', 'hombre']),
         city: z.string().trim().min(2).max(60),
         terms: z.literal(true),
         valuesConsent: z.literal(true),

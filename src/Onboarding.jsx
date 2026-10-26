@@ -156,7 +156,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
   const [draft, setDraft] = useState(() => ({
     name: user?.name || identity?.name || '',
     birthdate: user?.birthdate || '',
-    gender: user?.gender || 'otro',
+    gender: ['hombre', 'mujer'].includes(user?.gender) ? user.gender : '',
     city: user?.city || '',
     occupation: user?.occupation || '',
     bio: user?.bio?.slice(0, 200) || '',
@@ -206,6 +206,10 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
   async function submit(e) {
     e.preventDefault();
     setError('');
+    if (!['hombre', 'mujer'].includes(draft.gender)) {
+      setStep(1);
+      return setError('Elige Hombre o Mujer en Sexo.');
+    }
     if (step === 1) {
       const birthError = birthdateError(draft.birthdate);
       setBirthError(birthError);
@@ -473,10 +477,16 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
           <div className="form-row">
             <label>
               {t('Sexo')}
-              <select value={draft.gender} onChange={(e) => field('gender', e.target.value)}>
+              <select
+                required
+                value={draft.gender}
+                onChange={(e) => field('gender', e.target.value)}
+              >
+                <option value="" disabled>
+                  {t('Elige una opción')}
+                </option>
                 <option value="mujer">{t('Mujer')}</option>
                 <option value="hombre">{t('Hombre')}</option>
-                <option value="otro">{t('Otro')}</option>
               </select>
             </label>
             <label>
@@ -488,7 +498,6 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
                 <option value="todos">{t('Todas las personas')}</option>
                 <option value="mujer">{t('Mujeres')}</option>
                 <option value="hombre">{t('Hombres')}</option>
-                <option value="otro">{t('Otras identidades')}</option>
               </select>
             </label>
           </div>

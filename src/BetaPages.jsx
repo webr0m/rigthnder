@@ -643,7 +643,6 @@ export function BetaFilters({ filters, onApply }) {
           <option value="todos">{t('Todas las personas')}</option>
           <option value="mujer">{t('Mujeres')}</option>
           <option value="hombre">{t('Hombres')}</option>
-          <option value="otro">{t('Otro')}</option>
         </select>
       </label>
       <label>

@@ -1,3 +1,7 @@
+# Dominio actual: onlyfachos.webrom.cc
+
+Desde el 26 de octubre de 2026, el dominio vigente es **https://onlyfachos.webrom.cc**. Usar este origen en `PUBLIC_URL`, `CANONICAL_HOST`, `GOOGLE_REDIRECT_URI`, `ALLOWED_ORIGINS` y la API móvil. La información de .lat que sigue describe el despliegue anterior. No se debe recrear ni sustituir la base SQLite. El correo público actual es `admin@webrom.cc`.
+
 # Desplegar OnlyFachos en Namecheap y Cloudflare
 
 Dominio principal: **https://onlyfachos.webrom.lat**. El anterior, `rigthnder.webrom.lat`, queda como redirección web 301. La aplicación requiere Node.js 22.13 o superior; el plan Stellar Plus observado tiene Node 24.21.0. Usar la entrada `app.cjs` para Passenger y un directorio de aplicación independiente. No subir solo el frontend: cuentas y mensajes requieren el backend.

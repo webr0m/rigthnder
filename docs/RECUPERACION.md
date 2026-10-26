@@ -5,9 +5,9 @@ En «Inicia sesión → Olvidé mi contraseña», la persona introduce su correo
 El remitente debe pertenecer a un dominio autorizado en el servidor. Configura únicamente en el `.env` privado del backend:
 
 ```dotenv
-PUBLIC_URL=https://onlyfachos.webrom.lat
+PUBLIC_URL=https://onlyfachos.webrom.cc
 MAIL_TRANSPORT=sendmail
-MAIL_FROM=admin@webrom.lat
+MAIL_FROM=admin@webrom.cc
 SENDMAIL_PATH=/sbin/sendmail
 ```
 

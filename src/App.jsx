@@ -527,6 +527,8 @@ export default function App() {
           history.replaceState({}, '', location.pathname);
         if (location.pathname === '/privacidad') setModal('privacy');
         if (location.pathname === '/terminos') setModal('terms');
+        if (location.pathname === '/seguridad-infantil') setModal('child-safety');
+        if (location.pathname === '/eliminar-cuenta') setModal('account-deletion');
       } catch (e) {
         if (alive) setInitError(e.message);
       } finally {
@@ -1252,9 +1254,16 @@ export default function App() {
           />
         </Modal>
       )}
-      {(modal === 'privacy' || modal === 'terms') && (
+      {['privacy', 'terms', 'child-safety', 'account-deletion'].includes(modal) && (
         <Modal
-          title={modal === 'privacy' ? t('TU PRIVACIDAD') : t('NORMAS DE COMUNIDAD')}
+          title={t(
+            {
+              privacy: 'TU PRIVACIDAD',
+              terms: 'NORMAS DE COMUNIDAD',
+              'child-safety': 'SEGURIDAD INFANTIL',
+              'account-deletion': 'ELIMINAR CUENTA',
+            }[modal],
+          )}
           onClose={() => setModal(null)}
         >
           <Legal type={modal} />

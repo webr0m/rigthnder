@@ -46,7 +46,7 @@ const demoCommunitySchema = makeCommunitySchema(
 );
 const profileSchema = z.object({
   name: z.string().trim().min(2).max(40),
-  gender: z.enum(['mujer', 'hombre', 'otro']),
+  gender: z.enum(['mujer', 'hombre']),
   city: z.string().trim().min(2).max(60),
   occupation: z.string().trim().max(80).default(''),
   bio: z.string().trim().max(600).default(''),
@@ -247,7 +247,7 @@ export function createApp(db, options = {}) {
   }
 
   app.get('/api/health', (_req, res) =>
-    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.4', demoEnabled }),
+    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.5', demoEnabled }),
   );
   const googleEnabled = mountGoogleAuth(app, db, {
     production,
@@ -348,7 +348,7 @@ export function createApp(db, options = {}) {
         valuesConsent: z.literal(true),
         name: z.string().trim().min(2).max(40),
         city: z.string().trim().min(2).max(60),
-        gender: z.enum(['mujer', 'hombre', 'otro']),
+        gender: z.enum(['mujer', 'hombre']),
       }),
       req.body,
     );

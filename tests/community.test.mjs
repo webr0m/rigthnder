@@ -34,7 +34,7 @@ async function account(name) {
       email: name + '@example.com',
       password: 'Community-test-2026',
       birthdate: '1997-02-12',
-      gender: 'otro',
+      gender: 'hombre',
       city: 'Santiago',
       terms: true,
       valuesConsent: true,
