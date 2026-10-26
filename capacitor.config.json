@@ -8,6 +8,10 @@
   },
   "android": {
     "allowMixedContent": false,
-    "includePlugins": ["@capacitor/app", "@capacitor/browser"]
+    "includePlugins": [
+      "@capacitor/app",
+      "@capacitor/browser",
+      "@aparajita/capacitor-secure-storage"
+    ]
   }
 }

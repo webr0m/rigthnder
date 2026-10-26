@@ -2706,5 +2706,29 @@
   "la beta recibe consultas privadas en ajustes → contactar soporte y denuncias en cada perfil. también puedes escribir a admin@webrom.cc. rodrigo olmos es el responsable de la aplicación y de revisar las denuncias.": {
     "en": "The beta receives private inquiries under Settings → Contact support and reports in each profile. You can also email admin@webrom.cc. Rodrigo Olmos operates the application and reviews reports.",
     "de": "Die Beta nimmt private Anfragen unter Einstellungen → Support kontaktieren und Meldungen in jedem Profil entgegen. Du kannst auch an admin@webrom.cc schreiben. Rodrigo Olmos betreibt die Anwendung und prüft Meldungen."
+  },
+  "mantener mi sesión en este dispositivo": {
+    "en": "Keep me signed in on this device",
+    "de": "Auf diesem Gerät angemeldet bleiben"
+  },
+  "hasta 30 días. desmárcalo si usas un dispositivo compartido.": {
+    "en": "Up to 30 days. Uncheck this on a shared device.",
+    "de": "Bis zu 30 Tage. Auf gemeinsam genutzten Geräten deaktivieren."
+  },
+  "no pudimos actualizar el acceso guardado de este dispositivo. inténtalo otra vez.": {
+    "en": "We could not update the saved sign-in on this device. Please try again.",
+    "de": "Die gespeicherte Anmeldung konnte nicht aktualisiert werden. Bitte versuche es erneut."
+  },
+  "no pudimos restaurar la sesión guardada. inicia sesión de nuevo.": {
+    "en": "We could not restore your saved session. Please sign in again.",
+    "de": "Deine gespeicherte Sitzung konnte nicht wiederhergestellt werden. Bitte melde dich erneut an."
+  },
+  "la opción de recordar sesión no es válida.": {
+    "en": "The remember sign-in option is invalid.",
+    "de": "Die Option zum Speichern der Anmeldung ist ungültig."
+  },
+  "si eliges mantener la sesión, el acceso se guarda hasta 30 días: en una cookie protegida en la web y en el almacenamiento cifrado del dispositivo en la app móvil. sin esa opción, la sesión es temporal, con un máximo de 12 horas. no guardamos tu contraseña en el dispositivo. cerrar sesión o restablecer la contraseña invalida los accesos anteriores.": {
+    "en": "If you choose to stay signed in, access is saved for up to 30 days in a protected web cookie or encrypted device storage in the mobile app. Otherwise, your session is temporary, lasting at most 12 hours. Your password is not saved on the device. Signing out or resetting your password revokes previous sessions.",
+    "de": "Wenn du angemeldet bleiben möchtest, wird der Zugang bis zu 30 Tage in einem geschützten Web-Cookie oder im verschlüsselten Gerätespeicher der mobilen App gespeichert. Andernfalls ist die Sitzung vorübergehend und dauert höchstens 12 Stunden. Dein Passwort wird nicht auf dem Gerät gespeichert. Abmelden oder das Zurücksetzen des Passworts macht frühere Sitzungen ungültig."
   }
 }

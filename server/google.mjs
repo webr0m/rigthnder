@@ -35,18 +35,18 @@ export function mountGoogleAuth(
           'Configura GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET y GOOGLE_REDIRECT_URI en el servidor para activar Google.',
       });
     const native = req.query.native === '1';
+    if (req.query.rememberMe !== undefined && !['0', '1'].includes(req.query.rememberMe))
+      return res.status(400).json({ error: 'La opción de recordar sesión no es válida.' });
+    const rememberMe = req.query.rememberMe !== '0';
     const challenge = native ? req.query.challenge : '';
     if (native && !/^[A-Za-z0-9_-]{43}$/.test(challenge || ''))
       return res.status(400).json({ error: 'Falta el comprobante de acceso móvil.' });
     for (const table of ['oauth_states', 'oauth_pending', 'oauth_handoffs'])
       db.prepare(`DELETE FROM ${table} WHERE expires_at < ?`).run(Date.now());
     const state = randomBytes(32).toString('hex');
-    db.prepare('INSERT INTO oauth_states VALUES (?,?,?,?)').run(
-      hash(state),
-      native ? 1 : 0,
-      challenge,
-      Date.now() + 10 * 60_000,
-    );
+    db.prepare(
+      'INSERT INTO oauth_states (state_hash,native,challenge,expires_at,remember_me) VALUES (?,?,?,?,?)',
+    ).run(hash(state), native ? 1 : 0, challenge, Date.now() + 10 * 60_000, rememberMe ? 1 : 0);
     res.cookie('rigthnder_oauth_state', state, cookieOptions);
     const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
     url.search = new URLSearchParams({
@@ -115,13 +115,14 @@ export function mountGoogleAuth(
           'Este correo ya usa contraseña. Inicia sesión con ella; vincular cuentas estará disponible en una próxima versión.',
         );
       let payload;
-      if (existing) payload = { userId: existing.id };
+      if (existing) payload = { userId: existing.id, rememberMe: !!saved.remember_me };
       else {
         const ticket = randomBytes(32).toString('hex');
         const identity = {
           sub: info.sub,
           email: info.email.toLowerCase(),
           name: (info.given_name || info.name || '').slice(0, 40),
+          rememberMe: !!saved.remember_me,
         };
         db.prepare('INSERT INTO oauth_pending VALUES (?,?,?)').run(
           hash(ticket),
@@ -140,7 +141,7 @@ export function mountGoogleAuth(
         );
         return res.redirect('com.rigthnder.app://auth?code=' + code);
       }
-      if (existing) session(res, existing);
+      if (existing) session(res, existing, !!saved.remember_me);
       else res.cookie('rigthnder_google_pending', payload.ticket, cookieOptions);
       res.redirect(config.publicUrl + (existing ? '/?google=ok' : '/?google=complete'));
     } catch {
@@ -163,7 +164,7 @@ export function mountGoogleAuth(
     if (payload.userId) {
       const user = db.prepare('SELECT * FROM users WHERE id=?').get(payload.userId);
       if (!user) return res.status(401).json({ error: 'La cuenta ya no está disponible.' });
-      return res.json(session(res, user));
+      return res.json(session(res, user, payload.rememberMe ?? true));
     }
     res.json(payload);
   });
@@ -245,7 +246,15 @@ export function mountGoogleAuth(
       id,
     );
     res.clearCookie('rigthnder_google_pending', cookieOptions);
-    res.status(201).json(session(res, db.prepare('SELECT * FROM users WHERE id=?').get(id)));
+    res
+      .status(201)
+      .json(
+        session(
+          res,
+          db.prepare('SELECT * FROM users WHERE id=?').get(id),
+          identity.rememberMe ?? true,
+        ),
+      );
   });
   return enabled;
 }

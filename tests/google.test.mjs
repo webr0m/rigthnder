@@ -33,7 +33,7 @@ test('Google OAuth: state binding, verified identity, adult onboarding, one-use 
   await once(server, 'listening');
   const base = `http://127.0.0.1:${server.address().port}/api/auth/google`;
   try {
-    const start = await fetch(base, { redirect: 'manual' });
+    const start = await fetch(base + '?rememberMe=0', { redirect: 'manual' });
     const url = new URL(start.headers.get('location'));
     const state = url.searchParams.get('state');
     assert.equal(url.hostname, 'accounts.google.com');
@@ -75,6 +75,11 @@ test('Google OAuth: state binding, verified identity, adult onboarding, one-use 
     assert.equal(registered.status, 201);
     const result = await registered.json();
     assert.ok(result.token);
+    assert.equal(result.session.rememberMe, false);
+    assert.doesNotMatch(
+      registered.headers.get('set-cookie').match(/rigthnder_session=[^;]+[^,]*/)[0],
+      /Max-Age|Expires/,
+    );
     assert.equal(result.user.settings.appearance, 'light');
     assert.equal(result.user.settings.language, 'en');
     assert.equal((await complete({ ...body, birthdate: '1999-01-01' })).status, 401);
@@ -107,7 +112,10 @@ test('Google OAuth: state binding, verified identity, adult onboarding, one-use 
         body: JSON.stringify({ code, verifier: v }),
       });
     assert.equal((await exchange('b'.repeat(64))).status, 401);
-    assert.equal((await exchange(verifier)).status, 200);
+    const exchanged = await exchange(verifier);
+    assert.equal(exchanged.status, 200);
+    assert.equal((await exchanged.json()).session.rememberMe, true);
+    assert.match(exchanged.headers.get('set-cookie'), /Max-Age=2592000/);
     assert.equal((await exchange(verifier)).status, 401);
   } finally {
     await new Promise((resolve) => server.close(resolve));

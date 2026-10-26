@@ -190,6 +190,7 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
     ['messages', 'kind', "TEXT NOT NULL DEFAULT 'text'"],
     ['users', 'settings_json', "TEXT NOT NULL DEFAULT '{}'"],
     ['reports', 'details', "TEXT NOT NULL DEFAULT ''"],
+    ['oauth_states', 'remember_me', 'INTEGER NOT NULL DEFAULT 1'],
   ]) {
     if (
       !db

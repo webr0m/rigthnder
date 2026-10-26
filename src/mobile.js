@@ -10,9 +10,10 @@ import {
 import { api, API_URL } from './api';
 let verifier = '';
 let adsReady = false;
-export async function googleLogin() {
+export async function googleLogin(rememberMe = true) {
+  const rememberQuery = 'rememberMe=' + (rememberMe ? '1' : '0');
   if (!Capacitor.isNativePlatform()) {
-    window.location.assign(API_URL + '/api/auth/google');
+    window.location.assign(API_URL + '/api/auth/google?' + rememberQuery);
     return;
   }
   if (!API_URL.startsWith('https://'))
@@ -25,7 +26,9 @@ export async function googleLogin() {
     .replaceAll('+', '-')
     .replaceAll('/', '_')
     .replace(/=+$/, '');
-  await Browser.open({ url: API_URL + '/api/auth/google?native=1&challenge=' + challenge });
+  await Browser.open({
+    url: API_URL + '/api/auth/google?native=1&challenge=' + challenge + '&' + rememberQuery,
+  });
 }
 export async function listenGoogle(onResult, onError) {
   if (!Capacitor.isNativePlatform()) return () => {};
@@ -42,7 +45,7 @@ export async function listenGoogle(onResult, onError) {
         body: { code: params.get('code'), verifier },
       });
       verifier = '';
-      onResult(result);
+      await onResult(result);
     } catch (error) {
       onError(error.message);
     }

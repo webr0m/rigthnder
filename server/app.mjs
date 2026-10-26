@@ -172,24 +172,23 @@ export function createApp(db, options = {}) {
     }
     return result.data;
   }
-  function session(res, user) {
+  function session(res, user, rememberMe = true) {
     const token = randomBytes(32).toString('hex');
+    const duration = (rememberMe ? 30 * 24 : 12) * 60 * 60_000;
+    const expiresAt = Date.now() + duration;
     db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now());
-    db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(
-      hash(token),
-      user.id,
-      Date.now() + 7 * 24 * 60 * 60_000,
-    );
+    db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(hash(token), user.id, expiresAt);
     res.cookie('rigthnder_session', token, {
       httpOnly: true,
       secure: production,
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60_000,
+      ...(rememberMe ? { maxAge: duration } : {}),
       path: '/',
     });
     return {
       user: { ...ownProfile(user), email: user.email, birthdate: user.birthdate },
       token,
+      session: { rememberMe, expiresAt },
     };
   }
   function auth(req, res, next) {
@@ -247,7 +246,7 @@ export function createApp(db, options = {}) {
   }
 
   app.get('/api/health', (_req, res) =>
-    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.5', demoEnabled }),
+    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.6', demoEnabled }),
   );
   const googleEnabled = mountGoogleAuth(app, db, {
     production,
@@ -274,6 +273,10 @@ export function createApp(db, options = {}) {
   });
   app.post('/api/auth/demo', (_req, res) => {
     if (!demoEnabled) return res.status(403).json({ error: 'La demostración está desactivada.' });
+    const { rememberMe } = parse(
+      z.object({ rememberMe: z.boolean().default(true) }),
+      _req.body || {},
+    );
     const id = randomUUID(),
       now = new Date().toISOString();
     // Cada visita recibe un usuario independiente; los perfiles de muestra nunca aparecen a usuarios reales.
@@ -327,7 +330,7 @@ export function createApp(db, options = {}) {
             : 'Me encanta. Tenemos una conversación pendiente ☕',
           Date.now() - days * 86400000 - 60000,
         );
-    res.status(201).json(session(res, getUser(id)));
+    res.status(201).json(session(res, getUser(id), rememberMe));
   });
   app.post('/api/auth/register', async (req, res) => {
     const data = parse(
@@ -337,6 +340,7 @@ export function createApp(db, options = {}) {
           .max(160)
           .transform((v) => v.toLowerCase()),
         password: z.string().min(10).max(128),
+        rememberMe: z.boolean().default(true),
         community: communitySchema.optional(),
         bio: z.string().trim().max(200).default(''),
         occupation: z.string().trim().max(80).default(''),
@@ -396,7 +400,7 @@ export function createApp(db, options = {}) {
       JSON.stringify({ appearance: data.appearance, language: data.language }),
       id,
     );
-    res.status(201).json(session(res, getUser(id)));
+    res.status(201).json(session(res, getUser(id), data.rememberMe));
   });
   app.post('/api/auth/login', async (req, res) => {
     const data = parse(
@@ -406,6 +410,7 @@ export function createApp(db, options = {}) {
           .max(160)
           .transform((v) => v.toLowerCase()),
         password: z.string().max(128),
+        rememberMe: z.boolean().default(true),
       }),
       req.body,
     );
@@ -419,7 +424,7 @@ export function createApp(db, options = {}) {
       getUser(user.id)?.password !== user.password
     )
       return res.status(401).json({ error: 'Correo o contraseña incorrectos.' });
-    res.json(session(res, user));
+    res.json(session(res, user, data.rememberMe));
   });
   app.post('/api/auth/logout', auth, (req, res) => {
     db.prepare('DELETE FROM sessions WHERE user_id=?').run(req.user.id);

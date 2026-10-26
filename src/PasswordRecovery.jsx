@@ -27,7 +27,7 @@ export default function PasswordRecovery({ token, onBack, onReset }) {
           method: 'POST',
           body: { token, password: data.password },
         });
-        setToken(null);
+        await setToken(null).catch(() => {});
         onReset?.();
         history.replaceState({}, '', '/recuperar-contrasena');
         setDone(true);

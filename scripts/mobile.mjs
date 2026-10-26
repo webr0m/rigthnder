@@ -15,6 +15,7 @@ if (platform === 'android') {
     includePlugins: [
       '@capacitor/app',
       '@capacitor/browser',
+      '@aparajita/capacitor-secure-storage',
       ...(adsEnabled ? ['@capacitor-community/admob'] : []),
     ],
   };

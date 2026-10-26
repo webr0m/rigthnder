@@ -249,6 +249,11 @@ function Legal({ type }) {
       <div className="legal-copy">
         <p>
           {t(
+            'Si eliges mantener la sesión, el acceso se guarda hasta 30 días: en una cookie protegida en la web y en el almacenamiento cifrado del dispositivo en la app móvil. Sin esa opción, la sesión es temporal, con un máximo de 12 horas. No guardamos tu contraseña en el dispositivo. Cerrar sesión o restablecer la contraseña invalida los accesos anteriores.',
+          )}
+        </p>
+        <p>
+          {t(
             'OnlyFachos guarda tu nombre, correo, fecha de nacimiento, ciudad, foto, perfil, valores, intereses, datos opcionales de política y religión, invitaciones, propuestas de citas, visitas al perfil, preferencias y mensajes en el servidor de la aplicación.',
           )}
         </p>

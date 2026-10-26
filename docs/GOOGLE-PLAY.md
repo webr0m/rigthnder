@@ -8,7 +8,7 @@ Paquete Android: `com.rigthnder.app`. Versión preparada: `1.0.0-beta.1.5`, cód
 - Prueba cerrada Alpha: mismo paquete `10006`, versión 1 del segmento, junto con ficha y declaraciones, enviada a Google; verificaciones automáticas en curso al cerrar esta entrega. Todavía no equivale a aprobación ni publicación pública.
 - Se utiliza el grupo de OnlyFachos, sin agregar listas de otros proyectos. Última comprobación: 5 direcciones; deben reunirse al menos 12 personas que acepten participar en la **prueba cerrada** durante 14 días continuos. Google contabiliza las inscripciones reales, no solo correos agregados a una lista.
 - IARC: términos confirmados por el titular, clasificación guardada y corregida para no indicar ubicación precisa compartida ni moderación de chats. Se conservan bloqueo y denuncia. Seguridad infantil: normas públicas y responsable operativo confirmados.
-- Gmail recibe el correo de admin@webrom.cc. Enviar como esa dirección desde Gmail sigue pendiente de contraseña SMTP y verificación a cargo del titular.
+- Gmail recibe el correo de admin@webrom.cc. Enviar como esa dirección desde Gmail ya está verificado.
 
 ## Ficha propuesta
 

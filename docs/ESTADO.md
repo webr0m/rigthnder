@@ -8,7 +8,7 @@ La misma compilación se preparó como **Prueba cerrada - Alpha** y se envió a 
 
 Ficha con recursos propios e ilustraciones de demostración etiquetadas como creadas con IA; privacidad, acceso de revisión por demo, anuncios desactivados, datos recopilados, eliminación, audiencia 18+ con bloqueo de menores, clasificación, seguridad infantil, funciones financieras, salud y carácter no gubernamental completados. IARC corregido para no atribuir ubicación precisa ni moderación de chats a la app: el bloqueo y las denuncias sí están disponibles. La aceptación de IARC y la responsabilidad operativa de seguridad infantil fueron confirmadas por el titular. No hay publicación de producción ni aprobación de Google todavía. [Preparación de Play](GOOGLE-PLAY.md).
 
-Contacto público: Rodrigo Olmos, admin@webrom.cc. Reenvío a Gmail configurado y mensaje de prueba recibido. Envío desde Gmail pendiente de completar por el titular con la contraseña SMTP y la verificación de Google. Privacidad, eliminación y seguridad infantil públicas en el dominio .cc.
+Contacto público: Rodrigo Olmos, admin@webrom.cc. Reenvío a Gmail configurado y mensaje de prueba recibido. Envío como admin@webrom.cc verificado en Gmail. Privacidad, eliminación y seguridad infantil públicas en el dominio .cc.
 
 ## Estado anterior
 

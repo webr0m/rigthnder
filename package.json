@@ -1,6 +1,6 @@
 {
   "name": "rigthnder",
-  "version": "1.0.0-beta.1.5",
+  "version": "1.0.0-beta.1.6",
   "private": true,
   "type": "module",
   "description": "OnlyFachos: comunidad con feed vertical, chat directo y citas de mutuo acuerdo.",
@@ -19,6 +19,7 @@
     "mobile:sync": "cap sync"
   },
   "dependencies": {
+    "@aparajita/capacitor-secure-storage": "8.0.1",
     "@capacitor-community/admob": "8.2.1",
     "@capacitor/android": "8.5.3",
     "@capacitor/app": "8.1.2",

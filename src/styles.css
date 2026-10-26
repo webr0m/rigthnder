@@ -422,6 +422,25 @@ mark {
   line-height: 1.6;
   gap: 9px;
 }
+.form .remember-session {
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 2px 0;
+}
+.remember-session input {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+.remember-session span {
+  display: grid;
+  gap: 5px;
+}
+.remember-session small {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
 .checkbox-label input {
   accent-color: var(--gold);
   flex-shrink: 0;

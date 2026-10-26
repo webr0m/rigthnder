@@ -19,7 +19,7 @@ import {
   X,
   Zap,
 } from 'lucide-react';
-import { api, setToken } from './api';
+import { api, setToken, restoreToken } from './api';
 import { googleLogin, listenGoogle, startAds, privacyAds } from './mobile';
 import { Button, Modal, Photo, Safety, Legal, locationLabel } from './Shared';
 import Onboarding from './Onboarding';
@@ -202,17 +202,18 @@ export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
   );
 }
 function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, initialLogin }) {
+  const [rememberMe, setRememberMe] = useState(true);
   const [login, setLogin] = useState(Boolean(initialLogin)),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
   async function submit(e) {
     e.preventDefault();
     setError('');
-    const data = Object.fromEntries(new FormData(e.currentTarget));
+    const data = { ...Object.fromEntries(new FormData(e.currentTarget)), rememberMe };
     if (!login) return onRegister(data);
     setBusy(true);
     try {
-      onLogin(await api('/auth/login', { method: 'POST', body: data }));
+      await onLogin(await api('/auth/login', { method: 'POST', body: data }));
     } catch (e) {
       setError(e.message);
     } finally {
@@ -273,7 +274,7 @@ function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, init
               try {
                 if (!options.googleEnabled)
                   return notify('Google aún no está habilitado. Puedes continuar con tu correo.');
-                await googleLogin();
+                await googleLogin(rememberMe);
               } catch (e) {
                 notify(e.message, true);
               }
@@ -309,6 +310,21 @@ function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, init
               placeholder={login ? t('Tu contraseña') : t('Mínimo 10 caracteres')}
               autoComplete={login ? 'current-password' : 'new-password'}
             />
+          </label>
+          <label className="checkbox-label remember-session">
+            <input
+              type="checkbox"
+              name="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              aria-describedby="remember-session-help"
+            />
+            <span>
+              {t('Mantener mi sesión en este dispositivo')}
+              <small id="remember-session-help">
+                {t('Hasta 30 días. Desmárcalo si usas un dispositivo compartido.')}
+              </small>
+            </span>
           </label>
           {login && (
             <button type="button" className="text-link" onClick={onRecover}>
@@ -360,7 +376,7 @@ function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, init
             onClick={async () => {
               setBusy(true);
               try {
-                onLogin(await api('/auth/demo', { method: 'POST' }));
+                await onLogin(await api('/auth/demo', { method: 'POST', body: { rememberMe } }));
               } catch (e) {
                 notify(e.message, true);
               } finally {
@@ -471,8 +487,8 @@ export default function App() {
     setToast({ message: t(message), error });
     toastTimer.current = setTimeout(() => setToast(null), 5000);
   }
-  function signedIn(r) {
-    setToken(r.token);
+  async function signedIn(r) {
+    await setToken(r.token, r.session);
     setUser(r.user);
     if (r.user.settings?.appearance) setTheme(r.user.settings.appearance);
     if (r.user.settings?.language) setLanguage(r.user.settings.language);
@@ -502,6 +518,12 @@ export default function App() {
     let alive = true,
       unlisten;
     (async () => {
+      try {
+        await restoreToken();
+      } catch {
+        if (alive) notify('No pudimos restaurar la sesión guardada. Inicia sesión de nuevo.', true);
+      }
+      if (!alive) return;
       try {
         const config = await api('/options');
         if (!alive) return;
@@ -673,7 +695,7 @@ export default function App() {
         setReload((v) => v + 1);
         notify('Perfil guardado. Ya tiene tu toque.');
       } else {
-        signedIn(
+        await signedIn(
           await api(wizard.type === 'google' ? '/auth/google/complete' : '/auth/register', {
             method: 'POST',
             body: {
@@ -694,7 +716,7 @@ export default function App() {
   async function logout() {
     try {
       await api('/auth/logout', { method: 'POST' });
-      setToken('');
+      await setToken('').catch(() => {});
       setUser(null);
       setConversations([]);
       setFeed({ profiles: [], online: [], hasMore: false });
@@ -1352,7 +1374,7 @@ export default function App() {
               setBusy(true);
               try {
                 await api('/me', { method: 'DELETE' });
-                setToken('');
+                await setToken('').catch(() => {});
                 setUser(null);
                 setModal(null);
                 setConversations([]);
