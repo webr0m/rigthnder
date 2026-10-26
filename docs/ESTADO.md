@@ -1,3 +1,13 @@
+# Beta 1.5 · 26 de octubre de 2026
+
+Web publicada en **https://onlyfachos.webrom.cc**, versión `1.0.0-beta.1.5`. Se conserva la base activa y se creó el respaldo privado `onlyfachos-2026-10-26T15-33-42-952Z`. Invitaciones visibles para ambas personas, aceptación bilateral con pantalla de match y cambios de plan de mutuo acuerdo. Sexo ofrece únicamente Hombre y Mujer; no se reasignan los datos históricos. 41 pruebas pasan.
+
+Android: AAB firmado, código `10005`, target SDK 36, SHA-256 `EE31792E14AC77A9899CE67A14EC3BCE8C30C29EEF1BF5410902F002E25C9F03`. La versión se cargó y publicó en el segmento de prueba interna de Google Play. [Acceso de prueba](https://play.google.com/apps/internaltest/4701515858079115212), únicamente para verificadores autorizados. La consola exige completar la configuración y una prueba cerrada de 12 adultos durante 14 días para solicitar producción. La ficha y declaraciones se están completando; no está publicada para todo el público. [Preparación de Play](GOOGLE-PLAY.md).
+
+Contacto público: Rodrigo Olmos, admin@webrom.cc. Reenvío a Gmail configurado y mensaje de prueba recibido. Envío desde Gmail pendiente de completar por el titular con la contraseña SMTP y la verificación de Google. Privacidad, eliminación y seguridad infantil públicas en el dominio .cc.
+
+## Estado anterior
+
 # Beta web 1.0.0-beta.1.3 · 22 de octubre de 2026
 
 Publicada y verificada en **https://onlyfachos.webrom.lat**. Respaldo privado consistente: `onlyfachos-2026-10-22T21-19-25-811Z`. DNS A con proxy Cloudflare y dominio cPanel apuntando al mismo Passenger. Regla de Cloudflare «OnlyFachos - dominio anterior» activa; HTTP y HTTPS redirigen directamente con 301, conservando ruta y consulta. Ambos dominios responden en `/api/health` con `1.0.0-beta.1.3`.
