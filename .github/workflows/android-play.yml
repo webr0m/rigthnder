@@ -27,6 +27,18 @@ jobs:
           VITE_API_URL: https://onlyfachos.webrom.cc
           VITE_ADMOB_ENABLED: 'false'
       - run: chmod +x android/gradlew && cd android && ./gradlew bundleRelease --no-daemon
+      - name: Verify beta has no advertising SDK or advertising ID permission
+        run: |
+          python3 - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('android/app/build/outputs/bundle/release/app-release.aab') as bundle:
+              for name in bundle.namelist():
+                  if name.endswith('.dex') or name.endswith('AndroidManifest.xml'):
+                      data = bundle.read(name)
+                      for marker in (b'Lcom/google/android/gms/ads/', b'Lcom/getcapacitor/community/admob/', b'com.google.android.gms.permission.AD_ID'):
+                          assert marker not in data, f'Unexpected advertising component in {name}'
+          print('Verified: beta bundle excludes AdMob and AD_ID')
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: OnlyFachos-Play-unsigned

@@ -3,6 +3,11 @@
   "appName": "OnlyFachos",
   "webDir": "dist",
   "backgroundColor": "#111111",
-  "ios": { "contentInset": "never" },
-  "android": { "allowMixedContent": false }
+  "ios": {
+    "contentInset": "never"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "includePlugins": ["@capacitor/app", "@capacitor/browser"]
+  }
 }

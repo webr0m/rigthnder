@@ -7,7 +7,7 @@ android {
         applicationId "com.rigthnder.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10005
+        versionCode 10006
         versionName "1.0.0-beta.1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {

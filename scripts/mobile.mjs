@@ -5,6 +5,21 @@ const platform = process.argv[2];
 if (!['android', 'ios'].includes(platform))
   throw new Error('Usa node scripts/mobile.mjs android o ios');
 const cap = resolve('node_modules/@capacitor/cli/bin/capacitor');
+const adsEnabled = process.env.VITE_ADMOB_ENABLED === 'true';
+if (platform === 'android') {
+  // Exclude the native advertising SDK from builds that do not request ads.
+  const configFile = 'capacitor.config.json';
+  const config = JSON.parse(readFileSync(configFile, 'utf8'));
+  config.android = {
+    ...config.android,
+    includePlugins: [
+      '@capacitor/app',
+      '@capacitor/browser',
+      ...(adsEnabled ? ['@capacitor-community/admob'] : []),
+    ],
+  };
+  writeFileSync(configFile, JSON.stringify(config, null, 2) + '\n');
+}
 function run(args) {
   const result = spawnSync(process.execPath, args, {
     stdio: 'inherit',
@@ -31,7 +46,12 @@ if (platform === 'android') {
             </intent-filter>
         </activity>`,
     );
-  if (!xml.includes('com.google.android.gms.ads.APPLICATION_ID'))
+  if (!adsEnabled)
+    xml = xml.replace(
+      /\s*<meta-data\s+android:name="com\.google\.android\.gms\.ads\.APPLICATION_ID"[^>]*\/>/g,
+      '',
+    );
+  if (adsEnabled && !xml.includes('com.google.android.gms.ads.APPLICATION_ID'))
     xml = xml.replace(
       '</application>',
       '<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-3940256099942544~3347511713" />\n    </application>',

@@ -1,6 +1,6 @@
 # OnlyFachos en Google Play
 
-Paquete Android: `com.rigthnder.app`. Versión preparada: `1.0.0-beta.1.5`, código `10005`, target SDK 36. API: `https://onlyfachos.webrom.cc`. El identificador se conserva para mantener compatibilidad. Anuncios desactivados en esta compilación; no hay compras ni suscripciones.
+Paquete Android: `com.rigthnder.app`. Versión preparada: `1.0.0-beta.1.5`, código `10006`, target SDK 36. API: `https://onlyfachos.webrom.cc`. El identificador se conserva para mantener compatibilidad. Esta compilación excluye el SDK nativo de AdMob; no hay anuncios, compras ni suscripciones. El código de integración se conserva y `VITE_ADMOB_ENABLED=true pnpm mobile:android` vuelve a incluirlo para una futura versión, que requerirá revisar sus declaraciones de datos y anuncios.
 
 ## Ficha propuesta
 
