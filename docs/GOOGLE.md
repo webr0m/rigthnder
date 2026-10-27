@@ -1,4 +1,12 @@
-# Activar acceso con Google
+# Acceso con Google
+
+## Estado · 27 de octubre de 2026
+
+Configurado en Google Auth Platform, proyecto `onlyfachos`, cliente web del backend y audiencia externa en producción. Dominio autorizado: `webrom.cc`. Origen: `https://onlyfachos.webrom.cc`. Callback: `https://onlyfachos.webrom.cc/api/auth/google/callback`. Correo de asistencia OAuth: `ridrogo@gmail.com`, autorizado por el titular; notificaciones del proyecto: `admin@webrom.cc`. Se aceptó la política de Google con autorización explícita.
+
+ID y secreto instalados en el `.env` privado del servidor con permisos 0600. No se descargó el secreto ni se guardó en el código o el dispositivo local. `/api/options` confirma `googleEnabled: true` y se verificó la redirección real al selector de Google con `openid email profile`. No se completó el acceso de una cuenta real ni se creó un perfil de producción durante esta prueba.
+
+## Configurar otra instalación
 
 El backend implementa el flujo de código OAuth de Google. Solicita solo `openid email profile`, valida `state` y su cookie, intercambia el código en Node y consulta UserInfo con el token obtenido. El secreto nunca se entrega al frontend. Los tokens de Google se descartan tras verificar la identidad; la app usa sus propias sesiones.
 

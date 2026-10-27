@@ -1,3 +1,15 @@
+# Beta 1.7 · 27 de octubre de 2026
+
+Web publicada en **https://onlyfachos.webrom.cc**, versión `1.0.0-beta.1.7`. Se conserva la base activa y se creó el respaldo privado `onlyfachos-2026-10-27T19-23-02-537Z`. Ahora se abre primero Iniciar sesión; Crear cuenta queda como alternativa.
+
+Se usa viewport-fit=contain y SystemBars de Capacitor para reservar el área de las barras del teléfono. CSS contempla los márgenes superiores, inferiores y laterales en el acceso, registro, perfil, ajustes, navegación, chat y ventanas. QA web con anchos de 360 y 390 px, altura reducida y márgenes simulados de 44 px arriba y 34 px abajo. Los botones quedaron fuera de esas franjas y el cuadro de mensaje termina antes de la navegación. Sigue siendo necesaria la prueba en teléfonos físicos; la simulación no emula el sistema operativo ni su teclado real.
+
+Google OAuth configurado con audiencia externa en producción, únicamente nombre y correo; secreto en .env privado del servidor. Se verificaron googleEnabled y la redirección real al selector de cuentas. No se completó un acceso real durante la prueba. [Configuración y límites](GOOGLE.md).
+
+44 pruebas pasan. Android e iOS para simulador compilan correctamente: [compilación móvil](https://github.com/webr0m/rigthnder/actions/runs/40567747913). Android 10008 firmado y activo en prueba interna: SHA-256 `1FA0A69A5FC863413CDA4023C9A871D570605E191C1CCF0D32F787635549C123`; [validación del AAB](https://github.com/webr0m/rigthnder/actions/runs/40567741554). iOS no es un IPA firmado ni una distribución TestFlight.
+
+## Estado anterior
+
 # Beta 1.6 · 26 de octubre de 2026
 
 Web publicada en **https://onlyfachos.webrom.cc**, versión `1.0.0-beta.1.6`. Se conserva la base activa y se creó el respaldo privado `onlyfachos-2026-10-26T23-15-27-679Z`. Invitaciones visibles para ambas personas, aceptación bilateral con pantalla de match y cambios de plan de mutuo acuerdo. Sexo ofrece únicamente Hombre y Mujer; no se reasignan los datos históricos. 44 pruebas pasan. Inicio de sesión persistente opcional durante 30 días en web y móvil; detalles en [SESIONES.md](SESIONES.md).
