@@ -6,6 +6,13 @@
   "ios": {
     "contentInset": "never"
   },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "css",
+      "initialViewportFitValueHint": "contain",
+      "hidden": false
+    }
+  },
   "android": {
     "allowMixedContent": false,
     "includePlugins": [

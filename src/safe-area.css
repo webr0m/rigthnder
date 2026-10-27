@@ -1,0 +1,109 @@
+/* SystemBars supplies these values on Android; Safari supplies env() on iOS.
+   With viewport-fit=contain the native view already excludes the system bars
+   and the values are zero, so these rules do not add the same inset twice. */
+:root {
+  --app-safe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --app-safe-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --app-safe-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --app-safe-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+  --app-height: calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom));
+  --mobile-nav-height: calc(78px + var(--app-safe-bottom));
+}
+html {
+  scroll-padding-top: calc(16px + var(--app-safe-top));
+  scroll-padding-bottom: calc(16px + var(--app-safe-bottom));
+}
+#root {
+  padding: var(--app-safe-top) var(--app-safe-right) 0 var(--app-safe-left);
+}
+.boot,
+.access-layout,
+.onboarding-shell,
+.recovery-shell {
+  min-height: var(--app-height);
+}
+.community-header {
+  top: var(--app-safe-top);
+}
+.theme-access {
+  top: calc(20px + var(--app-safe-top));
+  right: calc(22px + var(--app-safe-right));
+}
+.access-language {
+  top: calc(19px + var(--app-safe-top));
+}
+.modal-backdrop {
+  padding: calc(24px + var(--app-safe-top)) calc(24px + var(--app-safe-right))
+    calc(24px + var(--app-safe-bottom)) calc(24px + var(--app-safe-left));
+}
+.modal {
+  max-height: calc(var(--app-height) - 48px);
+}
+.toast {
+  bottom: calc(25px + var(--app-safe-bottom));
+}
+@media (max-width: 760px) {
+  .access-layout {
+    padding-bottom: calc(36px + var(--app-safe-bottom));
+  }
+  .theme-access {
+    top: calc(25px + var(--app-safe-top));
+    right: calc(16px + var(--app-safe-right));
+  }
+  .access-language {
+    top: calc(25px + var(--app-safe-top));
+    right: calc(60px + var(--app-safe-right));
+  }
+  .view-community .community-header {
+    padding-top: 18px;
+  }
+  .page {
+    padding-bottom: calc(100px + var(--app-safe-bottom));
+  }
+  .page-community {
+    padding-bottom: calc(100px + var(--app-safe-bottom));
+  }
+  .bottom-nav {
+    left: var(--app-safe-left);
+    right: var(--app-safe-right);
+    min-height: var(--mobile-nav-height);
+    padding-bottom: calc(10px + var(--app-safe-bottom));
+  }
+  .wizard-footer {
+    padding-bottom: calc(14px + var(--app-safe-bottom));
+  }
+  .recovery-shell {
+    padding-bottom: calc(40px + var(--app-safe-bottom));
+  }
+  .modal-backdrop {
+    padding: calc(15px + var(--app-safe-top)) calc(15px + var(--app-safe-right))
+      calc(15px + var(--app-safe-bottom)) calc(15px + var(--app-safe-left));
+  }
+  .modal {
+    max-height: calc(var(--app-height) - 30px);
+  }
+  .page-chat {
+    padding: 0;
+  }
+  .chat-layout {
+    height: calc(100dvh - var(--app-safe-top) - 61px - var(--mobile-nav-height));
+    min-height: 0;
+  }
+  .chat-open .chat-layout {
+    height: calc(100dvh - var(--app-safe-top) - var(--mobile-nav-height));
+  }
+  .with-ad.chat-open .chat-layout {
+    height: calc(100dvh - var(--app-safe-top) - var(--mobile-nav-height) - 60px);
+  }
+  .toast {
+    bottom: calc(var(--mobile-nav-height) + 12px);
+    max-width: calc(100vw - var(--app-safe-left) - var(--app-safe-right) - 30px);
+  }
+}
+@media (max-width: 700px) {
+  .profile-detail-modal {
+    height: calc(var(--app-height) - 30px) !important;
+    max-height: calc(var(--app-height) - 30px) !important;
+    border-radius: 15px !important;
+  }
+}

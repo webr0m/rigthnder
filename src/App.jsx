@@ -203,6 +203,7 @@ export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
 }
 function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, initialLogin }) {
   const [rememberMe, setRememberMe] = useState(true);
+  const [googleBusy, setGoogleBusy] = useState(false);
   const [login, setLogin] = useState(Boolean(initialLogin)),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
@@ -270,19 +271,29 @@ function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, init
           <button
             type="button"
             className="social-login google"
+            disabled={busy || googleBusy || !options.googleEnabled}
+            aria-describedby={!options.googleEnabled ? 'google-setup-status' : undefined}
             onClick={async () => {
+              setGoogleBusy(true);
               try {
                 if (!options.googleEnabled)
                   return notify('Google aún no está habilitado. Puedes continuar con tu correo.');
                 await googleLogin(rememberMe);
               } catch (e) {
                 notify(e.message, true);
+              } finally {
+                setGoogleBusy(false);
               }
             }}
           >
-            <b>{t('G')}</b>
+            {googleBusy ? <LoaderCircle className="spin" size={18} /> : <b>G</b>}
             <span>{t('Continuar con Google')}</span>
           </button>
+          {!options.googleEnabled && (
+            <p id="google-setup-status" className="hint" role="status">
+              {t('El acceso con Google está en preparación. Puedes entrar con tu correo.')}
+            </p>
+          )}
           <div className="form-divider">
             <span />
             {t('O CON CORREO')}
@@ -398,7 +409,7 @@ export default function App() {
       ? { token: new URLSearchParams(location.hash.slice(1)).get('token') ?? undefined }
       : null,
   );
-  const [loginRequested, setLoginRequested] = useState(false);
+  const [loginRequested, setLoginRequested] = useState(true);
   useEffect(() => {
     const syncRecovery = () => {
       if (location.pathname === '/recuperar-contrasena') {

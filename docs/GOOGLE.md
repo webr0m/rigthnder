@@ -25,13 +25,13 @@ En local usa las dos URLs `http://localhost:3000` equivalentes. Reinicia Node. E
 
 ## Primer acceso
 
-Google verifica el correo y devuelve el nombre. Si no existe la cuenta, la app pide fecha de nacimiento (18+), ciudad, identidad y consentimiento. La identidad pendiente expira en 10 minutos y se consume una sola vez. Una cuenta con contraseña que ya use ese correo debe entrar con contraseña: no se vincula automáticamente ni se sustituye su acceso.
+Google verifica el correo y devuelve el nombre. Si no existe la cuenta, la app pide fecha de nacimiento (18+), ciudad, sexo y consentimiento. La identidad pendiente expira en 10 minutos y se consume una sola vez. Una cuenta con contraseña que ya use ese correo debe entrar con contraseña: no se vincula automáticamente ni se sustituye su acceso.
 
 ## Android/iOS
 
 La app abre el backend en el navegador nativo con `@capacitor/browser`. Google vuelve al callback HTTPS del servidor y luego a `com.rigthnder.app://auth`. Ese enlace contiene un código temporal, no un token de sesión. La app lo intercambia con un comprobante SHA-256 ligado al inicio del flujo; expira en 2 minutos y se consume una vez. Si la app fue cerrada durante el proceso y perdió el comprobante, el usuario inicia de nuevo.
 
-El script `mobile.mjs` configura el enlace en AndroidManifest e Info.plist. Los tokens de sesión nativos quedan en memoria y se pierden al cerrar la app; no se guardan en localStorage. Antes de producción, usar enlaces universales/App Links verificados para reforzar el retorno y realizar pruebas reales de cada plataforma.
+El script `mobile.mjs` configura el enlace en AndroidManifest e Info.plist. Desde beta 1.6, los tokens de sesión nativos se conservan en Keystore/Keychain si se marca Mantener mi sesión en este dispositivo (30 días); sin esa opción solo viven en memoria. No se guardan en localStorage. Antes de producción, usar enlaces universales/App Links verificados para reforzar el retorno y realizar pruebas reales de cada plataforma.
 
 ## Comprobarlo
 

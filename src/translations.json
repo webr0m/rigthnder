@@ -2730,5 +2730,9 @@
   "si eliges mantener la sesión, el acceso se guarda hasta 30 días: en una cookie protegida en la web y en el almacenamiento cifrado del dispositivo en la app móvil. sin esa opción, la sesión es temporal, con un máximo de 12 horas. no guardamos tu contraseña en el dispositivo. cerrar sesión o restablecer la contraseña invalida los accesos anteriores.": {
     "en": "If you choose to stay signed in, access is saved for up to 30 days in a protected web cookie or encrypted device storage in the mobile app. Otherwise, your session is temporary, lasting at most 12 hours. Your password is not saved on the device. Signing out or resetting your password revokes previous sessions.",
     "de": "Wenn du angemeldet bleiben möchtest, wird der Zugang bis zu 30 Tage in einem geschützten Web-Cookie oder im verschlüsselten Gerätespeicher der mobilen App gespeichert. Andernfalls ist die Sitzung vorübergehend und dauert höchstens 12 Stunden. Dein Passwort wird nicht auf dem Gerät gespeichert. Abmelden oder das Zurücksetzen des Passworts macht frühere Sitzungen ungültig."
+  },
+  "el acceso con google está en preparación. puedes entrar con tu correo.": {
+    "en": "Google sign-in is being set up. You can sign in with your email.",
+    "de": "Die Google-Anmeldung wird eingerichtet. Du kannst dich mit deiner E-Mail-Adresse anmelden."
   }
 }
