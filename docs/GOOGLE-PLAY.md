@@ -1,11 +1,11 @@
 # OnlyFachos en Google Play
 
-Paquete Android: `com.rigthnder.app`. Versión preparada: `1.0.0-beta.1.5`, código `10006`, target SDK 36. API: `https://onlyfachos.webrom.cc`. El identificador se conserva para mantener compatibilidad. Esta compilación excluye el SDK nativo de AdMob; no hay anuncios, compras ni suscripciones. El código de integración se conserva: al ejecutar `pnpm mobile:android` con la variable `VITE_ADMOB_ENABLED=true`, el SDK vuelve a incluirse para una futura versión, que requerirá revisar sus declaraciones de datos y anuncios.
+Paquete Android: `com.rigthnder.app`. Versión preparada: `1.0.0-beta.1.6`, código `10007`, target SDK 36. API: `https://onlyfachos.webrom.cc`. El identificador se conserva para mantener compatibilidad. Esta compilación excluye el SDK nativo de AdMob; no hay anuncios, compras ni suscripciones. El código de integración se conserva: al ejecutar `pnpm mobile:android` con la variable `VITE_ADMOB_ENABLED=true`, el SDK vuelve a incluirse para una futura versión, que requerirá revisar sus declaraciones de datos y anuncios.
 
 ## Estado del envío · 26 de octubre de 2026
 
-- Prueba interna: código `10006` activo, [enlace de instalación para el grupo autorizado](https://play.google.com/apps/internaltest/4701515858079115212).
-- Prueba cerrada Alpha: mismo paquete `10006`, versión 1 del segmento, junto con ficha y declaraciones, enviada a Google; verificaciones automáticas en curso al cerrar esta entrega. Todavía no equivale a aprobación ni publicación pública.
+- Prueba interna: código `10007` activo, [enlace de instalación para el grupo autorizado](https://play.google.com/apps/internaltest/4701515858079115212).
+- Prueba cerrada Alpha: paquete `10007`, versión 2 del segmento, guardado y solicitud de envío confirmada. La consola aún muestra el cambio previo a revisión mientras ejecuta comprobaciones automáticas. Todavía no equivale a aprobación de esta actualización ni publicación de producción.
 - Se utiliza el grupo de OnlyFachos, sin agregar listas de otros proyectos. Última comprobación: 5 direcciones; deben reunirse al menos 12 personas que acepten participar en la **prueba cerrada** durante 14 días continuos. Google contabiliza las inscripciones reales, no solo correos agregados a una lista.
 - IARC: términos confirmados por el titular, clasificación guardada y corregida para no indicar ubicación precisa compartida ni moderación de chats. Se conservan bloqueo y denuncia. Seguridad infantil: normas públicas y responsable operativo confirmados.
 - Gmail recibe el correo de admin@webrom.cc. Enviar como esa dirección desde Gmail ya está verificado.
