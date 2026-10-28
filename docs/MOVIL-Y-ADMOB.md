@@ -1,5 +1,7 @@
 # Android, iOS y AdMob
 
+[Preparación de anuncios reales y requisitos de publicación](ADMOB-PRODUCCION.md). La beta `10009` sigue usando anuncios de prueba; el paquete `10010` con IDs reales está preparado por separado y todavía no se distribuye.
+
 La interfaz se empaqueta con Capacitor 8. Node y SQLite siguen en el servidor. Se conserva `com.rigthnder.app` para actualizar la aplicación existente.
 
 ## Android
