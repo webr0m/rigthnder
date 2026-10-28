@@ -1,8 +1,17 @@
 # OnlyFachos en Google Play
 
-Paquete Android: `com.rigthnder.app`. Código preparado: `1.0.0-beta.1.8`, `10009`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob de prueba y FCM; no hay compras ni suscripciones. La revisión anterior `10008` excluía el SDK publicitario. Antes de subir `10009`, actualizar Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
+Paquete Android: `com.rigthnder.app`. Beta `1.0.0-beta.1.8`, `10009`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob de prueba y FCM; no hay compras ni suscripciones. La revisión anterior `10008` excluía el SDK publicitario. Se actualizaron Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
 
-Referencia del proveedor: [datos del Google Mobile Ads SDK](https://developers.google.com/admob/android/privacy/play-data-disclosure). Las nuevas compilaciones deben reflejar su configuración efectiva, aun usando anuncios de prueba. No se da por enviada o aprobada beta 1.8 hasta verificarlo en la consola.
+Referencia del proveedor: [datos del Google Mobile Ads SDK](https://developers.google.com/admob/android/privacy/play-data-disclosure). Las nuevas compilaciones deben reflejar su configuración efectiva, aun usando anuncios de prueba.
+
+## Estado · 28 de octubre de 2026
+
+- `10009 · OnlyFachos beta 1.8` disponible para verificadores internos. [Instalar para el grupo autorizado](https://play.google.com/apps/internaltest/4701515858079115212).
+- Prueba cerrada Alpha: mismo paquete `10009`, lanzamiento al 100% del canal. Se enviaron los tres cambios (versión, anuncios y Seguridad de datos); la consola confirma **«Cambios en la etapa de revisión»**, con verificaciones rápidas todavía en curso. No equivale a aprobación ni publicación de producción. Se conservó el grupo de verificadores.
+- AAB firmado SHA-256 `BA48EAFF453F540230D8D0D873D6857AE631F7EEFD5DF2A5FE8C023A8E7AADD0`. [CI](https://github.com/webr0m/rigthnder/actions/runs/40661327242) comprueba SDK AdMob, FCM, permiso AD_ID e identificadores de anuncios de prueba.
+- En prueba interna se aceptó la excepción de validación AD_ID **solo para esta versión** porque aún existían artefactos antiguos activos sin SDK ni permiso publicitario; la compilación nueva sí incluye el permiso. La declaración global sigue indicando uso de ID publicitario. No se modificó la configuración para ocultar su uso.
+- Anuncios: sí. ID publicitario: publicidad, estadísticas y prevención de fraude. Seguridad de datos incluye OAuth y recopila/comparte solo las categorías de SDK pertinentes; no comparte personalización ni datos sensibles del perfil con anunciantes. Las declaraciones guardadas están sujetas a la revisión de Google.
+- Advertencias no bloqueantes de Play: sin archivo de desofuscación ni símbolos nativos de terceros. No se presenta la prueba interna como publicación de producción.
 
 ## Estado del envío · 27 de octubre de 2026
 
@@ -36,7 +45,7 @@ La clave de carga local se encuentra en `%LOCALAPPDATA%/OnlyFachos/signing/onlyf
 
 La creación de la app requiere confirmar las políticas del programa y certificar el cumplimiento de las leyes de exportación de EE.UU. No se debe certificar automáticamente en nombre del titular sin su confirmación específica.
 
-Seguridad de datos debe reflejar los datos reales: correo, nombre, identificador de usuario, edad/fecha de nacimiento, ciudad declarada (sin GPS), perfil, fotos, mensajes, audio y contenido opcional de política/religión. Se guardan en el backend para prestar el servicio. La compilación preparada mantiene AdMob desactivado y no solicita publicidad. No declarar que no se recopilan datos. El modo demo no sustituye pruebas con dos cuentas reales del operador.
+Seguridad de datos debe reflejar los datos reales: correo, nombre, identificador de usuario, edad/fecha de nacimiento, ciudad declarada (sin GPS), perfil, fotos, mensajes, audio y contenido opcional de política/religión. Se guardan en el backend para prestar el servicio. Desde `10009`, AdMob de prueba y FCM se declaran según su comportamiento y las instrucciones del proveedor; se contemplan los identificadores, diagnósticos, interacciones y ubicación aproximada del SDK publicitario aunque no se soliciten anuncios personalizados. No declarar que no se recopilan datos. El modo demo no sustituye pruebas con dos cuentas reales del operador.
 
 La app permite eliminar datos desde Perfil → Ajustes y dispone de solicitud externa por correo. Hay denuncias dentro de la app, bloqueo y estándares públicos contra CSAE/CSAM. El responsable debe operar la moderación y atender ese correo. No declarar verificación documental o moderación automática que la app no tiene.
 

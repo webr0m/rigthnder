@@ -1,10 +1,12 @@
 # Acceso con Google
 
-## Estado · 27 de octubre de 2026
+## Estado · 28 de octubre de 2026
 
 Configurado en Google Auth Platform, proyecto `onlyfachos`, cliente web del backend y audiencia externa en producción. Dominio autorizado: `webrom.cc`. Origen: `https://onlyfachos.webrom.cc`. Callback: `https://onlyfachos.webrom.cc/api/auth/google/callback`. Correo de asistencia OAuth: `ridrogo@gmail.com`, autorizado por el titular; notificaciones del proyecto: `admin@webrom.cc`. Se aceptó la política de Google con autorización explícita.
 
 ID y secreto instalados en el `.env` privado del servidor con permisos 0600. No se descargó el secreto ni se guardó en el código o el dispositivo local. `/api/options` confirma `googleEnabled: true` y se verificó la redirección real al selector de Google con `openid email profile`. No se completó el acceso de una cuenta real ni se creó un perfil de producción durante esta prueba.
+
+La vinculación explícita de cuentas existentes está publicada con beta 1.8. Se conservó la misma base SQLite durante el despliegue; Firebase se usa solo para notificaciones Android, sin sustituir la base ni crear perfiles duplicados por correo.
 
 ## Configurar otra instalación
 

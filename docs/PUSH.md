@@ -6,6 +6,8 @@ Los avisos llevan solo el nombre de la app y texto genérico en español, inglé
 
 ## Servidor
 
+Activado en Namecheap el 28 de octubre de 2026 para web y Android. `/api/push/config` devuelve `web: true` y `android: true`; esto confirma configuración, no recepción en teléfonos físicos. Google verificó la firma de la credencial sin enviar mensajes de prueba. La clave RSA se generó en el servidor y solo se subió su certificado público a Google. El certificado vence el **28 de octubre de 2027**: rotarlo antes de esa fecha, probar la nueva credencial y retirar la anterior después de verificar el cambio.
+
 Configura una vez `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY`, `WEB_PUSH_SUBJECT` y, para Android, `FCM_CREDENTIALS_PATH`. Las claves privadas permanecen fuera de los directorios públicos, con permisos 0600, y nunca usan prefijo `VITE_`. La credencial FCM necesita el rol `roles/firebasecloudmessaging.admin` en su proyecto; no necesita permisos de bases de datos ni correo.
 
 En esta instalación el proyecto es `onlyfachos` y la cuenta exclusiva es `onlyfachos-push@onlyfachos.iam.gserviceaccount.com`. Firebase no reemplaza SQLite ni habilita Analytics. La configuración cliente Android `google-services.json` contiene identificadores públicos de Firebase y una API key restringida a sus APIs, sin clave privada de servidor.
