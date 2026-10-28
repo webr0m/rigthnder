@@ -1,6 +1,6 @@
 # OnlyFachos
 
-**Beta 1 · web `1.0.0-beta.1.5`**. Nuevo perfil, ajustes, filtros, chats por estado y citas con día/lugar de aceptación bilateral. [Probar la beta y compilar apps](docs/BETA-1.md). [Descargar APK Android y app iOS Simulator](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1).
+**Código beta `1.0.0-beta.1.8`**. Google vinculado a cuentas existentes, avisos push opcionales y AdMob de prueba en móvil. [Estado del despliegue](docs/ESTADO.md), [probar y compilar](docs/BETA-1.md). Los paquetes de la [entrega anterior](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1) no incluyen estos cambios.
 
 **Sin swipes. Solo conversación.** Comunidad de citas para mayores de 18 años: feed vertical, perfiles con referentes, chat directo y citas aceptadas por ambas personas. Rediseño de Rigthnder a partir de los mockups claro/oscuro aportados por el usuario. MIT.
 
@@ -38,7 +38,7 @@ La demo se inicia con «Explorar la demostración». Sus perfiles, información 
 
 Los modos claro y oscuro se cambian con el sol/luna; se guarda únicamente la preferencia de apariencia en el navegador. En producción la demo requiere `DEMO_ENABLED=true`.
 
-Apple, GIFs y PRO no están habilitados; no hay cobros ni suscripciones. Google requiere credenciales OAuth. AdMob conserva su integración nativa de prueba, con consentimiento, sin enviar perfiles ni opiniones a anunciantes. No hay anuncios web. Android/iOS requieren compilación, firma y pruebas en dispositivos; no se ha generado una versión de tienda.
+Apple, GIFs y PRO no están habilitados; no hay cobros ni suscripciones. Google requiere credenciales OAuth privadas y puede vincularse desde Perfil → Ajustes tras confirmar la contraseña. AdMob se incluye con anuncios de prueba en las nuevas compilaciones nativas; el SDK espera a que UMP permita solicitar anuncios. No hay anuncios web ni se envían perfiles u opiniones a anunciantes. Push necesita configuración del servidor y autorización de cada dispositivo; consulta [notificaciones](docs/PUSH.md). La publicación real y las compilaciones de Play se detallan en [Estado](docs/ESTADO.md).
 
 Este MVP todavía requiere moderación operativa, verificación del correo, límites de abuso a escala, contacto y políticas definitivas del operador, respaldos y pruebas de dispositivos para un lanzamiento abierto. La edad es declarada y los mensajes no tienen cifrado de extremo a extremo. [Operación](docs/OPERACION.md).
 
@@ -57,6 +57,6 @@ pnpm test
 pnpm build
 ```
 
-41 pruebas cubren cuentas, edad/consentimiento, OAuth simulado, recuperación por correo (caducidad, uso único, límites y revocación de sesiones), aislamiento de demo, compatibilidad anterior, chat sin likes, participantes autorizados, estados de invitación, rechazos, bloqueo, fotos, audio inválido, stickers, reacciones, feed paginado y rachas. La grabación requiere un dispositivo con micrófono y permiso; no se comprobó con hardware Android/iOS.
+Las pruebas cubren cuentas, edad, OAuth simulado y vinculación sin duplicados, recuperación, sesiones y respuestas atrasadas, privacidad, chat, citas bilaterales, bloqueo, archivos, feed, anuncios/consentimiento y revocación/reintentos de push. El paquete Node se prueba sin node_modules para verificar sus dependencias incluidas. La grabación y los SDK móviles aún requieren pruebas en teléfonos físicos.
 
 La migración SQLite es aditiva y conserva usuarios y mensajes. La tabla histórica `matches` almacena las conversaciones; `date_invitations` representa las citas. Los endpoints `/api/swipes` y `/api/matches` permanecen como compatibilidad técnica y no se usan en la interfaz nueva. Antes de desplegar, crea un respaldo consistente de SQLite y conserva `.env` y el directorio de datos fuera del paquete.

@@ -429,12 +429,6 @@
   .chat-open .chat-layout {
     height: calc(100dvh - 78px - env(safe-area-inset-bottom));
   }
-  .with-ad .page-community {
-    padding-bottom: calc(160px + env(safe-area-inset-bottom));
-  }
-  .with-ad.chat-open .chat-layout {
-    height: calc(100dvh - 138px - env(safe-area-inset-bottom));
-  }
 }
 @media (max-width: 360px) {
   .page-community {

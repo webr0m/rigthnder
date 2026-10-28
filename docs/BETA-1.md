@@ -1,6 +1,6 @@
 # OnlyFachos · Beta 1
 
-Versión `1.0.0-beta.1.1`, 20 de octubre de 2026. Distribución principal: web pública en https://onlyfachos.webrom.lat. Los nombres de dominio, repositorio y paquete móvil (`com.rigthnder.app`) se conservan para mantener compatibilidad.
+Código `1.0.0-beta.1.8`, 28 de octubre de 2026. Dominio actual: https://onlyfachos.webrom.cc. Consulta [Estado](ESTADO.md) para saber qué versión está publicada. El paquete móvil sigue siendo `com.rigthnder.app`.
 
 ## Recorrido de prueba
 
@@ -12,6 +12,8 @@ Versión `1.0.0-beta.1.1`, 20 de octubre de 2026. Distribución principal: web p
 6. Mi perfil ofrece progreso real, visitas únicas, chats, citas confirmadas, fotos y acceso a cada paso del editor. Pausar quita el perfil del descubrimiento y conserva sus conversaciones.
 7. Ajustes: claro/oscuro/automático, preferencias de avisos, ocultar partido/fe, desbloquear, soporte privado, exportar y eliminar cuenta. Ocultar se aplica en el servidor, no solo en la interfaz.
 8. La denuncia admite motivo, detalles y bloqueo simultáneo. El destinatario no recibe la denuncia. La revisión es manual.
+9. En una cuenta con contraseña, Perfil → Ajustes → Google → Vincular confirma tu contraseña y exige la misma dirección de Google verificada. Después puedes usar cualquiera de los dos accesos con el mismo perfil y conversaciones.
+10. Activa los avisos en Ajustes → Notificaciones en este dispositivo. Los mensajes y citas se anuncian con texto genérico y puedes desactivarlos. Google/FCM no recibe el contenido de los chats. Android necesita una nueva compilación y el servidor configurado; iOS nativo requiere APNs y firma Apple.
 
 Los mockups de referencia son «OnlyFachos-Nuevas-Pantallas-Modo-Claro.pdf» y «OnlyFachos-Nuevas-Pantallas-Modo-Oscuro.pdf». Sus retratos y documentos no se publican en el código abierto. Se preservan el scrolling y los campos «Sexo» y residencia en el extranjero de la versión anterior.
 
@@ -29,7 +31,7 @@ Ambos empaquetan la misma interfaz y conectan por HTTPS al backend público. Par
 - Google OAuth está implementado y probado con proveedor simulado; necesita credenciales reales en el servidor para activarse.
 - Apple, verificación de selfies, suscripciones PRO, GIFs y push no están activos. Las pantallas de verificación/PRO reciben interés privado y no conceden insignias ni cobran.
 - Los avisos configurables se guardan; la beta muestra actividad dentro de la app. No se solicitan permisos de push o GPS sin funcionalidad disponible. «Cerca» usa la ciudad declarada; no hay distancias ficticias ni locales aliados/descuentos inventados.
-- AdMob conserva integración nativa opcional con IDs de prueba y consentimiento. Requiere configuración del titular y prueba de dispositivos antes de monetizar. No se envían datos políticos, religiosos o mensajes a anuncios.
+- AdMob se incluye por defecto en las compilaciones nativas con anuncios de prueba y consentimiento, y se retira al cerrar sesión. Requiere App IDs y ad units propios, mensajes UMP y prueba de dispositivos antes de monetizar. No se envían datos políticos, religiosos o mensajes a anuncios. El workflow de Play genera la beta sin SDK publicitario.
 - La recuperación automática por correo necesita un servicio de correo transaccional. La pantalla lo informa.
 - Las cuentas nuevas se basan en edad declarada; no hay verificación documental. El operador debe atender soporte/denuncias y completar sus datos y políticas antes de comercializar.
 

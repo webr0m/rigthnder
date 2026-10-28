@@ -1,6 +1,6 @@
 # Android, iOS y AdMob
 
-La interfaz se empaqueta con Capacitor 8. El backend Node y SQLite sigue en el servidor; no corre dentro del teléfono. ID inicial `com.rigthnder.app`: define tu identificador definitivo antes de publicar.
+La interfaz se empaqueta con Capacitor 8. Node y SQLite siguen en el servidor. Se conserva `com.rigthnder.app` para actualizar la aplicación existente.
 
 ## Android
 
@@ -9,7 +9,7 @@ pnpm mobile:android
 pnpm exec cap open android
 ```
 
-El script construye la interfaz, crea el proyecto si falta, registra el enlace de Google y el App ID de AdMob de prueba y sincroniza plugins. Se usa `https://onlyfachos.webrom.cc` como API por defecto; puedes reemplazarla con `VITE_API_URL`.
+El script construye la interfaz, crea el proyecto si falta, registra el enlace de Google, incluye AdMob con el App ID de prueba y sincroniza plugins. Se usa `https://onlyfachos.webrom.cc` como API por defecto; puedes reemplazarla con `VITE_API_URL`. El script lee `.env`, igual que Vite, para que el SDK nativo y el JavaScript no queden desincronizados.
 
 Abre Android Studio, instala el SDK y prueba en emulador y teléfono. Genera una firma de release y un AAB para Play Console. No subas claves de firma al repositorio.
 
@@ -26,15 +26,14 @@ Consulta los requisitos actuales de herramientas en [Capacitor](https://capacito
 
 ## Anuncios
 
-La integración de `src/mobile.js`:
+AdMob está integrado en las compilaciones nativas y usa anuncios de prueba por defecto. En `src/mobile.js`:
 
 - No solicita anuncios en web.
-- Está desactivada por defecto.
-- Al pulsar **Mi perfil → Ajustes → Anuncios AdMob**, pide información de consentimiento y muestra el formulario si corresponde.
-- Solo inicializa y carga cuando `canRequestAds` lo permite.
-- Usa anuncios de Google de prueba por defecto y `npa: true`.
+- Se activa por defecto con `VITE_ADMOB_ENABLED=true` (o sin definir); usa `false` para generar un build sin SDK publicitario.
+- Solo en Comunidad, tras iniciar sesión, pide la información de consentimiento UMP e inicializa el SDK si `canRequestAds` lo permite. Retira el banner en chats, formularios, perfiles abiertos, ventanas, al escribir, ocultar la app o cerrar sesión.
+- Usa anuncios de Google de prueba mientras `VITE_ADMOB_TEST_MODE` no sea `false` y siempre solicita anuncios no personalizados (`npa: true`).
 - No recibe ni envía valores políticos, perfil, intereses o mensajes.
-- Incluye el acceso a **Privacidad de anuncios** y retira el banner antes de cambiar consentimiento.
+- Ajusta el contenido con la altura real del banner, lo retira al cerrar sesión y expone **Mi perfil → Ajustes → Privacidad de anuncios** para cambiar o retirar el consentimiento.
 
 Para probar, configura antes de compilar:
 
@@ -42,11 +41,15 @@ Para probar, configura antes de compilar:
 VITE_API_URL=https://onlyfachos.webrom.cc
 VITE_ADMOB_ENABLED=true
 VITE_ADMOB_TEST_MODE=true
+VITE_ADMOB_ANDROID_APP_ID=ca-app-pub-3940256099942544~3347511713
+VITE_ADMOB_IOS_APP_ID=ca-app-pub-3940256099942544~1458002511
 ```
 
-En AdMob crea apps Android e iOS y mensajes de privacidad UMP. No hagas clic en anuncios reales para probar. Para monetizar, reemplaza los **App IDs** de AndroidManifest e Info.plist, configura los **ad unit IDs** `VITE_ADMOB_*_BANNER_ID`, desactiva el modo de prueba solo en una build de release y verifica el consentimiento en dispositivos. App ID usa `~`; ad unit ID usa `/`.
+`pnpm mobile:android` incluye el plugin y el App ID. El workflow **Build Android for Google Play** de beta 1.8 incluye AdMob y FCM, verifica su presencia y usa anuncios de prueba. Antes de subir el AAB hay que actualizar Anuncios, ID publicitario y Seguridad de datos en Play; la declaración anterior sin SDK publicitario solo describe hasta el código 10008.
 
-Para iOS configura los SKAdNetwork IDs vigentes según la [integración oficial de Google](https://developers.google.com/admob/ios/quick-start). Esta versión no solicita ATT directamente: si necesitas IDFA, configura su mensaje en UMP y declara el propósito en Info.plist. Revisa Data Safety y App Privacy con los datos efectivamente recogidos por tus SDK.
+Las apps y banners propios están registrados en `mobile-ads.json` (identificadores públicos del publicador). El modo de prueba usa siempre los App IDs y banners oficiales de demostración; el modo real usa los IDs propios o las variables de entorno. Rechaza IDs de prueba en modo real y publicadores que no coincidan. Para otra instalación reemplaza los IDs propios. Antes de monetizar, publica los mensajes UMP, enlaza las fichas de las tiendas y completa la revisión AdMob y app-ads.txt. No hagas clic en anuncios reales para probar.
+
+En iOS el proyecto incluye `GADApplicationIdentifier` y el identificador SKAdNetwork de Google. Se retiró `GADIsAdManagerApp`, porque se usa AdMob. Revisa los SKAdNetwork IDs según la [integración oficial](https://developers.google.com/admob/ios/quick-start). Esta versión no solicita ATT directamente. Revisa Data Safety y App Privacy según los datos realmente recogidos por los SDK.
 
 El banner es una primera integración técnica, no ingresos garantizados. Su colocación y los insets deben revisarse en teléfonos reales; no debe tapar botones de navegación ni mensajes.
 

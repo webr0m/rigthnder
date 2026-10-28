@@ -1223,9 +1223,9 @@
     "en": "Both of you will see these details in the chat. Confirm any changes together.",
     "de": "Ihr seht diese Details beide im Chat. Bestätigt Änderungen gemeinsam."
   },
-  "anuncios admob": {
-    "en": "AdMob ads",
-    "de": "AdMob-Werbung"
+  "anuncios no personalizados; también puedes retirar tu consentimiento aquí.": {
+    "en": "Non-personalized ads; you can also withdraw your consent here.",
+    "de": "Nicht personalisierte Werbung; du kannst deine Einwilligung hier auch widerrufen."
   },
   "aparecerán aquí cuando estén activas.": {
     "en": "They'll appear here when available.",
@@ -2723,6 +2723,10 @@
     "en": "We could not restore your saved session. Please sign in again.",
     "de": "Deine gespeicherte Sitzung konnte nicht wiederhergestellt werden. Bitte melde dich erneut an."
   },
+  "tu sesión caducó. vuelve a iniciar sesión.": {
+    "en": "Your session expired. Please sign in again.",
+    "de": "Deine Sitzung ist abgelaufen. Bitte melde dich erneut an."
+  },
   "la opción de recordar sesión no es válida.": {
     "en": "The remember sign-in option is invalid.",
     "de": "Die Option zum Speichern der Anmeldung ist ungültig."
@@ -2734,5 +2738,125 @@
   "el acceso con google está en preparación. puedes entrar con tu correo.": {
     "en": "Google sign-in is being set up. You can sign in with your email.",
     "de": "Die Google-Anmeldung wird eingerichtet. Du kannst dich mit deiner E-Mail-Adresse anmelden."
+  },
+  "vincular google": {
+    "en": "Link Google",
+    "de": "Google verknüpfen"
+  },
+  "vinculado": {
+    "en": "Linked",
+    "de": "Verknüpft"
+  },
+  "vincular": {
+    "en": "Link",
+    "de": "Verknüpfen"
+  },
+  "contraseña actual": {
+    "en": "Current password",
+    "de": "Aktuelles Passwort"
+  },
+  "confirma tu contraseña y elige la cuenta de google con el mismo correo. se conservarán tu perfil, fotos y conversaciones.": {
+    "en": "Confirm your password and choose the Google account with the same email. Your profile, photos and conversations will be kept.",
+    "de": "Bestätige dein Passwort und wähle das Google-Konto mit derselben E-Mail-Adresse. Dein Profil, deine Fotos und Unterhaltungen bleiben erhalten."
+  },
+  "google quedó vinculado a tu cuenta existente.": {
+    "en": "Google is now linked to your existing account.",
+    "de": "Google ist jetzt mit deinem bestehenden Konto verknüpft."
+  },
+  "este correo ya usa contraseña. entra con ella y vincula google desde perfil → ajustes.": {
+    "en": "This email already uses a password. Sign in with it and link Google from Profile → Settings.",
+    "de": "Für diese E-Mail-Adresse gibt es bereits ein Passwort. Melde dich damit an und verknüpfe Google unter Profil → Einstellungen."
+  },
+  "google no está disponible para esta cuenta.": {
+    "en": "Google is not available for this account.",
+    "de": "Google ist für dieses Konto nicht verfügbar."
+  },
+  "google ya está vinculado a tu cuenta.": {
+    "en": "Google is already linked to your account.",
+    "de": "Google ist bereits mit deinem Konto verknüpft."
+  },
+  "la contraseña no es correcta.": {
+    "en": "The password is incorrect.",
+    "de": "Das Passwort ist falsch."
+  },
+  "la vinculación expiró. inténtalo de nuevo desde ajustes.": {
+    "en": "The linking request expired. Try again from Settings.",
+    "de": "Die Verknüpfungsanfrage ist abgelaufen. Versuche es erneut unter Einstellungen."
+  },
+  "elige la cuenta de google con el mismo correo que tu cuenta onlyfachos.": {
+    "en": "Choose the Google account with the same email as your OnlyFachos account.",
+    "de": "Wähle das Google-Konto mit derselben E-Mail-Adresse wie dein OnlyFachos-Konto."
+  },
+  "tu cuenta ya tiene otra identidad de google vinculada.": {
+    "en": "Your account is already linked to another Google identity.",
+    "de": "Dein Konto ist bereits mit einer anderen Google-Identität verknüpft."
+  },
+  "esa cuenta de google ya está vinculada a otro perfil.": {
+    "en": "That Google account is already linked to another profile.",
+    "de": "Dieses Google-Konto ist bereits mit einem anderen Profil verknüpft."
+  },
+  "notificaciones en este dispositivo": {
+    "en": "Notifications on this device",
+    "de": "Benachrichtigungen auf diesem Gerät"
+  },
+  "activadas": {
+    "en": "Enabled",
+    "de": "Aktiviert"
+  },
+  "desactivadas": {
+    "en": "Disabled",
+    "de": "Deaktiviert"
+  },
+  "notificaciones activadas.": {
+    "en": "Notifications enabled.",
+    "de": "Benachrichtigungen aktiviert."
+  },
+  "notificaciones desactivadas.": {
+    "en": "Notifications disabled.",
+    "de": "Benachrichtigungen deaktiviert."
+  },
+  "activa las notificaciones en cada dispositivo para recibir avisos de mensajes y citas. el contenido de tus conversaciones no aparece en la pantalla bloqueada.": {
+    "en": "Enable notifications on each device to receive message and date alerts. Your conversation contents do not appear on the lock screen.",
+    "de": "Aktiviere Benachrichtigungen auf jedem Gerät, um Hinweise auf Nachrichten und Dates zu erhalten. Der Inhalt deiner Unterhaltungen erscheint nicht auf dem Sperrbildschirm."
+  },
+  "las notificaciones aún no están disponibles en este dispositivo.": {
+    "en": "Notifications are not available on this device yet.",
+    "de": "Benachrichtigungen sind auf diesem Gerät noch nicht verfügbar."
+  },
+  "permite las notificaciones en los ajustes del dispositivo.": {
+    "en": "Allow notifications in your device settings.",
+    "de": "Erlaube Benachrichtigungen in den Geräteeinstellungen."
+  },
+  "no pudimos registrar las notificaciones. inténtalo otra vez.": {
+    "en": "We could not register notifications. Please try again.",
+    "de": "Die Benachrichtigungen konnten nicht registriert werden. Versuche es erneut."
+  },
+  "no pudimos cerrar la sesión. comprueba tu conexión y vuelve a intentarlo.": {
+    "en": "We could not sign you out. Check your connection and try again.",
+    "de": "Du konntest nicht abgemeldet werden. Prüfe deine Verbindung und versuche es erneut."
+  },
+  "google no solicita opciones de privacidad en este dispositivo por ahora.": {
+    "en": "Google does not require privacy options on this device at this time.",
+    "de": "Google verlangt derzeit keine Datenschutzoptionen auf diesem Gerät."
+  },
+  "envía el contenido json sin comprimir.": {
+    "en": "Send uncompressed JSON content.",
+    "de": "Sende den JSON-Inhalt unkomprimiert."
+  },
+  "el contenido json no es válido.": {
+    "en": "The JSON content is invalid.",
+    "de": "Der JSON-Inhalt ist ungültig."
+  },
+  "si activas notificaciones, guardamos la suscripción de ese dispositivo y usamos su servicio push (google fcm en android o el proveedor del navegador). solo enviamos avisos genéricos de mensajes y citas. puedes desactivarlos en ajustes; se revocan al cerrar sesión, caducar el acceso o eliminar la cuenta. firebase analytics no está habilitado.": {
+    "en": "If you enable notifications, we store this device’s subscription and use its push service (Google FCM on Android or the browser provider). We send only generic message and date alerts. You can disable them in Settings; they are revoked when you sign out, your session expires or you delete your account. Firebase Analytics is not enabled.",
+    "de": "Wenn du Benachrichtigungen aktivierst, speichern wir das Abonnement dieses Geräts und verwenden seinen Push-Dienst (Google FCM unter Android oder den Browser-Anbieter). Wir senden nur allgemeine Hinweise auf Nachrichten und Dates. Du kannst sie unter Einstellungen deaktivieren; sie werden beim Abmelden, beim Ablauf deiner Sitzung oder beim Löschen deines Kontos widerrufen. Firebase Analytics ist nicht aktiviert."
+  },
+  "el sdk de anuncios móvil puede procesar la dirección ip, identificadores del dispositivo, interacciones y diagnósticos para publicidad, medición y prevención de fraude. las opiniones políticas y la religión del perfil no se usan para segmentar anuncios.": {
+    "en": "The mobile advertising SDK may process IP addresses, device identifiers, interactions and diagnostics for advertising, measurement and fraud prevention. Political views and religion from profiles are not used to target ads.",
+    "de": "Das mobile Werbe-SDK kann IP-Adressen, Gerätekennungen, Interaktionen und Diagnosedaten für Werbung, Messung und Betrugsprävention verarbeiten. Politische Ansichten und Religion aus Profilen werden nicht für zielgerichtete Werbung verwendet."
+  },
+  "la cuenta cambió. activa las notificaciones de nuevo.": {
+    "en": "The account changed. Enable notifications again.",
+    "de": "Das Konto wurde gewechselt. Aktiviere die Benachrichtigungen erneut."
   }
 }

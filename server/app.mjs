@@ -13,6 +13,8 @@ import { mountGoogleAuth } from './google.mjs';
 import { makeCommunitySchema, mountCommunity } from './community.mjs';
 import { birthdateError } from './birthdate.mjs';
 import { mountRecovery } from './recovery.mjs';
+import manifest from '../package.json' with { type: 'json' };
+import { createPushService, mountPush } from './push.mjs';
 
 const scryptAsync = promisify(scrypt);
 const hash = (text) => createHash('sha256').update(text).digest('hex');
@@ -69,6 +71,8 @@ const profileSchema = z.object({
 
 export function createApp(db, options = {}) {
   const app = express();
+  const push = createPushService(db, options.push);
+  app.locals.push = push;
   const production = options.production ?? process.env.NODE_ENV === 'production';
   const demoEnabled =
     options.demoEnabled ??
@@ -133,7 +137,6 @@ export function createApp(db, options = {}) {
       return res.status(403).json({ error: 'Origen no permitido.' });
     next();
   });
-  app.use(express.json({ limit: '3mb' }));
   app.use(
     '/api',
     rateLimit({
@@ -155,6 +158,8 @@ export function createApp(db, options = {}) {
     }),
   );
 
+  // Reject abusive traffic before allocating/parsing its JSON body.
+  app.use(express.json({ limit: '3mb', inflate: false }));
   const getUser = (id) => db.prepare('SELECT * FROM users WHERE id=? AND seed=0').get(id);
   const getAny = (id) => db.prepare('SELECT * FROM users WHERE id=?').get(id);
   const blocked = (a, b) =>
@@ -206,6 +211,7 @@ export function createApp(db, options = {}) {
         .get(hash(token), Date.now());
     req.user = found && getUser(found.user_id);
     if (!req.user) return res.status(401).json({ error: 'Inicia sesión para continuar.' });
+    req.sessionHash = hash(token);
     if (Date.now() - req.user.last_seen > 60_000) {
       req.user.last_seen = Date.now();
       db.prepare('UPDATE users SET last_seen=? WHERE id=?').run(req.user.last_seen, req.user.id);
@@ -246,9 +252,10 @@ export function createApp(db, options = {}) {
   }
 
   app.get('/api/health', (_req, res) =>
-    res.json({ ok: true, name: 'OnlyFachos', version: '1.0.0-beta.1.7', demoEnabled }),
+    res.json({ ok: true, name: 'OnlyFachos', version: manifest.version, demoEnabled }),
   );
   const googleEnabled = mountGoogleAuth(app, db, {
+    auth,
     production,
     parse,
     session,
@@ -601,6 +608,11 @@ export function createApp(db, options = {}) {
     db.prepare(
       'INSERT INTO messages (id,match_id,sender_id,text,created_at) VALUES (?,?,?,?,?)',
     ).run(randomUUID(), match.id, req.user.id, text, Date.now());
+    push.enqueue(
+      req.user.id,
+      match.user_a === req.user.id ? match.user_b : match.user_a,
+      'messages',
+    );
     if (req.user.demo) {
       const reply = text.toLowerCase().includes('café')
         ? '¡Ese plan tiene mi voto! ☕ ¿Un café y nos contamos más?'
@@ -689,6 +701,7 @@ export function createApp(db, options = {}) {
     res.json({ ok: true });
   });
   mountCommunity(app, db, {
+    push,
     auth,
     parse,
     accessibleTarget,
@@ -698,7 +711,8 @@ export function createApp(db, options = {}) {
     demoCommunitySchema,
     photoSchema,
   });
-  mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMatch });
+  mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMatch, push });
+  mountPush(app, db, { auth, parse, push });
   app.use('/api', (_req, res) => res.status(404).json({ error: 'Ruta no encontrada.' }));
   const dist = resolve(options.distDirectory || 'dist');
   if (existsSync(dist)) {
@@ -715,6 +729,10 @@ export function createApp(db, options = {}) {
     );
   }
   app.use((error, _req, res, _next) => {
+    if (error.type === 'encoding.unsupported')
+      return res.status(415).json({ error: 'Envía el contenido JSON sin comprimir.' });
+    if (error.type === 'entity.parse.failed')
+      return res.status(400).json({ error: 'El contenido JSON no es válido.' });
     if (error.type === 'entity.too.large')
       return res.status(413).json({ error: 'El archivo es demasiado grande.' });
     const status = error.status || 500;

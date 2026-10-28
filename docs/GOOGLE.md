@@ -35,6 +35,10 @@ En local usa las dos URLs `http://localhost:3000` equivalentes. Reinicia Node. E
 
 Google verifica el correo y devuelve el nombre. Si no existe la cuenta, la app pide fecha de nacimiento (18+), ciudad, sexo y consentimiento. La identidad pendiente expira en 10 minutos y se consume una sola vez. Una cuenta con contraseña que ya use ese correo debe entrar con contraseña: no se vincula automáticamente ni se sustituye su acceso.
 
+Desde beta 1.8, esa cuenta puede vincular Google en **Perfil → Ajustes → Google → Vincular**. Se comprueba la contraseña actual y se emite un ticket de dos minutos, de un solo uso, ligado al usuario y su sesión. El callback exige un correo Google verificado idéntico y que la sesión siga vigente; una identidad Google no puede pertenecer a otro perfil. Solo se actualiza `users.google_sub` en la misma base SQLite: no se reemplaza la cuenta ni se copian perfiles, fotos o conversaciones. Los accesos posteriores buscan esa identidad y reutilizan el mismo `users.id`.
+
+Si se cierra sesión o se restablece la contraseña antes de completar el flujo, la vinculación se rechaza. Android/iOS conservan el intercambio de un solo uso con comprobante SHA-256, también para vincular. Las pruebas verifican coincidencia de correo, contraseña incorrecta, identidad no verificada, duplicación, revocación y acceso posterior a la misma cuenta.
+
 ## Android/iOS
 
 La app abre el backend en el navegador nativo con `@capacitor/browser`. Google vuelve al callback HTTPS del servidor y luego a `com.rigthnder.app://auth`. Ese enlace contiene un código temporal, no un token de sesión. La app lo intercambia con un comprobante SHA-256 ligado al inicio del flujo; expira en 2 minutos y se consume una vez. Si la app fue cerrada durante el proceso y perdió el comprobante, el usuario inicia de nuevo.

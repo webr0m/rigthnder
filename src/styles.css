@@ -1991,9 +1991,6 @@ dd {
 .toast button {
   display: flex;
 }
-.with-ad .bottom-nav {
-  bottom: 60px;
-}
 @media (min-width: 1500px) {
   .community-layout {
     gap: 70px;

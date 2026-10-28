@@ -1,3 +1,15 @@
+# Beta 1.8 · preparación · 28 de octubre de 2026
+
+Código `1.0.0-beta.1.8`, Android/iOS build `10009`. Pendiente publicación de esta revisión en hosting y Play; la última distribución verificada sigue siendo 1.7/10008, descrita abajo.
+
+- Google se puede vincular de forma explícita a las cuentas de contraseña existentes, conservando su `users.id`, perfil, fotos y conversaciones. Exige contraseña, correo Google verificado coincidente y sesión vigente. No crea una base de datos nueva ni mueve las cuentas a Firebase.
+- Push web y Android: activación voluntaria, mensajes y citas con contenido genérico, preferencias y bloqueos, revocación por sesión y cola persistente. Firebase añadido al proyecto OnlyFachos con Analytics desactivado; app Android registrada. Credencial privada y activación en hosting en preparación. iOS nativo requiere APNs/firma. [Detalles y límites](PUSH.md).
+- AdMob: apps Android/iOS y banners propios creados; IDs públicos en `mobile-ads.json`. La nueva beta compila con anuncios de prueba. El banner espera el consentimiento y solo aparece en Comunidad, con espacio medido y separación de la navegación. Se retira en formularios, perfiles, chats, avisos de seguridad y al cerrar sesión; las respuestas tardías no pueden recuperarlo. La monetización real requiere UMP, fichas de tienda, app-ads.txt y revisión de AdMob.
+- Auditoría: body-parser 2.4.0 y qs 6.17.0; `pnpm audit --prod` sin vulnerabilidades conocidas. Limitadores antes del parser, JSON comprimido rechazado y errores de JSON controlados. Respuestas 401 antiguas no cierran una sesión recién iniciada. Un error de red al cerrar sesión web no anuncia un cierre que no pudo revocar su cookie.
+- Pruebas automáticas y QA local: cuenta existente/Google, privacidad y revocación push, anuncios/consentimiento, errores de API y paquete Node ejecutado sin node_modules. Diálogo Google comprobado a 390 px sin desbordamiento y contraseña incorrecta rechazada; traducciones ES/EN/DE. Falta recepción push y anuncios en teléfonos físicos.
+
+## Distribución anterior verificada
+
 # Beta 1.7 · 27 de octubre de 2026
 
 Web publicada en **https://onlyfachos.webrom.cc**, versión `1.0.0-beta.1.7`. Se conserva la base activa y se creó el respaldo privado `onlyfachos-2026-10-27T19-23-02-537Z`. Ahora se abre primero Iniciar sesión; Crear cuenta queda como alternativa.
@@ -74,7 +86,7 @@ Versión `1.0.0-beta.1.1`. [Recorrido de prueba, apps y límites](BETA-1.md).
 
 - Google OAuth real: cliente y secreto en servidor. Apple y recuperación por correo no están activados.
 - iPhone físico/TestFlight: equipo Apple Developer, certificado y perfil de firma. Android: clave estable de distribución y prueba de dispositivos antes de futuras actualizaciones públicas.
-- AdMob real: IDs propios, consentimiento y pruebas; la integración opcional conserva IDs de prueba. No hay anuncios web, pagos ni PRO activo.
+- AdMob real: IDs propios, mensajes UMP y pruebas en dispositivos. Las builds nativas incluyen anuncios de prueba por defecto; el workflow de Play los desactiva y no hay anuncios web, pagos ni PRO activo.
 - Verificación de selfies, distancias GPS, locales aliados, GIFs y push no están activados. Las pantallas indican su estado real.
 - Moderación y soporte: bandejas privadas y herramienta de operador disponibles; el titular debe atenderlas y completar sus datos/políticas antes de comercializar.
 - Colaboración de diseño: [guía](DISENO.md), módulos de pantallas separados y licencia MIT. El archivo de Figma anterior conserva Rigthnder y no refleja esta beta; no se publicó allí el nuevo diseño.

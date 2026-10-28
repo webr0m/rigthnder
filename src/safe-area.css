@@ -8,6 +8,7 @@
   --app-safe-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
   --app-height: calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom));
   --mobile-nav-height: calc(78px + var(--app-safe-bottom));
+  --ad-banner-height: 0px;
 }
 html {
   scroll-padding-top: calc(16px + var(--app-safe-top));
@@ -63,6 +64,9 @@ html {
   .page-community {
     padding-bottom: calc(100px + var(--app-safe-bottom));
   }
+  .with-ad .page:not(.page-chat) {
+    padding-bottom: calc(116px + var(--app-safe-bottom) + var(--ad-banner-height));
+  }
   .bottom-nav {
     left: var(--app-safe-left);
     right: var(--app-safe-right);
@@ -92,12 +96,18 @@ html {
   .chat-open .chat-layout {
     height: calc(100dvh - var(--app-safe-top) - var(--mobile-nav-height));
   }
-  .with-ad.chat-open .chat-layout {
-    height: calc(100dvh - var(--app-safe-top) - var(--mobile-nav-height) - 60px);
-  }
   .toast {
     bottom: calc(var(--mobile-nav-height) + 12px);
     max-width: calc(100vw - var(--app-safe-left) - var(--app-safe-right) - 30px);
+  }
+  .with-ad .toast {
+    bottom: calc(var(--mobile-nav-height) + var(--ad-banner-height) + 28px);
+  }
+}
+@media (min-width: 761px) {
+  /* En tabletas no hay barra inferior: reserva el banner al final de la página. */
+  .with-ad .page:not(.page-chat) {
+    padding-bottom: calc(var(--ad-banner-height) + 40px);
   }
 }
 @media (max-width: 700px) {

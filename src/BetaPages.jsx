@@ -17,6 +17,8 @@ import {
   MapPin,
 } from 'lucide-react';
 import { api } from './api';
+import { adsAvailable, linkGoogle } from './mobile';
+import { pushStatus, enablePush, disablePush } from './push';
 import { Button, Modal, Photo, locationLabel } from './Shared';
 
 export function Toggle({ label, hint, checked, onChange, disabled = false }) {
@@ -294,6 +296,7 @@ export function BetaAccount({ user, onEdit, onPreview, onSettings, saveSettings,
   );
 }
 export function BetaSettings({
+  googleEnabled,
   user,
   theme,
   setTheme,
@@ -305,13 +308,27 @@ export function BetaSettings({
   exportData,
   notify,
   onService,
-  onAds,
   onAdPrivacy,
 }) {
   const [blocked, setBlocked] = useState(null),
     [showBlocked, setShowBlocked] = useState(false),
     [working, setWorking] = useState(false);
+  const [googleLinkOpen, setGoogleLinkOpen] = useState(false),
+    [linkError, setLinkError] = useState('');
   const s = user.settings || {};
+  const [push, setPush] = useState({ available: false, enabled: false });
+  useEffect(() => {
+    let alive = true;
+    if (!user.demo)
+      pushStatus(user.id)
+        .then((value) => {
+          if (alive) setPush(value);
+        })
+        .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [user.id]);
   async function unblock(id) {
     setWorking(true);
     try {
@@ -355,11 +372,63 @@ export function BetaSettings({
       <h4>{t('IDIOMA DE LA APP')}</h4>
       <LanguagePicker onChange={(language) => saveSettings({ language })} />
       <h4>{t('CUENTA')}</h4>
+      {googleLinkOpen && (
+        <Modal title={t('Vincular Google')} onClose={() => setGoogleLinkOpen(false)}>
+          <p>
+            {t(
+              'Confirma tu contraseña y elige la cuenta de Google con el mismo correo. Se conservarán tu perfil, fotos y conversaciones.',
+            )}
+          </p>
+          <form
+            className="form"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setWorking(true);
+              setLinkError('');
+              const password = new FormData(e.currentTarget).get('password');
+              try {
+                await linkGoogle(password);
+                setGoogleLinkOpen(false);
+              } catch (error) {
+                setLinkError(error.message);
+              } finally {
+                setWorking(false);
+              }
+            }}
+          >
+            <label>
+              {t('Contraseña actual')}
+              <input
+                type="password"
+                name="password"
+                required
+                maxLength={128}
+                autoComplete="current-password"
+              />
+            </label>
+            {linkError && (
+              <p className="form-error" role="alert">
+                {t(linkError)}
+              </p>
+            )}
+            <Button disabled={working}>{t('Vincular Google')}</Button>
+          </form>
+        </Modal>
+      )}
       <div className="beta-group">
         <div className="beta-row">
           <b>{t('Correo')}</b>
           <span className="break-word">{user.email || t('Sesión demo')}</span>
         </div>
+        {!user.demo && googleEnabled && (
+          <Row
+            title={t('Google')}
+            value={user.googleLinked ? t('Vinculado') : t('Vincular')}
+            onClick={() => {
+              if (!user.googleLinked) setGoogleLinkOpen(true);
+            }}
+          />
+        )}
         <Row
           title={t('Verificación')}
           value="Sin verificar"
@@ -369,6 +438,26 @@ export function BetaSettings({
       </div>
       <h4>{t('NOTIFICACIONES')}</h4>
       <div className="beta-group">
+        {!user.demo && (
+          <Row
+            title={t('Notificaciones en este dispositivo')}
+            value={push.enabled ? t('Activadas') : t('Desactivadas')}
+            onClick={async () => {
+              if (working) return;
+              setWorking(true);
+              try {
+                if (push.enabled) await disablePush();
+                else await enablePush(user.id);
+                setPush(await pushStatus(user.id));
+                notify(push.enabled ? 'Notificaciones desactivadas.' : 'Notificaciones activadas.');
+              } catch (error) {
+                notify(error.message, true);
+              } finally {
+                setWorking(false);
+              }
+            }}
+          />
+        )}
         {[
           ['messages', 'Mensajes nuevos'],
           ['dates', 'Avisos de cita'],
@@ -384,7 +473,7 @@ export function BetaSettings({
       </div>
       <p className="hint">
         {t(
-          'Guardamos tus preferencias. Los avisos se muestran dentro de la app; las notificaciones push aún no están activadas.',
+          'Activa las notificaciones en cada dispositivo para recibir avisos de mensajes y citas. El contenido de tus conversaciones no aparece en la pantalla bloqueada.',
         )}
       </p>
       <h4>{t('PRIVACIDAD')}</h4>
@@ -420,15 +509,18 @@ export function BetaSettings({
           }}
         />
       </div>
-      <h4>{t('PUBLICIDAD EN MÓVIL')}</h4>
-      <div className="beta-group">
-        <Row
-          title={t('Anuncios AdMob')}
-          hint={t('Opcional; requiere configuración nativa')}
-          onClick={onAds}
-        />
-        <Row title={t('Privacidad de anuncios')} onClick={onAdPrivacy} />
-      </div>
+      {adsAvailable() && (
+        <>
+          <h4>{t('PUBLICIDAD EN MÓVIL')}</h4>
+          <div className="beta-group">
+            <Row
+              title={t('Privacidad de anuncios')}
+              hint={t('Anuncios no personalizados; también puedes retirar tu consentimiento aquí.')}
+              onClick={onAdPrivacy}
+            />
+          </div>
+        </>
+      )}
       <h4>{t('AYUDA Y LEGAL')}</h4>
       <div className="beta-group">
         <Row title={t('Normas y condiciones')} onClick={() => onLegal('terms')} />

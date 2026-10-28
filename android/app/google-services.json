@@ -1,0 +1,28 @@
+{
+  "project_info": {
+    "project_number": "436246832023",
+    "project_id": "onlyfachos"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436246832023:android:abd5b57ced6b2775fb5ad2",
+        "android_client_info": {
+          "package_name": "com.rigthnder.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnMmg72_7wxp8s5GzJuLvzDEtM3fId6GQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

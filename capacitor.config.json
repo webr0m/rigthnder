@@ -4,7 +4,13 @@
   "webDir": "dist",
   "backgroundColor": "#111111",
   "ios": {
-    "contentInset": "never"
+    "contentInset": "never",
+    "includePlugins": [
+      "@capacitor/app",
+      "@capacitor/browser",
+      "@aparajita/capacitor-secure-storage",
+      "@capacitor-community/admob"
+    ]
   },
   "plugins": {
     "SystemBars": {
@@ -18,7 +24,9 @@
     "includePlugins": [
       "@capacitor/app",
       "@capacitor/browser",
-      "@aparajita/capacitor-secure-storage"
+      "@aparajita/capacitor-secure-storage",
+      "@capacitor-community/admob",
+      "@capacitor/push-notifications"
     ]
   }
 }

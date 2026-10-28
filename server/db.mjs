@@ -147,6 +147,19 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
       token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       credential_hash TEXT NOT NULL, expires_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS push_devices (
+      id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      session_hash TEXT NOT NULL REFERENCES sessions(token_hash) ON DELETE CASCADE,
+      kind TEXT NOT NULL CHECK(kind IN ('web','android')), destination TEXT NOT NULL UNIQUE,
+      p256dh TEXT NOT NULL DEFAULT '', auth TEXT NOT NULL DEFAULT '', updated_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS push_devices_user ON push_devices(user_id);
+    CREATE TABLE IF NOT EXISTS push_outbox (
+      id TEXT PRIMARY KEY, device_id TEXT NOT NULL REFERENCES push_devices(id) ON DELETE CASCADE,
+      sender_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      kind TEXT NOT NULL CHECK(kind IN ('messages','dates')), attempts INTEGER NOT NULL DEFAULT 0,
+      available_at INTEGER NOT NULL, created_at INTEGER NOT NULL
+    );
     CREATE INDEX IF NOT EXISTS password_resets_user ON password_resets(user_id);
     CREATE TABLE IF NOT EXISTS password_reset_requests (
       email_hash TEXT PRIMARY KEY, window_start INTEGER NOT NULL, last_sent_at INTEGER NOT NULL, count INTEGER NOT NULL
@@ -182,6 +195,7 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
     CREATE TABLE IF NOT EXISTS oauth_states (state_hash TEXT PRIMARY KEY, native INTEGER NOT NULL, challenge TEXT, expires_at INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS oauth_pending (ticket_hash TEXT PRIMARY KEY, payload TEXT NOT NULL, expires_at INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS oauth_handoffs (code_hash TEXT PRIMARY KEY, payload TEXT NOT NULL, challenge TEXT NOT NULL, expires_at INTEGER NOT NULL);
+    CREATE TABLE IF NOT EXISTS oauth_link_tickets (ticket_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, session_hash TEXT NOT NULL, native INTEGER NOT NULL, challenge TEXT, expires_at INTEGER NOT NULL);
   `);
   // Migración aditiva: conserva cuentas, conversaciones y mensajes de la versión anterior.
   for (const [table, column, definition] of [
@@ -191,6 +205,8 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
     ['users', 'settings_json', "TEXT NOT NULL DEFAULT '{}'"],
     ['reports', 'details', "TEXT NOT NULL DEFAULT ''"],
     ['oauth_states', 'remember_me', 'INTEGER NOT NULL DEFAULT 1'],
+    ['oauth_states', 'link_user_id', 'TEXT'],
+    ['oauth_states', 'link_session_hash', 'TEXT'],
   ]) {
     if (
       !db
@@ -378,7 +394,11 @@ export function settingsOf(user) {
   return { ...DEFAULT_SETTINGS, ...JSON.parse(user.settings_json || '{}') };
 }
 export function ownProfile(user) {
-  return { ...publicProfile(user, true), settings: settingsOf(user) };
+  return {
+    ...publicProfile(user, true),
+    settings: settingsOf(user),
+    googleLinked: !!user.google_sub,
+  };
 }
 export function publicProfile(user, own = false) {
   const community = JSON.parse(user.community_json || '{}');

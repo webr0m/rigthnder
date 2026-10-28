@@ -1,4 +1,6 @@
-import { randomBytes, randomUUID, createHash } from 'node:crypto';
+import { randomBytes, randomUUID, createHash, scrypt, timingSafeEqual } from 'node:crypto';
+import { promisify } from 'node:util';
+const scryptAsync = promisify(scrypt);
 import { z } from 'zod';
 const hash = (v) => createHash('sha256').update(v).digest('hex');
 const cookieValue = (req, name) =>
@@ -11,7 +13,16 @@ const cookieValue = (req, name) =>
 export function mountGoogleAuth(
   app,
   db,
-  { production, parse, session, validBirthdate, google, communitySchema, fetch: fetchImpl = fetch },
+  {
+    auth,
+    production,
+    parse,
+    session,
+    validBirthdate,
+    google,
+    communitySchema,
+    fetch: fetchImpl = fetch,
+  },
 ) {
   const config = google || {
     clientId: process.env.GOOGLE_CLIENT_ID,
@@ -28,25 +39,101 @@ export function mountGoogleAuth(
     maxAge: 10 * 60_000,
   };
   const pendingTicket = (req) => req.body?.ticket || cookieValue(req, 'rigthnder_google_pending');
+  const nativeHandoff = (res, saved, payload) => {
+    const code = randomBytes(32).toString('hex');
+    db.prepare('INSERT INTO oauth_handoffs VALUES (?,?,?,?)').run(
+      hash(code),
+      JSON.stringify(payload),
+      saved.challenge,
+      Date.now() + 2 * 60_000,
+    );
+    return res.redirect('com.rigthnder.app://auth?code=' + code);
+  };
+  app.post('/api/auth/google/link', auth, async (req, res) => {
+    if (!enabled || req.user.demo)
+      return res.status(400).json({ error: 'Google no está disponible para esta cuenta.' });
+    const p = parse(
+      z.object({
+        password: z.string().min(1).max(128),
+        native: z.boolean().default(false),
+        challenge: z
+          .string()
+          .regex(/^[A-Za-z0-9_-]{43}$/)
+          .optional(),
+      }),
+      req.body,
+    );
+    if (p.native && !p.challenge)
+      return res.status(400).json({ error: 'Falta el comprobante de acceso móvil.' });
+    if (req.user.google_sub)
+      return res.status(409).json({ error: 'Google ya está vinculado a tu cuenta.' });
+    const storedPassword = req.user.password;
+    const [salt, digest] = (storedPassword || 'invalid:00').split(':');
+    const calculated = await scryptAsync(p.password, salt, 64),
+      expected = Buffer.from(digest || '', 'hex');
+    const latest = db.prepare('SELECT password FROM users WHERE id=?').get(req.user.id);
+    if (
+      expected.length !== calculated.length ||
+      !timingSafeEqual(expected, calculated) ||
+      latest?.password !== storedPassword
+    )
+      return res.status(401).json({ error: 'La contraseña no es correcta.' });
+    db.prepare('DELETE FROM oauth_link_tickets WHERE expires_at<?').run(Date.now());
+    const ticket = randomBytes(32).toString('hex');
+    db.prepare('INSERT INTO oauth_link_tickets VALUES (?,?,?,?,?,?)').run(
+      hash(ticket),
+      req.user.id,
+      req.sessionHash,
+      p.native ? 1 : 0,
+      p.challenge || '',
+      Date.now() + 2 * 60_000,
+    );
+    res.json({ url: config.publicUrl + '/api/auth/google?linkTicket=' + ticket });
+  });
   app.get('/api/auth/google', (req, res) => {
     if (!enabled)
       return res.status(503).json({
         error:
           'Configura GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET y GOOGLE_REDIRECT_URI en el servidor para activar Google.',
       });
-    const native = req.query.native === '1';
+    let link;
+    if (req.query.linkTicket !== undefined) {
+      if (typeof req.query.linkTicket !== 'string' || !/^[a-f0-9]{64}$/.test(req.query.linkTicket))
+        return res
+          .status(400)
+          .json({ error: 'La vinculación expiró. Inténtalo de nuevo desde Ajustes.' });
+      link = db
+        .prepare('SELECT * FROM oauth_link_tickets WHERE ticket_hash=? AND expires_at>?')
+        .get(hash(req.query.linkTicket), Date.now());
+      if (!link)
+        return res
+          .status(400)
+          .json({ error: 'La vinculación expiró. Inténtalo de nuevo desde Ajustes.' });
+      db.prepare('DELETE FROM oauth_link_tickets WHERE ticket_hash=?').run(
+        hash(req.query.linkTicket),
+      );
+    }
+    const native = link ? !!link.native : req.query.native === '1';
     if (req.query.rememberMe !== undefined && !['0', '1'].includes(req.query.rememberMe))
       return res.status(400).json({ error: 'La opción de recordar sesión no es válida.' });
     const rememberMe = req.query.rememberMe !== '0';
-    const challenge = native ? req.query.challenge : '';
+    const challenge = native ? link?.challenge || req.query.challenge : '';
     if (native && !/^[A-Za-z0-9_-]{43}$/.test(challenge || ''))
       return res.status(400).json({ error: 'Falta el comprobante de acceso móvil.' });
     for (const table of ['oauth_states', 'oauth_pending', 'oauth_handoffs'])
       db.prepare(`DELETE FROM ${table} WHERE expires_at < ?`).run(Date.now());
     const state = randomBytes(32).toString('hex');
     db.prepare(
-      'INSERT INTO oauth_states (state_hash,native,challenge,expires_at,remember_me) VALUES (?,?,?,?,?)',
-    ).run(hash(state), native ? 1 : 0, challenge, Date.now() + 10 * 60_000, rememberMe ? 1 : 0);
+      'INSERT INTO oauth_states (state_hash,native,challenge,expires_at,remember_me,link_user_id,link_session_hash) VALUES (?,?,?,?,?,?,?)',
+    ).run(
+      hash(state),
+      native ? 1 : 0,
+      challenge,
+      Date.now() + 10 * 60_000,
+      rememberMe ? 1 : 0,
+      link?.user_id || null,
+      link?.session_hash || null,
+    );
     res.cookie('rigthnder_oauth_state', state, cookieOptions);
     const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
     url.search = new URLSearchParams({
@@ -103,7 +190,36 @@ export function mountGoogleAuth(
       });
       if (!infoResponse.ok) throw new Error('userinfo');
       const info = await infoResponse.json();
-      if (!info.sub || !info.email || info.email_verified !== true) throw new Error('unverified');
+      if (
+        typeof info.sub !== 'string' ||
+        !info.sub ||
+        typeof info.email !== 'string' ||
+        !info.email ||
+        info.email_verified !== true
+      )
+        throw new Error('unverified');
+      if (saved.link_user_id) {
+        const user = db
+          .prepare('SELECT * FROM users WHERE id=? AND demo=0')
+          .get(saved.link_user_id);
+        const active = db
+          .prepare('SELECT 1 FROM sessions WHERE token_hash=? AND user_id=? AND expires_at>?')
+          .get(saved.link_session_hash, saved.link_user_id, Date.now());
+        if (!user || !active)
+          return fail('La vinculación expiró. Inténtalo de nuevo desde Ajustes.');
+        if (user.email.toLowerCase() !== info.email.toLowerCase())
+          return fail('Elige la cuenta de Google con el mismo correo que tu cuenta OnlyFachos.');
+        if (user.google_sub && user.google_sub !== info.sub)
+          return fail('Tu cuenta ya tiene otra identidad de Google vinculada.');
+        const other = db
+          .prepare('SELECT id FROM users WHERE google_sub=? AND id<>?')
+          .get(info.sub, user.id);
+        if (other) return fail('Esa cuenta de Google ya está vinculada a otro perfil.');
+        db.prepare('UPDATE users SET google_sub=? WHERE id=?').run(info.sub, user.id);
+        return saved.native
+          ? nativeHandoff(res, saved, { linked: true })
+          : res.redirect(config.publicUrl + '/?google=linked');
+      }
       const existing = db
         .prepare('SELECT * FROM users WHERE google_sub=? AND demo=0')
         .get(info.sub);
@@ -112,7 +228,7 @@ export function mountGoogleAuth(
         db.prepare('SELECT 1 FROM users WHERE email=?').get(info.email.toLowerCase())
       )
         return fail(
-          'Este correo ya usa contraseña. Inicia sesión con ella; vincular cuentas estará disponible en una próxima versión.',
+          'Este correo ya usa contraseña. Entra con ella y vincula Google desde Perfil → Ajustes.',
         );
       let payload;
       if (existing) payload = { userId: existing.id, rememberMe: !!saved.remember_me };
@@ -132,14 +248,7 @@ export function mountGoogleAuth(
         payload = { ticket, identity: { name: identity.name, email: identity.email } };
       }
       if (saved.native) {
-        const code = randomBytes(32).toString('hex');
-        db.prepare('INSERT INTO oauth_handoffs VALUES (?,?,?,?)').run(
-          hash(code),
-          JSON.stringify(payload),
-          saved.challenge,
-          Date.now() + 2 * 60_000,
-        );
-        return res.redirect('com.rigthnder.app://auth?code=' + code);
+        return nativeHandoff(res, saved, payload);
       }
       if (existing) session(res, existing, !!saved.remember_me);
       else res.cookie('rigthnder_google_pending', payload.ticket, cookieOptions);

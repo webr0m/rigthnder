@@ -19,8 +19,9 @@ import {
   X,
   Zap,
 } from 'lucide-react';
-import { api, setToken, restoreToken } from './api';
-import { googleLogin, listenGoogle, startAds, privacyAds } from './mobile';
+import { api, setToken, restoreToken, logoutSession } from './api';
+import { listenPush, forgetPush } from './push';
+import { googleLogin, listenGoogle, startAds, stopAds, privacyAds } from './mobile';
 import { Button, Modal, Photo, Safety, Legal, locationLabel } from './Shared';
 import Onboarding from './Onboarding';
 import Conversations from './Conversations';
@@ -492,7 +493,8 @@ export default function App() {
     version = useRef(0),
     toastTimer = useRef(),
     scroll = useRef(0),
-    chatOrigin = useRef('chat');
+    chatOrigin = useRef('chat'),
+    sessionExpired = useRef(false);
   function notify(message, error = false) {
     clearTimeout(toastTimer.current);
     setToast({ message: t(message), error });
@@ -552,11 +554,17 @@ export default function App() {
               if (me.settings?.language) setLanguage(me.settings.language);
               setFilters({ ...DEFAULT, gender: me.lookingFor });
               if (location.pathname === '/eliminar-cuenta') setTab('profile');
+              if (q.get('open') === 'chats') setTab('chat');
             }
           } catch {}
         }
+        if (q.get('google') === 'linked') {
+          setTab('profile');
+          setSettingsOpen(true);
+          notify('Google quedó vinculado a tu cuenta existente.');
+        }
         if (q.get('oauth_error')) notify(q.get('oauth_error'), true);
-        if (q.has('google') || q.has('oauth_error'))
+        if (q.has('google') || q.has('oauth_error') || q.has('open'))
           history.replaceState({}, '', location.pathname);
         if (location.pathname === '/privacidad') setModal('privacy');
         if (location.pathname === '/terminos') setModal('terms');
@@ -569,7 +577,13 @@ export default function App() {
       }
     })();
     listenGoogle(
-      (r) => (r.ticket ? setWizard({ type: 'google', ...r }) : signedIn(r)),
+      async (r) => {
+        if (r.linked) {
+          setUser(await api('/me'));
+          notify('Google quedó vinculado a tu cuenta existente.');
+        } else if (r.ticket) setWizard({ type: 'google', ...r });
+        else await signedIn(r);
+      },
       (m) => notify(m, true),
     ).then((fn) => (unlisten = fn));
     return () => {
@@ -592,6 +606,81 @@ export default function App() {
     refresh().catch((e) => notify(e.message, true));
     const t = setInterval(() => refresh().catch(() => {}), 10000);
     return () => clearInterval(t);
+  }, [user?.id]);
+  useEffect(() => {
+    if (!user || user.demo) return;
+    let alive = true,
+      cleanup;
+    listenPush(user.id, () => {
+      setTab('chat');
+      setActive(null);
+    })
+      .then((fn) => {
+        if (alive) cleanup = fn;
+        else fn();
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+      cleanup?.();
+    };
+  }, [user?.id]);
+  useEffect(() => {
+    // Keep ads away from private chats, forms, safety dialogs and authentication.
+    const allowed =
+      ready &&
+      user &&
+      (!user.demo || import.meta.env.VITE_ADMOB_TEST_MODE !== 'false') &&
+      tab === 'community' &&
+      !wizard &&
+      !modal &&
+      !profileView &&
+      !service &&
+      !recovery;
+    let timer;
+    const sync = () => {
+      clearTimeout(timer);
+      const editing = document.activeElement?.matches(
+        'input, textarea, select, [contenteditable="true"]',
+      );
+      if (!allowed || document.visibilityState === 'hidden' || editing) stopAds().catch(() => {});
+      else timer = setTimeout(() => startAds({ silent: true }).catch(() => {}), 150);
+    };
+    sync();
+    window.addEventListener('resize', sync);
+    document.addEventListener('visibilitychange', sync);
+    document.addEventListener('focusin', sync);
+    const afterBlur = () => queueMicrotask(sync);
+    document.addEventListener('focusout', afterBlur);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', sync);
+      document.removeEventListener('visibilitychange', sync);
+      document.removeEventListener('focusin', sync);
+      document.removeEventListener('focusout', afterBlur);
+      stopAds().catch(() => {});
+    };
+  }, [ready, user?.id, tab, !!wizard, !!modal, !!profileView, !!service, !!recovery]);
+  useEffect(() => {
+    if (!user) {
+      sessionExpired.current = false;
+      return;
+    }
+    const expire = () => {
+      if (sessionExpired.current) return;
+      sessionExpired.current = true;
+      stopAds().catch(() => {});
+      forgetPush().catch(() => {});
+      setToken('').catch(() => {});
+      setUser(null);
+      setConversations([]);
+      setFeed({ profiles: [], online: [], hasMore: false });
+      setActive(null);
+      setModal(null);
+      notify('Tu sesión caducó. Vuelve a iniciar sesión.', true);
+    };
+    window.addEventListener('onlyfachos:auth-expired', expire);
+    return () => window.removeEventListener('onlyfachos:auth-expired', expire);
   }, [user?.id]);
   const params = new URLSearchParams({ ...filters, mode, q: query }).toString();
   useEffect(() => {
@@ -725,16 +814,18 @@ export default function App() {
     }
   }
   async function logout() {
+    stopAds().catch(() => {});
     try {
-      await api('/auth/logout', { method: 'POST' });
-      await setToken('').catch(() => {});
-      setUser(null);
-      setConversations([]);
-      setFeed({ profiles: [], online: [], hasMore: false });
-      setActive(null);
-    } catch (e) {
-      notify(e.message, true);
+      await logoutSession();
+    } catch (error) {
+      notify(error.message, true);
+      return;
     }
+    await forgetPush().catch(() => {});
+    setUser(null);
+    setConversations([]);
+    setFeed({ profiles: [], online: [], hasMore: false });
+    setActive(null);
   }
   async function exportData() {
     try {
@@ -1197,6 +1288,7 @@ export default function App() {
               {tab === 'profile' &&
                 (settingsOpen ? (
                   <BetaSettings
+                    googleEnabled={options.googleEnabled}
                     user={user}
                     theme={theme}
                     setTheme={setTheme}
@@ -1208,16 +1300,12 @@ export default function App() {
                     exportData={exportData}
                     notify={notify}
                     onService={setService}
-                    onAds={async () => {
-                      try {
-                        notify(await startAds());
-                      } catch (e) {
-                        notify(e.message, true);
-                      }
-                    }}
                     onAdPrivacy={async () => {
                       try {
-                        await privacyAds();
+                        if (!(await privacyAds()))
+                          notify(
+                            'Google no solicita opciones de privacidad en este dispositivo por ahora.',
+                          );
                       } catch (e) {
                         notify(e.message, true);
                       }
@@ -1386,9 +1474,12 @@ export default function App() {
               try {
                 await api('/me', { method: 'DELETE' });
                 await setToken('').catch(() => {});
+                stopAds().catch(() => {});
                 setUser(null);
                 setModal(null);
                 setConversations([]);
+                setFeed({ profiles: [], online: [], hasMore: false });
+                setActive(null);
                 notify('Tu cuenta y sus datos se eliminaron.');
               } catch (e) {
                 notify(e.message, true);

@@ -70,9 +70,15 @@
     <string>OnlyFachos usa el micrófono solo cuando eliges grabar un mensaje de voz.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Elige fotos para tu perfil o para compartirlas en una conversación.</string>
-<key>GADApplicationIdentifier</key>
-    <string>ca-app-pub-3940256099942544~1458002511</string>
+    <key>SKAdNetworkItems</key>
+    <array>
+        <dict>
+            <key>SKAdNetworkIdentifier</key>
+            <string>cstr6suwn9.skadnetwork</string>
+        </dict>
+    </array>
     <key>CFBundleURLTypes</key>
     <array><dict><key>CFBundleURLSchemes</key><array><string>com.rigthnder.app</string></array></dict></array>
+    <key>GADApplicationIdentifier</key><string>ca-app-pub-3940256099942544~1458002511</string>
 </dict>
 </plist>

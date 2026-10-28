@@ -25,19 +25,22 @@ jobs:
       - run: pnpm mobile:android
         env:
           VITE_API_URL: https://onlyfachos.webrom.cc
-          VITE_ADMOB_ENABLED: 'false'
+          VITE_ADMOB_ENABLED: 'true'
+          VITE_ADMOB_TEST_MODE: 'true'
       - run: chmod +x android/gradlew && cd android && ./gradlew bundleRelease --no-daemon
-      - name: Verify beta has no advertising SDK or advertising ID permission
+      - name: Verify AdMob and FCM are packaged with test advertising configuration
         run: |
           python3 - <<'PY'
           import zipfile
           with zipfile.ZipFile('android/app/build/outputs/bundle/release/app-release.aab') as bundle:
-              for name in bundle.namelist():
-                  if name.endswith('.dex') or name.endswith('AndroidManifest.xml'):
-                      data = bundle.read(name)
-                      for marker in (b'Lcom/google/android/gms/ads/', b'Lcom/getcapacitor/community/admob/', b'com.google.android.gms.permission.AD_ID'):
-                          assert marker not in data, f'Unexpected advertising component in {name}'
-          print('Verified: beta bundle excludes AdMob and AD_ID')
+              dex = b''.join(bundle.read(name) for name in bundle.namelist() if name.endswith('.dex'))
+              manifest = bundle.read('base/manifest/AndroidManifest.xml')
+              for marker in (b'Lcom/google/android/gms/ads/', b'Lcom/getcapacitor/community/admob/', b'Lcom/google/firebase/messaging/FirebaseMessaging;'):
+                  assert marker in dex, f'Missing native component: {marker}'
+              assert b'com.google.android.gms.permission.AD_ID' in manifest
+              resources = bundle.read('base/resources.pb')
+              assert b'ca-app-pub-3940256099942544~3347511713' in resources
+          print('Verified: AdMob test app and FCM included; update Play advertising disclosures before upload')
           PY
       - uses: actions/upload-artifact@v4
         with:

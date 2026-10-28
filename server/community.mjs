@@ -125,6 +125,7 @@ export function mountCommunity(
   app,
   db,
   {
+    push,
     auth,
     parse,
     accessibleTarget,
@@ -288,16 +289,19 @@ export function mountCommunity(
   app.post('/api/conversations', auth, (req, res) => {
     const { targetId } = parse(z.object({ targetId: z.string().max(80) }), req.body);
     const target = accessibleTarget(req, targetId);
-    if (
-      settingsOf(target).paused &&
-      !db
-        .prepare('SELECT 1 FROM matches WHERE (user_a=? AND user_b=?) OR (user_a=? AND user_b=?)')
-        .get(req.user.id, target.id, target.id, req.user.id)
-    )
+    const existing = db
+      .prepare('SELECT * FROM matches WHERE (user_a=? AND user_b=?) OR (user_a=? AND user_b=?)')
+      .get(req.user.id, target.id, target.id, req.user.id);
+    if (settingsOf(target).paused && !existing)
       return res.status(404).json({ error: 'Este perfil está pausado.' });
-    if (!req.user.demo && target.looking_for !== 'todos' && target.looking_for !== req.user.gender)
+    if (
+      !existing &&
+      !req.user.demo &&
+      target.looking_for !== 'todos' &&
+      target.looking_for !== req.user.gender
+    )
       return res.status(404).json({ error: 'Ese perfil no está disponible.' });
-    const m = makeMatch(req.user.id, target.id);
+    const m = existing || makeMatch(req.user.id, target.id);
     res.status(201).json(conversation(req, m));
   });
   app.get('/api/conversations', auth, (req, res) => {
@@ -370,6 +374,7 @@ export function mountCommunity(
     db.prepare(
       'INSERT INTO messages (id,match_id,sender_id,text,created_at,kind) VALUES (?,?,?,?,?,?)',
     ).run(randomUUID(), m.id, req.user.id, p.text.trim(), Date.now(), p.kind);
+    push.enqueue(req.user.id, m.user_a === req.user.id ? m.user_b : m.user_a, 'messages');
     if (req.user.demo)
       db.prepare(
         'INSERT INTO messages (id,match_id,sender_id,text,created_at) VALUES (?,?,?,?,?)',
@@ -419,7 +424,7 @@ export function mountCommunity(
     res.status(201).json({ ok: true });
   });
   app.post('/api/conversations/:id/invitations', auth, (req, res) => {
-    accessibleMatch(req, req.params.id);
+    const m = accessibleMatch(req, req.params.id);
     const { plan } = parse(z.object({ plan: z.enum(PLANS) }), req.body);
     if (
       db
@@ -433,6 +438,7 @@ export function mountCommunity(
     db.prepare(
       'INSERT INTO date_invitations (id,conversation_id,sender_id,plan,created_at) VALUES (?,?,?,?,?)',
     ).run(id, req.params.id, req.user.id, plan, Date.now());
+    push.enqueue(req.user.id, m.user_a === req.user.id ? m.user_b : m.user_a, 'dates');
     res.status(201).json({ id });
   });
   function invitation(req, id) {
@@ -456,6 +462,7 @@ export function mountCommunity(
         .run(accept ? 'accepted' : 'declined', row.id).changes
     )
       return res.status(409).json({ error: 'Esta invitación ya fue respondida.' });
+    push.enqueue(req.user.id, row.sender_id, 'dates');
     res.json({ ok: true });
   });
   app.post('/api/invitations/:id/demo-answer', auth, (req, res) => {

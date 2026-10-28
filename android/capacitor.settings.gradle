@@ -10,3 +10,9 @@ project(':capacitor-browser').projectDir = new File('../node_modules/.pnpm/@capa
 
 include ':aparajita-capacitor-secure-storage'
 project(':aparajita-capacitor-secure-storage').projectDir = new File('../node_modules/.pnpm/@aparajita+capacitor-secure-storage@8.0.1/node_modules/@aparajita/capacitor-secure-storage/android')
+
+include ':capacitor-community-admob'
+project(':capacitor-community-admob').projectDir = new File('../node_modules/.pnpm/@capacitor-community+admob@8.2.1/node_modules/@capacitor-community/admob/android')
+
+include ':capacitor-push-notifications'
+project(':capacitor-push-notifications').projectDir = new File('../node_modules/.pnpm/@capacitor+push-notifications@8.1.3_@capacitor+core@8.5.3/node_modules/@capacitor/push-notifications/android')

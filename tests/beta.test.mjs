@@ -112,7 +112,10 @@ test('pause removes discovery and new contacts but preserves existing chats; unp
   assert.equal((await req('/community/profiles?gender=todos&q=PauseBetaB', c.token)).data.total, 0);
   assert.equal((await req('/conversations', c.token, { targetId: b.user.id })).status, 404);
   assert.equal((await req('/conversations/' + id, a.token)).status, 200);
+  db.prepare("UPDATE users SET looking_for='mujer' WHERE id=?").run(b.user.id);
   assert.equal((await req('/conversations', a.token, { targetId: b.user.id })).status, 201);
+  assert.equal((await req('/conversations', c.token, { targetId: b.user.id })).status, 404);
+  db.prepare("UPDATE users SET looking_for='todos' WHERE id=?").run(b.user.id);
   await req('/me/settings', b.token, { paused: false }, 'PUT');
   assert.equal((await req('/community/profiles?gender=todos&q=PauseBetaB', c.token)).data.total, 1);
 });

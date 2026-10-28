@@ -272,6 +272,16 @@ function Legal({ type }) {
         <h3>{t('Tu control')}</h3>
         <p>
           {t(
+            'Si activas notificaciones, guardamos la suscripción de ese dispositivo y usamos su servicio push (Google FCM en Android o el proveedor del navegador). Solo enviamos avisos genéricos de mensajes y citas. Puedes desactivarlos en Ajustes; se revocan al cerrar sesión, caducar el acceso o eliminar la cuenta. Firebase Analytics no está habilitado.',
+          )}
+        </p>
+        <p>
+          {t(
+            'El SDK de anuncios móvil puede procesar la dirección IP, identificadores del dispositivo, interacciones y diagnósticos para publicidad, medición y prevención de fraude. Las opiniones políticas y la religión del perfil no se usan para segmentar anuncios.',
+          )}
+        </p>
+        <p>
+          {t(
             'Mi perfil → Ajustes → Descargar mis datos / Eliminar mi cuenta. Al eliminarla, borramos los registros asociados de la base activa. Puedes escribir al responsable para consultas de privacidad y eliminación de datos en respaldos.',
           )}
         </p>

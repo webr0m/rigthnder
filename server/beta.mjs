@@ -11,7 +11,7 @@ export function proposalsFor(db, conversationId) {
     )
     .all(conversationId);
 }
-export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMatch }) {
+export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMatch, push }) {
   const get = (id) => db.prepare('SELECT * FROM users WHERE id=?').get(id);
   const dateMessage = (conversationId, senderId, text) =>
     db
@@ -131,7 +131,7 @@ export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMa
     res.json({ ok: true });
   });
   app.post('/api/conversations/:id/proposals', auth, (req, res) => {
-    accessibleMatch(req, req.params.id);
+    const match = accessibleMatch(req, req.params.id);
     const p = parse(
       z.object({
         day: z.string().datetime({ offset: true }),
@@ -181,6 +181,7 @@ export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMa
       db.exec('ROLLBACK');
       throw e;
     }
+    push.enqueue(req.user.id, match.user_a === req.user.id ? match.user_b : match.user_a, 'dates');
     res.status(201).json({ id });
   });
   app.post('/api/proposals/:id/answer', auth, (req, res) => {
@@ -227,6 +228,7 @@ export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMa
       db.exec('ROLLBACK');
       throw e;
     }
+    if (!p.demo) push.enqueue(req.user.id, row.sender_id, 'dates');
     res.json({ ok: true });
   });
   app.delete('/api/proposals/:id', auth, (req, res) => {
