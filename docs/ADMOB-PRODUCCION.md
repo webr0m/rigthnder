@@ -9,7 +9,8 @@ La beta distribuida `10009` utiliza anuncios oficiales de prueba. No se cambia e
 - `https://onlyfachos.webrom.cc/app-ads.txt` responde 200 y declara el publicador correcto.
 - AdMob indica **Debe revisarse / Publicación limitada**. La búsqueda exacta de `com.rigthnder.app` no devuelve una ficha que pueda vincularse. La beta cerrada de Google Play sigue en revisión; no es una ficha pública de producción.
 - Play muestra 6 verificadores inscritos y exige al menos 12 durante 14 días continuos antes de solicitar producción. [Inscripción a la prueba cerrada](https://play.google.com/apps/testing/com.rigthnder.app), solo para las cuentas o el grupo habilitado por el operador. Compartir la web o la prueba interna no satisface este requisito; no se agregaron personas ni se modificó el grupo.
-- El mensaje europeo de OnlyFachos está en borrador, limitado a sus dos apps, con inglés, español y alemán, botones de aceptar, no consentir y administrar opciones, y la política de privacidad del dominio actual. La lista de proveedores del CMP se comparte a nivel de cuenta: modificarla afecta también a las demás apps. Revisarla antes de publicar el mensaje; no confundir el alcance de la lista con la selección de apps de un mensaje.
+- El mensaje europeo `OnlyFachos · privacidad europea · ES EN DE` está **Publicado**, limitado a sus dos apps, con inglés, español y alemán, botones de aceptar, no consentir y administrar opciones, y la política de privacidad del dominio actual. Segmentación: EEE, Reino Unido y Suiza; no se habilitó la implementación automática en unidades de anuncios de otras apps.
+- La lista de proveedores del CMP se limitó a **Google como único socio en toda la cuenta**, con autorización expresa del titular. La incorporación automática de socios frecuentes y de fuentes de anuncios está desactivada. Esta lista se comparte con las demás apps de la cuenta; el mensaje publicado sigue siendo exclusivo de OnlyFachos.
 - Los perfiles, mensajes, religión y datos políticos no se envían al SDK publicitario. Los anuncios siguen siendo no personalizados. La demostración no muestra anuncios reales.
 
 ## Compilar
@@ -28,8 +29,10 @@ La compilación `10010` se completó correctamente en [GitHub Actions](https://g
 
 1. Completar las pruebas y el acceso a producción que exige Google Play; publicar una ficha accesible que AdMob pueda encontrar.
 2. Vincular esa ficha a la app existente de AdMob, sin crear otro App ID. Revisar el sitio web del desarrollador y la verificación de `app-ads.txt`.
-3. Publicar el mensaje UMP de OnlyFachos tras revisar proveedores, finalidades y regiones. Configurar los mensajes adicionales que correspondan a la distribución. Mantener disponible Perfil → Ajustes → Privacidad de anuncios para cambiar o retirar consentimiento.
+3. El mensaje europeo UMP de OnlyFachos ya está publicado. Verificar su recepción en dispositivos físicos y configurar los mensajes adicionales que correspondan a la distribución. Mantener disponible Perfil → Ajustes → Privacidad de anuncios para cambiar o retirar consentimiento.
 4. Obtener la aprobación de la app en AdMob. Verificar UMP y el banner en dispositivos físicos configurados como dispositivos de prueba.
 5. Subir el AAB firmado con código nuevo y revisar la información de anuncios y Seguridad de datos en Play. La versión `10009` ya declara AdMob, OAuth y FCM; cualquier cambio futuro debe reflejar el comportamiento efectivo.
 
 Fuentes: [preparación de apps en AdMob](https://support.google.com/admob/answer/10564477), [socios publicitarios del CMP](https://support.google.com/admob/answer/10113004), [mensajes europeos](https://support.google.com/admob/answer/10114014).
+
+La vista previa del editor de Google conserva texto genérico sobre publicidad personalizada y posible geolocalización precisa aun con un único socio seleccionado. No se modificó ese texto controlado por el proveedor ni se habilitó GPS: las solicitudes de la app mantienen `npa: true` y no aportan ubicación precisa. No se ha verificado el formulario servido en un teléfono; comprobarlo antes de distribuir el paquete con anuncios reales.

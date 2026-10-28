@@ -10,7 +10,7 @@ Web `1.0.0-beta.1.8` publicada en **https://onlyfachos.webrom.cc** y Android `10
 
 Android firmado: SHA-256 `BA48EAFF453F540230D8D0D873D6857AE631F7EEFD5DF2A5FE8C023A8E7AADD0`, [compilación AAB](https://github.com/webr0m/rigthnder/actions/runs/40661327242). [Android debug e iOS simulador](https://github.com/webr0m/rigthnder/actions/runs/40661331426) compilan correctamente. iOS sigue sin IPA firmado ni TestFlight. [Estado de Play](GOOGLE-PLAY.md).
 
-AdMob de producción: el paquete Android `10010` con IDs reales está compilado y firmado, **sin distribuir**. La app aún no puede vincularse a una ficha pública; Play exige completar la prueba cerrada (6 inscritos de 12 requeridos, durante 14 días). El consentimiento europeo permanece en borrador mientras se revisa la lista compartida de socios. [Detalles y paquete](ADMOB-PRODUCCION.md).
+AdMob de producción: el paquete Android `10010` con IDs reales está compilado y firmado, **sin distribuir**. La app aún no puede vincularse a una ficha pública; Play exige completar la prueba cerrada (6 inscritos de 12 requeridos, durante 14 días). El consentimiento europeo está **Publicado** en ES/EN/DE para OnlyFachos Android e iOS; por autorización del titular, la lista compartida de socios se limitó a Google en toda la cuenta. [Detalles y paquete](ADMOB-PRODUCCION.md).
 
 ## Distribución anterior verificada
 
