@@ -1,6 +1,20 @@
 name: Build Android for Google Play
 on:
   workflow_dispatch:
+    inputs:
+      advertising:
+        description: Advertising configuration (production does not publish to Play)
+        required: true
+        default: test
+        type: choice
+        options:
+          - test
+          - production
+      version_code:
+        description: Android version code; use a new number before uploading to Play
+        required: true
+        default: '10010'
+        type: string
 permissions:
   contents: read
 jobs:
@@ -22,16 +36,26 @@ jobs:
           java-version: 21
       - run: pnpm install --frozen-lockfile
       - run: pnpm check && pnpm test
+      - name: Validate version code
+        env:
+          ONLYFACHOS_VERSION_CODE: ${{ inputs.version_code }}
+        run: |
+          node -e "const n=process.env.ONLYFACHOS_VERSION_CODE; if(!/^[1-9][0-9]{0,9}$/.test(n)||Number(n)>2100000000) throw Error('Invalid Android version code')"
       - run: pnpm mobile:android
         env:
           VITE_API_URL: https://onlyfachos.webrom.cc
           VITE_ADMOB_ENABLED: 'true'
-          VITE_ADMOB_TEST_MODE: 'true'
-      - run: chmod +x android/gradlew && cd android && ./gradlew bundleRelease --no-daemon
-      - name: Verify AdMob and FCM are packaged with test advertising configuration
+          VITE_ADMOB_TEST_MODE: ${{ inputs.advertising == 'production' && 'false' || 'true' }}
+      - name: Build Android App Bundle
+        env:
+          ONLYFACHOS_VERSION_CODE: ${{ inputs.version_code }}
+        run: chmod +x android/gradlew && cd android && ./gradlew bundleRelease --no-daemon -PonlyfachosVersionCode="$ONLYFACHOS_VERSION_CODE"
+      - name: Verify packaged AdMob configuration and FCM
+        env:
+          ADVERTISING_MODE: ${{ inputs.advertising }}
         run: |
           python3 - <<'PY'
-          import zipfile
+          import json, os, zipfile
           with zipfile.ZipFile('android/app/build/outputs/bundle/release/app-release.aab') as bundle:
               dex = b''.join(bundle.read(name) for name in bundle.namelist() if name.endswith('.dex'))
               manifest = bundle.read('base/manifest/AndroidManifest.xml')
@@ -39,12 +63,15 @@ jobs:
                   assert marker in dex, f'Missing native component: {marker}'
               assert b'com.google.android.gms.permission.AD_ID' in manifest
               resources = bundle.read('base/resources.pb')
-              assert b'ca-app-pub-3940256099942544~3347511713' in resources
-          print('Verified: AdMob test app and FCM included; update Play advertising disclosures before upload')
+              app_id = (json.load(open('mobile-ads.json'))['android']['appId']
+                        if os.environ['ADVERTISING_MODE'] == 'production'
+                        else 'ca-app-pub-3940256099942544~3347511713')
+              assert app_id.encode() in resources, 'Packaged AdMob App ID does not match selected mode'
+          print('Verified: AdMob mode=' + os.environ['ADVERTISING_MODE'] + ', AD_ID and FCM included. Artifact only; no Play publication.')
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: OnlyFachos-Play-unsigned
+          name: OnlyFachos-Play-unsigned-${{ inputs.advertising }}-${{ inputs.version_code }}
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 14

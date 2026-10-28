@@ -7,7 +7,7 @@ android {
         applicationId "com.rigthnder.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10009
+        versionCode project.hasProperty('onlyfachosVersionCode') ? Integer.parseInt(project.property('onlyfachosVersionCode').toString()) : 10009
         versionName "1.0.0-beta.1.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
