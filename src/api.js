@@ -1,7 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { t } from './locale.mjs';
 import { createSessionStore } from './session-store.mjs';
-import { createApiClient } from './api-client.mjs';
+import { createApiClient, revokeSession } from './api-client.mjs';
 export const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 const native = Capacitor.isNativePlatform();
 let sessionGeneration = 0;
@@ -47,13 +47,5 @@ export const api = createApiClient({
   },
 });
 export async function logoutSession() {
-  try {
-    await api('/auth/logout', { method: 'POST' });
-  } catch (error) {
-    // A browser's HttpOnly cookie can only be revoked by the server. Keep the
-    // account visible if offline instead of falsely claiming to have logged out.
-    if (!native && error.status !== 401)
-      throw Error(t('No pudimos cerrar la sesión. Comprueba tu conexión y vuelve a intentarlo.'));
-  }
-  await setToken('');
+  await revokeSession(api, () => setToken(''), t);
 }

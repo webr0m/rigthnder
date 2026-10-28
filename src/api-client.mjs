@@ -45,3 +45,17 @@ export function createApiClient({
     return result;
   };
 }
+
+export async function revokeSession(request, clear, translate = (value) => value) {
+  try {
+    await request('/auth/logout', { method: 'POST' });
+  } catch (error) {
+    if (error.status !== 401)
+      throw Error(
+        translate('No pudimos cerrar la sesión. Comprueba tu conexión y vuelve a intentarlo.'),
+      );
+  }
+  // Confirm server revocation before claiming logout, including native devices
+  // registered for background FCM notifications.
+  await clear();
+}

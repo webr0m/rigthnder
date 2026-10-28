@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createApiClient } from '../src/api-client.mjs';
+import { createApiClient, revokeSession } from '../src/api-client.mjs';
 const deferred = () => {
   let resolve;
   const promise = new Promise((r) => (resolve = r));
@@ -39,6 +39,33 @@ test('an old unauthorized response cannot expire a newly signed-in account, even
   lateResponse.resolve(new Response('proxy html', { status: 401 }));
   assert.equal(await pending, 401);
   assert.equal(expired, 0);
+});
+
+test('logout confirms server revocation before clearing saved access and treats an expired session as already revoked', async () => {
+  let cleared = 0;
+  const clear = async () => {
+    cleared++;
+  };
+  for (const error of [
+    TypeError('offline'),
+    Object.assign(Error('server unavailable'), { status: 503 }),
+  ]) {
+    await assert.rejects(
+      revokeSession(async () => {
+        throw error;
+      }, clear),
+      /No pudimos cerrar la sesión/,
+    );
+    assert.equal(cleared, 0);
+  }
+  await revokeSession(async () => {
+    const e = Error('expired');
+    e.status = 401;
+    throw e;
+  }, clear);
+  assert.equal(cleared, 1);
+  await revokeSession(async () => ({ ok: true }), clear);
+  assert.equal(cleared, 2);
 });
 test('current unauthorized sessions expire; invalid JSON, proxy HTML and network failures produce useful errors', async () => {
   let expired = 0;
