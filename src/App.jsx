@@ -677,6 +677,10 @@ export default function App() {
       setFeed({ profiles: [], online: [], hasMore: false });
       setActive(null);
       setModal(null);
+      setWizard(null);
+      setProfileView(null);
+      setService(null);
+      setSettingsOpen(false);
       notify('Tu sesión caducó. Vuelve a iniciar sesión.', true);
     };
     window.addEventListener('onlyfachos:auth-expired', expire);
@@ -826,6 +830,10 @@ export default function App() {
     setConversations([]);
     setFeed({ profiles: [], online: [], hasMore: false });
     setActive(null);
+    setWizard(null);
+    setProfileView(null);
+    setService(null);
+    setSettingsOpen(false);
   }
   async function exportData() {
     try {

@@ -34,11 +34,25 @@ test('an old unauthorized response cannot expire a newly signed-in account, even
     sessions: { getToken: () => token, clear: () => assert.fail('must not clear new login') },
     fetch: () => lateResponse.promise,
   });
-  const pending = late('/me').catch((e) => e.status);
+  const pending = late('/me').catch((e) => e.code);
   generation++;
   lateResponse.resolve(new Response('proxy html', { status: 401 }));
-  assert.equal(await pending, 401);
+  assert.equal(await pending, 'STALE_SESSION');
   assert.equal(expired, 0);
+});
+
+test('a successful old profile response cannot replace the newly signed-in account', async () => {
+  let generation = 0;
+  const response = deferred();
+  const api = createApiClient({
+    generation: () => generation,
+    sessions: { getToken: () => '' },
+    fetch: () => response.promise,
+  });
+  const oldProfile = api('/me');
+  generation++;
+  response.resolve(Response.json({ id: 'previous-user', privatePhotos: ['private'] }));
+  await assert.rejects(oldProfile, (error) => error.code === 'STALE_SESSION');
 });
 
 test('logout confirms server revocation before clearing saved access and treats an expired session as already revoked', async () => {

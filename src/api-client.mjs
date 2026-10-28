@@ -33,6 +33,11 @@ export function createApiClient({
       if (response.ok) throw failure();
       result = {};
     }
+    if (started !== generation()) {
+      const error = new Error(translate('Tu sesión cambió. Vuelve a intentarlo.'));
+      error.code = 'STALE_SESSION';
+      throw error;
+    }
     if (!response.ok) {
       if (response.status === 401 && !path.startsWith('/auth/') && started === generation()) {
         if (bearer) await sessions.clear(bearer).catch(() => {});

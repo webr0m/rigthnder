@@ -2858,5 +2858,9 @@
   "la cuenta cambió. activa las notificaciones de nuevo.": {
     "en": "The account changed. Enable notifications again.",
     "de": "Das Konto wurde gewechselt. Aktiviere die Benachrichtigungen erneut."
+  },
+  "tu sesión cambió. vuelve a intentarlo.": {
+    "en": "Your session changed. Please try again.",
+    "de": "Deine Sitzung hat sich geändert. Versuche es erneut."
   }
 }
