@@ -1,10 +1,17 @@
 # OnlyFachos en Google Play
 
-Paquete Android: `com.rigthnder.app`. Beta `1.0.0-beta.1.8`, `10009`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob de prueba y FCM; no hay compras ni suscripciones. La revisión anterior `10008` excluía el SDK publicitario. Se actualizaron Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
+Paquete Android: `com.rigthnder.app`. Beta `1.0.0-beta.1.8`, `10010`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob con IDs propios, anuncios no personalizados y FCM; no hay compras ni suscripciones. `10009` usaba anuncios de prueba y `10008` excluía el SDK publicitario. Se actualizaron Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
 
 Referencia del proveedor: [datos del Google Mobile Ads SDK](https://developers.google.com/admob/android/privacy/play-data-disclosure). Las nuevas compilaciones deben reflejar su configuración efectiva, aun usando anuncios de prueba.
 
 ## Estado · 28 de octubre de 2026
+
+- `10010 · OnlyFachos · publicidad y privacidad` está **disponible para verificadores internos**. [Instalar o actualizar para el grupo autorizado](https://play.google.com/apps/internaltest/4701515858079115212).
+- Prueba cerrada Alpha: el mismo paquete `10010`, lanzamiento al 100% del canal, guardado y enviado. La consola confirma **«Cambios en la etapa de revisión»**, con verificaciones rápidas en curso. El grupo de verificadores se conserva. No equivale a aprobación ni publicación de producción.
+- AAB firmado SHA-256 `38E73899241F245619C04ED76626A88C5D903971332D856576FA7B5E421D4669`; [compilación con los IDs propios](https://github.com/webr0m/rigthnder/actions/runs/40752781767). Google Play verificó el código `10010`; no hubo errores bloqueantes, solo las advertencias de desofuscación y símbolos nativos ya conocidas.
+- El mensaje europeo de consentimiento está publicado en ES/EN/DE para las dos apps OnlyFachos. La lista compartida de socios está limitada a Google por autorización del titular. AdMob aún requiere vincular una ficha pública y completar su aprobación; configurar IDs reales no elimina esas condiciones. No se ha verificado la entrega de anuncios ni el formulario en teléfonos físicos.
+
+## Distribución anterior · código 10009
 
 - `10009 · OnlyFachos beta 1.8` disponible para verificadores internos. [Instalar para el grupo autorizado](https://play.google.com/apps/internaltest/4701515858079115212).
 - Prueba cerrada Alpha: mismo paquete `10009`, lanzamiento al 100% del canal. Se enviaron los tres cambios (versión, anuncios y Seguridad de datos); la consola confirma **«Cambios en la etapa de revisión»**, con verificaciones rápidas todavía en curso. No equivale a aprobación ni publicación de producción. Se conservó el grupo de verificadores.

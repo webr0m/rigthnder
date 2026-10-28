@@ -1,6 +1,6 @@
 # Preparar anuncios reales
 
-La beta distribuida `10009` utiliza anuncios oficiales de prueba. No se cambia esa compilación desde la consola de AdMob: los identificadores se incorporan al compilar una nueva app.
+Android `10010` está disponible en prueba interna con los IDs propios de AdMob y anuncios no personalizados; el mismo paquete fue enviado al canal cerrado. `10009` utilizaba anuncios oficiales de prueba. Cambiar la consola de AdMob no sustituye la instalación de la actualización: los identificadores se incorporan al compilar la app. La configuración real no equivale a aprobación de AdMob ni a disponibilidad pública en Google Play.
 
 ## Estado comprobado · 28 de octubre de 2026
 
@@ -23,15 +23,15 @@ gh workflow run android-play.yml -f advertising=production -f version_code=10010
 
 La compilación verifica que el AAB contiene el App ID del modo seleccionado, el SDK AdMob, el permiso AD_ID y FCM. El número se pasa a Gradle con `-PonlyfachosVersionCode`; no cambia por sí solo las versiones instaladas ni la web. El artefacto se llama `OnlyFachos-Play-unsigned-production-10010`; requiere la clave de carga existente antes de subirlo a Play.
 
-La compilación `10010` se completó correctamente en [GitHub Actions](https://github.com/webr0m/rigthnder/actions/runs/40752781767), incluidos los 61 tests y la verificación de componentes e ID publicitario de producción. Se firmó y verificó localmente con la clave de carga existente. SHA-256 del AAB firmado: `38E73899241F245619C04ED76626A88C5D903971332D856576FA7B5E421D4669`. **Preparado, sin subir ni distribuir**. La beta interna activa y el canal cerrado enviado a revisión conservan `10009` con anuncios de prueba.
+La compilación `10010` se completó correctamente en [GitHub Actions](https://github.com/webr0m/rigthnder/actions/runs/40752781767), incluidos los 61 tests y la verificación de componentes e ID publicitario de producción. Se firmó y verificó localmente con la clave de carga existente. SHA-256 del AAB firmado: `38E73899241F245619C04ED76626A88C5D903971332D856576FA7B5E421D4669`. **Subido y disponible en prueba interna**; el canal cerrado Alpha figura en la etapa de revisión con el mismo paquete `10010`. No se comprobó la entrega real de anuncios ni el formulario en teléfonos físicos; para QA deben configurarse dispositivos de prueba y evitar clics de prueba sobre anuncios reales.
 
-## Antes de distribuir anuncios reales
+## Para completar la monetización
 
 1. Completar las pruebas y el acceso a producción que exige Google Play; publicar una ficha accesible que AdMob pueda encontrar.
 2. Vincular esa ficha a la app existente de AdMob, sin crear otro App ID. Revisar el sitio web del desarrollador y la verificación de `app-ads.txt`.
 3. El mensaje europeo UMP de OnlyFachos ya está publicado. Verificar su recepción en dispositivos físicos y configurar los mensajes adicionales que correspondan a la distribución. Mantener disponible Perfil → Ajustes → Privacidad de anuncios para cambiar o retirar consentimiento.
 4. Obtener la aprobación de la app en AdMob. Verificar UMP y el banner en dispositivos físicos configurados como dispositivos de prueba.
-5. Subir el AAB firmado con código nuevo y revisar la información de anuncios y Seguridad de datos en Play. La versión `10009` ya declara AdMob, OAuth y FCM; cualquier cambio futuro debe reflejar el comportamiento efectivo.
+5. `10010` ya está subido a Google Play, disponible en prueba interna y enviado a revisión cerrada. Las declaraciones de anuncios y Seguridad de datos ya contemplan AdMob, OAuth y FCM; cualquier cambio futuro debe reflejar el comportamiento efectivo. La publicación de producción sigue pendiente del acceso que conceda Google.
 
 Fuentes: [preparación de apps en AdMob](https://support.google.com/admob/answer/10564477), [socios publicitarios del CMP](https://support.google.com/admob/answer/10113004), [mensajes europeos](https://support.google.com/admob/answer/10114014).
 
