@@ -1,6 +1,6 @@
 # OnlyFachos
 
-**Código beta `1.0.0-beta.1.8`**. Google vinculado a cuentas existentes, avisos push opcionales y publicidad móvil no personalizada. Android `10010` está disponible en prueba interna con IDs propios de AdMob; la aprobación publicitaria y el acceso a producción siguen pendientes. Las compilaciones de desarrollo usan anuncios de prueba por defecto. [Estado del despliegue](docs/ESTADO.md), [probar y compilar](docs/BETA-1.md). Los paquetes de la [entrega anterior](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1) no incluyen estos cambios.
+**Código beta `1.0.0-beta.1.9`**. Google vinculado a cuentas existentes, avisos push opcionales y publicidad móvil no personalizada. Android `10010` está disponible en prueba interna con IDs propios de AdMob; la aprobación publicitaria y el acceso a producción siguen pendientes. Las compilaciones de desarrollo usan anuncios de prueba por defecto. [Estado del despliegue](docs/ESTADO.md), [probar y compilar](docs/BETA-1.md). Los paquetes de la [entrega anterior](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1) no incluyen estos cambios.
 
 **Sin swipes. Solo conversación.** Comunidad de citas para mayores de 18 años: feed vertical, perfiles con referentes, chat directo y citas aceptadas por ambas personas. Rediseño de Rigthnder a partir de los mockups claro/oscuro aportados por el usuario. MIT.
 
@@ -18,7 +18,7 @@ pnpm build
 pnpm start
 ```
 
-Abre http://localhost:3000. Para desarrollar: `pnpm dev`, interfaz en http://localhost:5173 y API en 3000. Si otro proyecto ocupa 3000, configura `PORT=3100` y `API_PROXY_URL=http://127.0.0.1:3100` antes de ejecutar el comando.
+Abre http://localhost:3000 para la portada, `/demo` para la demo directa y `/app` para el acceso existente. Para desarrollar: `pnpm dev`, interfaz en http://localhost:5173 y API en 3000. Si otro proyecto ocupa 3000, configura `PORT=3100` y `API_PROXY_URL=http://127.0.0.1:3100` antes de ejecutar el comando.
 
 ## Cómo funciona
 
@@ -34,7 +34,7 @@ La recuperación por correo está en «Inicia sesión → Olvidé mi contraseña
 
 ## Demo y límites
 
-La demo se inicia con «Explorar la demostración». Sus perfiles, información política y religiosa, fotos ilustrativas y respuestas son ficticios; no atribuyen opiniones a las personas fotografiadas. Cada visitante tiene una sesión separada y las cuentas reales nunca ven la demo. Incluye una conversación ficticia de tres días y botones explícitos para simular aceptación/rechazo. Los contadores provienen de esos registros, no son cifras comerciales inventadas.
+La web pública es una portada promocional de una sola página, con imagen panorámica animada y ambas tiendas como «Próximamente». El botón «Explorar la demo» abre `/demo` directamente sin registrarse. Sus perfiles, información política y religiosa, fotos ilustrativas y respuestas son ficticios; no atribuyen opiniones a las personas fotografiadas. Cada visitante tiene una sesión separada y las cuentas reales nunca ven la demo. Incluye una conversación ficticia de tres días y botones explícitos para simular aceptación/rechazo. Los contadores provienen de esos registros, no son cifras comerciales inventadas.
 
 Los modos claro y oscuro se cambian con el sol/luna; se guarda únicamente la preferencia de apariencia en el navegador. En producción la demo requiere `DEMO_ENABLED=true`.
 

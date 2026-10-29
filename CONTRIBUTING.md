@@ -32,3 +32,5 @@ GitHub es el origen principal. Sincronicen `main` a GitLab después de cada merg
 | `docs/DISENO.md`  | Brief compartido                      |
 
 La licencia MIT cubre las contribuciones al software. Usen solo recursos que puedan redistribuirse y documenten licencias externas.
+
+Para la web promocional: `src/Marketing.jsx`, `src/marketing.css` y `public/marketing/`. Verificar también los textos ES/EN/DE, el control de movimiento y el acceso a `/demo` sin alterar sesiones reales.

@@ -44,3 +44,7 @@ Tu amigo puede proponer cambios en Figma y adjuntar el frame a un issue. Para co
 | `src/Shared.jsx` | Controles, modales, bloqueo y textos |
 
 Revisar 390 px, 320 px, escritorio, navegación por teclado, fotos ausentes, bios largas, zoom, ambos temas y estados sin resultados. Los modales deben contener el foco y devolverlo al cerrar. No activar botones de Apple, GIFs o pagos como si estuvieran integrados.
+
+## Portada pública de una sola página
+
+La portada vive en `src/Marketing.jsx` y `src/marketing.css`; imágenes en `public/marketing/`. La app de muestra está en `/demo` y la experiencia existente en `/app`. Conservar el aviso Próximamente de ambas tiendas hasta tener enlaces públicos confirmados. Animaciones pausables y movimiento reducido; no usar cifras, testimonios ni perfiles reales como contenido de promoción sin autorización.

@@ -23,3 +23,7 @@ Android usa `@capacitor/push-notifications`, canal `onlyfachos-activity` y permi
 Las pruebas usan dispositivos y entregas simulados: privacidad de payload, destinatario, preferencias, bloqueo, cambio de cuenta, cierre de sesión, endpoints caducados, sesiones vencidas y reintentos tras reiniciar el servicio. La recepción real en Android/iPhone debe validarse en dispositivos con el permiso concedido; no se mandan avisos de prueba a cuentas reales sin autorización.
 
 Fuentes: [FCM HTTP v1](https://firebase.google.com/docs/cloud-messaging/send/v1-api), [plugin Capacitor](https://capacitorjs.com/docs/apis/push-notifications), [privacidad de Firebase](https://firebase.google.com/support/privacy), [claves públicas de Firebase](https://firebase.google.com/docs/projects/api-keys), [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API).
+
+## Activación en beta 1.9
+
+La acción instala listeners antes de registrar Android y confirma el dispositivo de la sesión actual con `/api/push/devices/current`. Las esperas del servicio tienen un plazo de respuesta y el fallo se muestra en Ajustes; se pueden abrir los ajustes del sistema si se rechazó el permiso. Un registro repetido del mismo dueño y sesión conserva su ID y la cola pendiente. La prueba automatizada usa un emulador desechable; no sustituye comprobar un aviso recibido con la app en segundo plano en el teléfono del usuario.

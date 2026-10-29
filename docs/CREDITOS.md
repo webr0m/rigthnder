@@ -20,3 +20,7 @@ Condiciones: https://unsplash.com/license y https://unsplash.com/terms. La MIT d
 Iconos: Lucide, licencia ISC. Símbolo OnlyFachos en SVG propio. React, Vite, Capacitor, Express y demás dependencias conservan sus licencias respectivas.
 
 Anton para titulares: SIL Open Font License, incluida en `public/fonts/ANTON-OFL.txt`. Fuente: https://github.com/google/fonts/tree/main/ofl/anton. Los mockups de referencia son documentos del usuario y no se redistribuyen en el repositorio.
+
+## Portada promocional (beta 1.9)
+
+`public/marketing/encuentro-*.webp`: fotografía de campaña generada con IA para OnlyFachos, con personas ficticias. Versiones optimizadas para web; animación mediante CSS. No representa usuarios reales ni testimonios.
