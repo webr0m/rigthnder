@@ -22,7 +22,6 @@ android {
             // the Play bundle is built separately and signed with the upload key.
             if (project.hasProperty('onlyfachosTestSigning')) {
                 signingConfig signingConfigs.debug
-                proguardFiles 'smoke-proguard-rules.pro'
             }
             minifyEnabled true
             shrinkResources true
@@ -30,7 +29,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    if (project.hasProperty('onlyfachosTestSigning')) testBuildType 'release'
 }
 
 repositories {

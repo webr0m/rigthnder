@@ -3,7 +3,6 @@ package com.rigthnder.app;
 import static org.junit.Assert.*;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -13,7 +12,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 public class OnlyFachosSmokeTest {
-    @Test public void optimizedAppLoadsNativePluginsAndFirebaseCanRegister() throws Exception {
+    @Test public void nativePluginsLoadAndFirebaseCanRegister() throws Exception {
         // Runs on a disposable CI emulator. Never uploads or prints the token,
         // creates a user account, requests ads, or sends a notification.
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
