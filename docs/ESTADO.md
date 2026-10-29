@@ -1,4 +1,16 @@
-# Beta 1.8 · 28 de octubre de 2026
+# Beta 1.9 · 29 de octubre de 2026
+
+Web promocional publicada en **https://onlyfachos.webrom.cc**, con portada panorámica animada, una sola página, tiendas como «Próximamente» y demo directa en [/demo](https://onlyfachos.webrom.cc/demo). El acceso existente permanece en [/app](https://onlyfachos.webrom.cc/app). Se conserva la misma base SQLite y la configuración privada, con respaldo consistente previo al despliegue.
+
+Google dispone de 60 minutos para completar el perfil y conserva un borrador cifrado para revalidar sin reiniciar. La activación push muestra progreso, plazos y errores, confirma el registro en servidor y ofrece ajustes de Android. Se reforzaron cabeceras web, permisos privados de archivos, FileProvider y respaldos/tráfico nativos. [Cambios y verificación](BETA-1.9.md).
+
+Android R8 **10011** está **disponible para verificadores internos** y enviado al canal cerrado Alpha al 100% del grupo existente. La consola confirma «Cambios en la etapa de revisión» con verificaciones rápidas en curso. No equivale a publicación de producción. [Actualizar para el grupo interno autorizado](https://play.google.com/apps/internaltest/4701515858079115212). [CI del AAB](https://github.com/webr0m/rigthnder/actions/runs/40807686378). SHA-256 firmado: `B5DDB9FBEB5B2879238608A1D681CD3C4216A63AB8B751B4C609CF0ED251C1F9`. Play reconoció ReTrace; queda la advertencia de símbolos de bibliotecas nativas precompiladas del proveedor.
+
+[Prueba Android/FCM correcta](https://github.com/webr0m/rigthnder/actions/runs/40810437867): arranque del APK optimizado en emulador API 35 y prueba instrumentada separada de plugins/registro Firebase, una prueba sin errores. El token temporal no se imprime ni se envía al backend y se revoca al terminar. Las pruebas de librerías ajenas no forman parte de esta tarea; los ensayos previos del harness instrumentado sobre R8 fallaron en dependencias del runner y se sustituyeron por arranque optimizado más instrumentación debug. No se ha comprobado la recepción real en un teléfono físico.
+
+[Android debug e iOS simulador 10011](https://github.com/webr0m/rigthnder/actions/runs/40809943899) compilan correctamente. iOS sigue sin IPA firmado, TestFlight ni configuración APNs. AdMob conserva los IDs propios y el consentimiento publicado; su aprobación y la ficha pública siguen pendientes.
+
+## Registro anterior · beta 1.8
 
 Web `1.0.0-beta.1.8` publicada en **https://onlyfachos.webrom.cc** y Android `10010` disponible en prueba interna. El mismo paquete `10010` fue enviado al canal cerrado Alpha; la consola confirma «Cambios en la etapa de revisión» mientras ejecuta las comprobaciones rápidas. Se conserva la misma base SQLite y sus 46 cuentas existentes al desplegar; respaldo consistente privado `onlyfachos-2026-10-28T15-38-55-649Z`. El paquete Node incluye sus dependencias auditadas y se comprobó fuera del repositorio, sin node_modules.
 

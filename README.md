@@ -1,6 +1,6 @@
 # OnlyFachos
 
-**Código beta `1.0.0-beta.1.9`**. Google vinculado a cuentas existentes, avisos push opcionales y publicidad móvil no personalizada. Android `10010` está disponible en prueba interna con IDs propios de AdMob; la aprobación publicitaria y el acceso a producción siguen pendientes. Las compilaciones de desarrollo usan anuncios de prueba por defecto. [Estado del despliegue](docs/ESTADO.md), [probar y compilar](docs/BETA-1.md). Los paquetes de la [entrega anterior](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1) no incluyen estos cambios.
+**Código beta `1.0.0-beta.1.9`**. Web promocional de una sola página, demo directa y registro Google recuperable. Android `10011` está disponible en prueba interna con IDs propios de AdMob y enviado a revisión de Alpha; la aprobación publicitaria y el acceso a producción siguen pendientes. Arranque optimizado y registro FCM verificados en un emulador; Android debug e iOS simulador compilan. Las compilaciones de desarrollo usan anuncios de prueba por defecto. [Estado del despliegue](docs/ESTADO.md), [cambios de beta 1.9](docs/BETA-1.9.md). Los paquetes de la [entrega anterior](https://github.com/webr0m/rigthnder/releases/tag/v1.0.0-beta.1.1) no incluyen estos cambios.
 
 **Sin swipes. Solo conversación.** Comunidad de citas para mayores de 18 años: feed vertical, perfiles con referentes, chat directo y citas aceptadas por ambas personas. Rediseño de Rigthnder a partir de los mockups claro/oscuro aportados por el usuario. MIT.
 

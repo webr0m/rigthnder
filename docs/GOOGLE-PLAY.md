@@ -1,10 +1,18 @@
 # OnlyFachos en Google Play
 
-Paquete Android: `com.rigthnder.app`. Beta `1.0.0-beta.1.8`, `10010`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob con IDs propios, anuncios no personalizados y FCM; no hay compras ni suscripciones. `10009` usaba anuncios de prueba y `10008` excluía el SDK publicitario. Se actualizaron Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
+Paquete Android: `com.rigthnder.app`. Beta `1.0.0-beta.1.9`, `10011`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob con IDs propios, anuncios no personalizados y FCM; no hay compras ni suscripciones. `10009` usaba anuncios de prueba y `10008` excluía el SDK publicitario. Se actualizaron Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
 
 Referencia del proveedor: [datos del Google Mobile Ads SDK](https://developers.google.com/admob/android/privacy/play-data-disclosure). Las nuevas compilaciones deben reflejar su configuración efectiva, aun usando anuncios de prueba.
 
-## Estado · 28 de octubre de 2026
+## Actualización beta 1.9 · 29 de octubre de 2026
+
+- AAB `10011` firmado, publicado y **disponible para verificadores internos**. Google Play reconoció automáticamente el mapeo de ReTrace incluido: ya no aparece la advertencia de desofuscación.
+- Validación: una advertencia por símbolos de depuración de bibliotecas nativas precompiladas. No se detectó reducción del catálogo de dispositivos.
+- Se activó R8 y se añadieron protecciones de archivos/red, control de insets, activación push con errores/plazos y registro Google recuperable. Los hallazgos de APIs obsoletas en SDKs se revisarán cuando Play analice el nuevo paquete; no se declaran eliminados de antemano.
+- El mismo `10011` fue promovido a Alpha al 100% del grupo actual y enviado a Google. La consola confirma **«Cambios en la etapa de revisión»**; no equivale a aprobación ni producción. Se conservaron los verificadores.
+- Registro FCM y plugins verificados en emulador, más arranque del APK optimizado. [CI correcta](https://github.com/webr0m/rigthnder/actions/runs/40810437867), [detalles y límites](BETA-1.9.md).
+
+## Estado anterior · 28 de octubre de 2026
 
 - `10010 · OnlyFachos · publicidad y privacidad` está **disponible para verificadores internos**. [Instalar o actualizar para el grupo autorizado](https://play.google.com/apps/internaltest/4701515858079115212).
 - Prueba cerrada Alpha: el mismo paquete `10010`, lanzamiento al 100% del canal, guardado y enviado. La consola confirma **«Cambios en la etapa de revisión»**, con verificaciones rápidas en curso. El grupo de verificadores se conserva. No equivale a aprobación ni publicación de producción.

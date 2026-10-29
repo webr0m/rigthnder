@@ -31,4 +31,6 @@ Android `10011` activa R8, reducción de recursos, mapeo de desofuscación integ
 - Portada revisada en móvil y escritorio; sin desbordamiento horizontal y con pausa de movimiento efectiva. Demo directa comprobada.
 - AAB R8 `10011` compilado, con componentes FCM/AdMob y permisos verificados contra el mapeo. Play reconoció el archivo de ReTrace incluido.
 
-La comprobación FCM en emulador y la distribución de `10011` se registrarán en [Estado](ESTADO.md) y [Google Play](GOOGLE-PLAY.md). La entrega de notificaciones y anuncios en teléfonos físicos requiere comprobarse en esos dispositivos; iOS no tiene configuración APNs ni IPA de distribución.
+La comprobación FCM en emulador pasó: plugins nativos presentes, token Firebase válido y revocado al terminar, sin enviarlo al backend. También arrancó correctamente el APK optimizado. La instrumentación FCM se ejecuta en debug para conservar las dependencias del runner; la prueba de arranque usa release con R8. [CI Android/FCM](https://github.com/webr0m/rigthnder/actions/runs/40810437867). [Android debug e iOS simulador](https://github.com/webr0m/rigthnder/actions/runs/40809943899) compilan con código 10011.
+
+`10011` está disponible en prueba interna y enviado a revisión de Alpha. [Estado](ESTADO.md), [Google Play](GOOGLE-PLAY.md). La entrega de notificaciones y anuncios en teléfonos físicos requiere comprobarse en esos dispositivos; iOS no tiene configuración APNs ni IPA de distribución.
