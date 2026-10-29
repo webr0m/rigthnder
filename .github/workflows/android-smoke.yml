@@ -31,7 +31,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Compile optimized startup app and separate FCM instrumentation
-        run: chmod +x android/gradlew && cd android && ./gradlew assembleRelease assembleDebug assembleDebugAndroidTest --no-daemon -PonlyfachosTestSigning=true
+        run: chmod +x android/gradlew && cd android && ./gradlew :app:assembleRelease :app:assembleDebug :app:assembleDebugAndroidTest --no-daemon -PonlyfachosTestSigning=true
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -44,7 +44,7 @@ jobs:
             sleep 5
             adb shell pidof com.rigthnder.app
             adb shell am force-stop com.rigthnder.app
-            cd android && ./gradlew connectedDebugAndroidTest --no-daemon -PonlyfachosTestSigning=true
+            cd android && ./gradlew :app:connectedDebugAndroidTest --no-daemon -PonlyfachosTestSigning=true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
