@@ -19,11 +19,14 @@ test('production revalidates HTML on root and SPA routes while caching static as
   try {
     await once(server, 'listening');
     const base = `http://127.0.0.1:${server.address().port}`;
-    for (const path of ['/', '/index.html', '/privacidad']) {
+    for (const path of ['/', '/index.html', '/privacidad', '/demo', '/app']) {
       const response = await fetch(base + path);
       assert.equal(response.status, 200);
       assert.equal(response.headers.get('cache-control'), 'no-cache');
       assert.match(await response.text(), /OnlyFachos/);
+      assert.equal(response.headers.get('x-frame-options'), 'DENY');
+      assert.match(response.headers.get('content-security-policy'), /frame-ancestors 'none'/);
+      assert.match(response.headers.get('permissions-policy'), /geolocation=\(\)/);
     }
     const asset = await fetch(base + '/test.css');
     assert.match(asset.headers.get('cache-control'), /max-age=3600/);

@@ -2720,8 +2720,8 @@
     "de": "Die gespeicherte Anmeldung konnte nicht aktualisiert werden. Bitte versuche es erneut."
   },
   "no pudimos restaurar la sesión guardada. inicia sesión de nuevo.": {
-    "en": "We could not restore your saved session. Please sign in again.",
-    "de": "Deine gespeicherte Sitzung konnte nicht wiederhergestellt werden. Bitte melde dich erneut an."
+    "en": "We could not restore your saved session. Sign in again.",
+    "de": "Die gespeicherte Sitzung konnte nicht wiederhergestellt werden. Melde dich erneut an."
   },
   "tu sesión caducó. vuelve a iniciar sesión.": {
     "en": "Your session expired. Please sign in again.",
@@ -2829,7 +2829,7 @@
   },
   "no pudimos registrar las notificaciones. inténtalo otra vez.": {
     "en": "We could not register notifications. Please try again.",
-    "de": "Die Benachrichtigungen konnten nicht registriert werden. Versuche es erneut."
+    "de": "Benachrichtigungen konnten nicht registriert werden. Versuche es erneut."
   },
   "no pudimos cerrar la sesión. comprueba tu conexión y vuelve a intentarlo.": {
     "en": "We could not sign you out. Check your connection and try again.",
@@ -2862,5 +2862,41 @@
   "tu sesión cambió. vuelve a intentarlo.": {
     "en": "Your session changed. Please try again.",
     "de": "Deine Sitzung hat sich geändert. Versuche es erneut."
+  },
+  "comprobando…": {
+    "en": "Checking…",
+    "de": "Wird geprüft…"
+  },
+  "abre los ajustes del teléfono si antes rechazaste el permiso.": {
+    "en": "Open your phone settings if you previously denied permission.",
+    "de": "Öffne die Telefoneinstellungen, wenn du die Berechtigung zuvor abgelehnt hast."
+  },
+  "abrir ajustes de notificaciones": {
+    "en": "Open notification settings",
+    "de": "Benachrichtigungseinstellungen öffnen"
+  },
+  "tu progreso se conserva en este dispositivo. vuelve a validar google para continuar desde este paso.": {
+    "en": "Your progress is saved on this device. Verify with Google again to continue from this step.",
+    "de": "Dein Fortschritt bleibt auf diesem Gerät gespeichert. Bestätige Google erneut, um hier fortzufahren."
+  },
+  "volver a validar con google": {
+    "en": "Verify with Google again",
+    "de": "Erneut mit Google bestätigen"
+  },
+  "tu validación de google venció. tus datos del formulario se conservan; vuelve a validar google para continuar.": {
+    "en": "Your Google verification expired. Your form is saved; verify with Google again to continue.",
+    "de": "Deine Google-Bestätigung ist abgelaufen. Dein Formular bleibt gespeichert; bestätige Google erneut."
+  },
+  "el servicio de notificaciones no respondió. inténtalo de nuevo.": {
+    "en": "The notification service did not respond. Please try again.",
+    "de": "Der Benachrichtigungsdienst hat nicht geantwortet. Versuche es erneut."
+  },
+  "google play services no pudo registrar las notificaciones. actualízalo y vuelve a intentarlo.": {
+    "en": "Google Play Services could not register notifications. Update it and try again.",
+    "de": "Google Play-Dienste konnten Benachrichtigungen nicht registrieren. Aktualisiere sie und versuche es erneut."
+  },
+  "firebase no pudo verificar este dispositivo. actualiza la app y vuelve a intentarlo.": {
+    "en": "Firebase could not verify this device. Update the app and try again.",
+    "de": "Firebase konnte dieses Gerät nicht bestätigen. Aktualisiere die App und versuche es erneut."
   }
 }

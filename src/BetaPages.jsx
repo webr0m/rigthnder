@@ -18,7 +18,8 @@ import {
 } from 'lucide-react';
 import { api } from './api';
 import { adsAvailable, linkGoogle } from './mobile';
-import { pushStatus, enablePush, disablePush } from './push';
+import { pushStatus, enablePush, disablePush, openPushSettings } from './push';
+import { Capacitor } from '@capacitor/core';
 import { Button, Modal, Photo, locationLabel } from './Shared';
 
 export function Toggle({ label, hint, checked, onChange, disabled = false }) {
@@ -38,9 +39,9 @@ export function Toggle({ label, hint, checked, onChange, disabled = false }) {
     </label>
   );
 }
-function Row({ title, value, hint, onClick }) {
+function Row({ title, value, hint, onClick, disabled = false }) {
   return (
-    <button className="beta-row" onClick={onClick}>
+    <button type="button" className="beta-row" onClick={onClick} disabled={disabled}>
       <span>
         <b>{t(title)}</b>
         {hint && <small>{t(hint)}</small>}
@@ -317,6 +318,8 @@ export function BetaSettings({
     [linkError, setLinkError] = useState('');
   const s = user.settings || {};
   const [push, setPush] = useState({ available: false, enabled: false });
+  const [pushBusy, setPushBusy] = useState(false),
+    [pushError, setPushError] = useState('');
   useEffect(() => {
     let alive = true;
     if (!user.demo)
@@ -324,7 +327,9 @@ export function BetaSettings({
         .then((value) => {
           if (alive) setPush(value);
         })
-        .catch(() => {});
+        .catch((error) => {
+          if (alive) setPushError(error.message);
+        });
     return () => {
       alive = false;
     };
@@ -441,19 +446,25 @@ export function BetaSettings({
         {!user.demo && (
           <Row
             title={t('Notificaciones en este dispositivo')}
-            value={push.enabled ? t('Activadas') : t('Desactivadas')}
+            value={pushBusy ? t('Comprobando…') : push.enabled ? t('Activadas') : t('Desactivadas')}
+            disabled={pushBusy}
             onClick={async () => {
-              if (working) return;
-              setWorking(true);
+              if (pushBusy) return;
+              setPushBusy(true);
+              setPushError('');
               try {
                 if (push.enabled) await disablePush();
                 else await enablePush(user.id);
-                setPush(await pushStatus(user.id));
+                const current = await pushStatus(user.id);
+                setPush(current);
+                if (!push.enabled && !current.enabled)
+                  throw Error(t('No pudimos confirmar la activación. Inténtalo de nuevo.'));
                 notify(push.enabled ? 'Notificaciones desactivadas.' : 'Notificaciones activadas.');
               } catch (error) {
+                setPushError(error.message);
                 notify(error.message, true);
               } finally {
-                setWorking(false);
+                setPushBusy(false);
               }
             }}
           />
@@ -471,6 +482,25 @@ export function BetaSettings({
           />
         ))}
       </div>
+      {pushBusy && (
+        <p className="hint" role="status">
+          {t('Completa el permiso del sistema. Estamos registrando este dispositivo…')}
+        </p>
+      )}
+      {pushError && (
+        <p className="form-error" role="alert">
+          {t(pushError)}
+        </p>
+      )}
+      {!user.demo && Capacitor.getPlatform() === 'android' && (push.denied || pushError) && (
+        <button
+          type="button"
+          className="text-link"
+          onClick={() => openPushSettings().catch((error) => setPushError(error.message))}
+        >
+          {t('Abrir ajustes de notificaciones')}
+        </button>
+      )}
       <p className="hint">
         {t(
           'Activa las notificaciones en cada dispositivo para recibir avisos de mensajes y citas. El contenido de tus conversaciones no aparece en la pantalla bloqueada.',

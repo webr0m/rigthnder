@@ -21,7 +21,17 @@ import {
 } from 'lucide-react';
 import { api, setToken, restoreToken, logoutSession } from './api';
 import { listenPush, forgetPush } from './push';
-import { googleLogin, listenGoogle, startAds, stopAds, privacyAds } from './mobile';
+import {
+  googleLogin,
+  listenGoogle,
+  startAds,
+  stopAds,
+  privacyAds,
+  pendingGoogleRegistration,
+  rememberGoogleRegistration,
+  clearGoogleRegistration,
+} from './mobile';
+import { registrationDrafts } from './onboarding-store';
 import { Button, Modal, Photo, Safety, Legal, locationLabel } from './Shared';
 import Onboarding from './Onboarding';
 import Conversations from './Conversations';
@@ -404,7 +414,7 @@ function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, init
     </div>
   );
 }
-export default function App() {
+export default function App({ demoOnly = false }) {
   const [recovery, setRecovery] = useState(() =>
     location.pathname === '/recuperar-contrasena'
       ? { token: new URLSearchParams(location.hash.slice(1)).get('token') ?? undefined }
@@ -502,6 +512,10 @@ export default function App() {
   }
   async function signedIn(r) {
     await setToken(r.token, r.session);
+    if (!r.user.demo) {
+      await registrationDrafts.clear().catch(() => {});
+      await clearGoogleRegistration().catch(() => {});
+    }
     setUser(r.user);
     if (r.user.settings?.appearance) setTheme(r.user.settings.appearance);
     if (r.user.settings?.language) setLanguage(r.user.settings.language);
@@ -510,6 +524,34 @@ export default function App() {
     setFilters({ ...DEFAULT, gender: r.user.lookingFor });
     setActive(null);
     setReload((v) => v + 1);
+  }
+  async function openGoogleWizard(pending) {
+    const draft = await registrationDrafts.load().catch(() => null);
+    const matching = draft?.identity?.email === pending.identity.email;
+    if (draft && !matching) await registrationDrafts.clear().catch(() => {});
+    await rememberGoogleRegistration(pending);
+    setWizard({ type: 'google', ...pending, initialData: matching ? draft : null });
+  }
+  async function resumeGoogleWizard() {
+    const stored = await pendingGoogleRegistration().catch(() => null);
+    try {
+      const pending = await api(
+        '/auth/google/pending',
+        stored?.ticket ? { method: 'POST', body: { ticket: stored.ticket } } : {},
+      );
+      await openGoogleWizard({ ...pending, ...(stored?.ticket ? { ticket: stored.ticket } : {}) });
+    } catch (error) {
+      if (error.status !== 404) throw error;
+      const draft = await registrationDrafts.load().catch(() => null);
+      if (draft?.identity?.email)
+        setWizard({
+          type: 'google',
+          identity: draft.identity,
+          initialData: draft,
+          rememberMe: draft.rememberMe,
+          reauthenticate: true,
+        });
+    }
   }
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
@@ -542,9 +584,10 @@ export default function App() {
         if (!alive) return;
         setOptions(config);
         const q = new URLSearchParams(location.search);
-        if (q.get('google') === 'complete') {
-          const pending = await api('/auth/google/pending');
-          if (alive) setWizard({ type: 'google', ...pending });
+        if (demoOnly) {
+          await signedIn(await api('/auth/demo', { method: 'POST', body: { rememberMe: false } }));
+        } else if (q.get('google') === 'complete') {
+          if (alive) await resumeGoogleWizard();
         } else if (location.pathname !== '/recuperar-contrasena') {
           try {
             const me = await api('/me');
@@ -556,7 +599,10 @@ export default function App() {
               if (location.pathname === '/eliminar-cuenta') setTab('profile');
               if (q.get('open') === 'chats') setTab('chat');
             }
-          } catch {}
+          } catch (error) {
+            if (error.status !== 401) throw error;
+            if (alive) await resumeGoogleWizard();
+          }
         }
         if (q.get('google') === 'linked') {
           setTab('profile');
@@ -565,7 +611,7 @@ export default function App() {
         }
         if (q.get('oauth_error')) notify(q.get('oauth_error'), true);
         if (q.has('google') || q.has('oauth_error') || q.has('open'))
-          history.replaceState({}, '', location.pathname);
+          history.replaceState({}, '', location.pathname === '/' ? '/app' : location.pathname);
         if (location.pathname === '/privacidad') setModal('privacy');
         if (location.pathname === '/terminos') setModal('terms');
         if (location.pathname === '/seguridad-infantil') setModal('child-safety');
@@ -575,17 +621,26 @@ export default function App() {
       } finally {
         if (alive) setReady(true);
       }
+      // Restore the saved session before consuming a cold-start OAuth link.
+      // Otherwise restoreToken() can overwrite a just-completed Google login.
+      if (!alive || demoOnly) return;
+      try {
+        const cleanup = await listenGoogle(
+          async (r) => {
+            if (r.linked) {
+              setUser(await api('/me'));
+              notify('Google quedó vinculado a tu cuenta existente.');
+            } else if (r.ticket) await openGoogleWizard(r);
+            else await signedIn(r);
+          },
+          (m) => notify(m, true),
+        );
+        if (alive) unlisten = cleanup;
+        else cleanup();
+      } catch (error) {
+        if (alive) notify(error.message, true);
+      }
     })();
-    listenGoogle(
-      async (r) => {
-        if (r.linked) {
-          setUser(await api('/me'));
-          notify('Google quedó vinculado a tu cuenta existente.');
-        } else if (r.ticket) setWizard({ type: 'google', ...r });
-        else await signedIn(r);
-      },
-      (m) => notify(m, true),
-    ).then((fn) => (unlisten = fn));
     return () => {
       alive = false;
       unlisten?.();
@@ -894,7 +949,14 @@ export default function App() {
     <div
       className={`app view-${tab} ${!user ? 'is-access' : ''} ${tab === 'chat' && active ? 'chat-open' : ''}`}
     >
-      {!user && !wizard ? (
+      {!user && !wizard && demoOnly ? (
+        <div className="boot">
+          <Wordmark />
+          <p>Terminaste la demo. Las conversaciones y los perfiles son ficticios.</p>
+          <Button onClick={() => location.reload()}>Volver a explorar</Button>
+          <a href="/">Volver a la portada</a>
+        </div>
+      ) : !user && !wizard ? (
         <>
           <div className="access-language">
             <LanguagePicker />
@@ -926,12 +988,26 @@ export default function App() {
             <LanguagePicker />
           </div>
           <Onboarding
-            key={wizard.type}
+            key={wizard.type + ':' + (wizard.identity?.email || '')}
             user={wizard.type === 'edit' ? user : null}
             identity={wizard.identity}
             initialStep={wizard.step || 1}
+            initialData={wizard.initialData}
+            reauthenticate={wizard.reauthenticate}
+            rememberMe={wizard.rememberMe ?? true}
+            onReauthenticate={() => googleLogin(wizard.rememberMe ?? true)}
             onSave={saveWizard}
-            onCancel={() => setWizard(null)}
+            onCancel={async () => {
+              if (wizard.type === 'google') {
+                await api('/auth/google/pending', {
+                  method: 'DELETE',
+                  body: wizard.ticket ? { ticket: wizard.ticket } : {},
+                }).catch(() => {});
+                await registrationDrafts.clear().catch(() => {});
+                await clearGoogleRegistration().catch(() => {});
+              }
+              setWizard(null);
+            }}
             busy={busy}
           />
           <aside className="onboarding-aside">
@@ -1414,19 +1490,33 @@ export default function App() {
       )}
       {modal === 'create' && (
         <Modal title={t('TU PRÓXIMA CONVERSACIÓN')} onClose={() => setModal(null)}>
-          <p>
-            {t(
-              'Estás explorando la demo. Para conectar con personas reales, cierra esta sesión y crea tu propia cuenta.',
-            )}
-          </p>
-          <Button
-            onClick={async () => {
-              await logout();
-              setModal(null);
-            }}
-          >
-            {t('CREAR MI CUENTA')}
-          </Button>
+          {demoOnly ? (
+            <>
+              <p>
+                OnlyFachos llegará próximamente a App Store y Google Play. Esta demo usa perfiles y
+                conversaciones ficticios.
+              </p>
+              <a className="button" href="/">
+                Volver a la portada
+              </a>
+            </>
+          ) : (
+            <>
+              <p>
+                {t(
+                  'Estás explorando la demo. Para conectar con personas reales, cierra esta sesión y crea tu propia cuenta.',
+                )}
+              </p>
+              <Button
+                onClick={async () => {
+                  await logout();
+                  setModal(null);
+                }}
+              >
+                {t('CREAR MI CUENTA')}
+              </Button>
+            </>
+          )}
         </Modal>
       )}
       {modal === 'activity' && (

@@ -1,5 +1,5 @@
 import { DatabaseSync } from 'node:sqlite';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, chmodSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 export { ageOf } from './birthdate.mjs';
 import { ageOf } from './birthdate.mjs';
@@ -124,8 +124,11 @@ export const DEMO_PROFILES = [
 ];
 
 export function openDatabase(filename = process.env.DATABASE_PATH || './data/rigthnder.sqlite') {
-  if (filename !== ':memory:') mkdirSync(dirname(resolve(filename)), { recursive: true });
+  if (filename !== ':memory:') mkdirSync(dirname(resolve(filename)), { recursive: true, mode: 0o700 });
   const db = new DatabaseSync(filename);
+  if(filename !== ':memory:' && process.platform !== 'win32') {
+    for(const path of [filename,filename+'-wal',filename+'-shm']) if(existsSync(path)) chmodSync(path,0o600);
+  }
   db.exec(`
     PRAGMA foreign_keys = ON;
     PRAGMA journal_mode = WAL;

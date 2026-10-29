@@ -266,6 +266,12 @@ export function createPushService(db, config = {}) {
 
 export function mountPush(app, db, { auth, parse, push }) {
   app.get('/api/push/config', (_req, res) => res.json(push.config));
+  app.get('/api/push/devices/current', auth, (req, res) => {
+    const row = db
+      .prepare('SELECT kind FROM push_devices WHERE user_id=? AND session_hash=?')
+      .get(req.user.id, req.sessionHash);
+    res.json({ enabled: !!row, kind: row?.kind || null });
+  });
   app.post('/api/push/devices', auth, (req, res) => {
     if (req.user.demo)
       return res.status(400).json({ error: 'Las notificaciones requieren una cuenta real.' });
@@ -304,7 +310,20 @@ export function mountPush(app, db, { auth, parse, push }) {
         .json({ error: 'Las notificaciones aún no están disponibles en este dispositivo.' });
     const destination = data.kind === 'web' ? data.endpoint : data.token;
     // A shared device belongs only to its current account/session. Revoke its old queued notices too.
-    const existing = db.prepare('SELECT id FROM push_devices WHERE destination=?').get(destination);
+    const existing = db.prepare('SELECT * FROM push_devices WHERE destination=?').get(destination);
+    if (
+      existing?.user_id === req.user.id &&
+      existing.session_hash === req.sessionHash &&
+      existing.kind === data.kind
+    ) {
+      db.prepare('UPDATE push_devices SET p256dh=?,auth=?,updated_at=? WHERE id=?').run(
+        data.keys?.p256dh || '',
+        data.keys?.auth || '',
+        Date.now(),
+        existing.id,
+      );
+      return res.status(201).json({ id: existing.id });
+    }
     if (existing) db.prepare('DELETE FROM push_devices WHERE id=?').run(existing.id);
     db.prepare('DELETE FROM push_devices WHERE session_hash=?').run(req.sessionHash);
     const count = db

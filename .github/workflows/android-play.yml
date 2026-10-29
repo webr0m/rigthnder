@@ -13,7 +13,7 @@ on:
       version_code:
         description: Android version code; use a new number before uploading to Play
         required: true
-        default: '10010'
+        default: '10011'
         type: string
 permissions:
   contents: read
@@ -55,13 +55,19 @@ jobs:
           ADVERTISING_MODE: ${{ inputs.advertising }}
         run: |
           python3 - <<'PY'
-          import json, os, zipfile
+          import json, os, zipfile, re
+          mapping = open('android/app/build/outputs/mapping/release/mapping.txt').read()
           with zipfile.ZipFile('android/app/build/outputs/bundle/release/app-release.aab') as bundle:
               dex = b''.join(bundle.read(name) for name in bundle.namelist() if name.endswith('.dex'))
               manifest = bundle.read('base/manifest/AndroidManifest.xml')
-              for marker in (b'Lcom/google/android/gms/ads/', b'Lcom/getcapacitor/community/admob/', b'Lcom/google/firebase/messaging/FirebaseMessaging;'):
-                  assert marker in dex, f'Missing native component: {marker}'
+              for original in ('com.getcapacitor.community.admob.AdMob', 'com.google.firebase.messaging.FirebaseMessaging', 'com.capacitorjs.plugins.pushnotifications.PushNotificationsPlugin', 'com.rigthnder.app.OnlyFachosDevicePlugin'):
+                  match = re.search(r'^' + re.escape(original) + r' -> ([^:]+):$', mapping, re.M)
+                  assert match, f'Missing R8 component: {original}'
+                  descriptor = ('L' + match.group(1).replace('.', '/') + ';').encode()
+                  assert descriptor in dex, f'Missing optimized native component: {original}'
               assert b'com.google.android.gms.permission.AD_ID' in manifest
+              assert b'android.permission.POST_NOTIFICATIONS' in manifest
+              assert 'BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map' in bundle.namelist(), 'Missing embedded R8 mapping'
               resources = bundle.read('base/resources.pb')
               app_id = (json.load(open('mobile-ads.json'))['android']['appId']
                         if os.environ['ADVERTISING_MODE'] == 'production'
@@ -72,6 +78,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: OnlyFachos-Play-unsigned-${{ inputs.advertising }}-${{ inputs.version_code }}
-          path: android/app/build/outputs/bundle/release/app-release.aab
+          path: |
+            android/app/build/outputs/bundle/release/app-release.aab
+            android/app/build/outputs/mapping/release/mapping.txt
+            android/app/build/outputs/native-debug-symbols/release/native-debug-symbols.zip
           if-no-files-found: error
           retention-days: 14

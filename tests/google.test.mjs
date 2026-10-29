@@ -54,6 +54,14 @@ test('Google OAuth: state binding, verified identity, adult onboarding, one-use 
     const pendingCookie = callback.headers
       .get('set-cookie')
       .match(/rigthnder_google_pending=([a-f0-9]+)/)[0];
+    assert.match(callback.headers.get('set-cookie'), /Max-Age=3600/);
+    const pending = await (
+      await fetch(base + '/pending', { headers: { Cookie: pendingCookie } })
+    ).json();
+    assert.equal(pending.rememberMe, false);
+    assert.ok(pending.expiresAt > Date.now() + 59 * 60_000);
+    // Completing a slow form after the old ten-minute limit must still work.
+    db.prepare('UPDATE oauth_pending SET expires_at=?').run(Date.now() + 45 * 60_000);
     const body = {
       name: 'Google Test',
       birthdate: '2020-01-01',
@@ -117,6 +125,25 @@ test('Google OAuth: state binding, verified identity, adult onboarding, one-use 
     assert.equal((await exchanged.json()).session.rememberMe, true);
     assert.match(exchanged.headers.get('set-cookie'), /Max-Age=2592000/);
     assert.equal((await exchange(verifier)).status, 401);
+    const expiredTicket = 'c'.repeat(64);
+    db.prepare('INSERT INTO oauth_pending VALUES (?,?,?)').run(
+      createHash('sha256').update(expiredTicket).digest('hex'),
+      JSON.stringify({ email: 'expired@example.com' }),
+      Date.now() - 1,
+    );
+    const expired = await fetch(base + '/complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket: expiredTicket }),
+    });
+    assert.equal(expired.status, 401);
+    assert.equal((await expired.json()).code, 'GOOGLE_REGISTRATION_EXPIRED');
+    const invalid = await fetch(base + '/pending', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket: expiredTicket }),
+    });
+    assert.equal(invalid.status, 404);
   } finally {
     await new Promise((resolve) => server.close(resolve));
     db.close();

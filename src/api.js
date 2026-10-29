@@ -4,25 +4,30 @@ import { createSessionStore } from './session-store.mjs';
 import { createApiClient, revokeSession } from './api-client.mjs';
 export const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 const native = Capacitor.isNativePlatform();
+// The public demo has a memory-only bearer and omits cookies: opening it cannot
+// replace or log out an existing account in another tab.
+const publicDemo = !native && /^\/demo\/?$/.test(location.pathname);
 let sessionGeneration = 0;
 const sessionKey = 'onlyfachos-session:' + API_URL;
 const secureStorage = async () => import('@aparajita/capacitor-secure-storage');
 const sessions = createSessionStore({
-  native,
-  storage: {
-    get: async () => (await secureStorage()).SecureStorage.get(sessionKey, false, false),
-    set: async (value) => {
-      const { SecureStorage, KeychainAccess } = await secureStorage();
-      await SecureStorage.set(
-        sessionKey,
-        value,
-        false,
-        false,
-        KeychainAccess.whenUnlockedThisDeviceOnly,
-      );
-    },
-    remove: async () => (await secureStorage()).SecureStorage.remove(sessionKey, false),
-  },
+  native: native || publicDemo,
+  storage: publicDemo
+    ? { get: async () => null, set: async () => {}, remove: async () => {} }
+    : {
+        get: async () => (await secureStorage()).SecureStorage.get(sessionKey, false, false),
+        set: async (value) => {
+          const { SecureStorage, KeychainAccess } = await secureStorage();
+          await SecureStorage.set(
+            sessionKey,
+            value,
+            false,
+            false,
+            KeychainAccess.whenUnlockedThisDeviceOnly,
+          );
+        },
+        remove: async () => (await secureStorage()).SecureStorage.remove(sessionKey, false),
+      },
 });
 export const restoreToken = () => sessions.restore();
 export const setToken = async (token, policy) => {
@@ -38,7 +43,7 @@ export const setToken = async (token, policy) => {
 };
 export const api = createApiClient({
   baseUrl: API_URL,
-  native,
+  native: native || publicDemo,
   sessions,
   generation: () => sessionGeneration,
   translate: t,

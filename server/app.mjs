@@ -99,12 +99,23 @@ export function createApp(db, options = {}) {
           mediaSrc: ["'self'", 'data:', 'blob:'],
           connectSrc: ["'self'"],
           fontSrc: ["'self'"],
+          frameAncestors: ["'none'"],
+          objectSrc: ["'none'"],
+          baseUri: ["'none'"],
           ...(production ? {} : { upgradeInsecureRequests: null }),
         },
       },
       crossOriginEmbedderPolicy: false,
+      frameguard: { action: 'deny' },
     }),
   );
+  app.use((_req, res, next) => {
+    res.set(
+      'Permissions-Policy',
+      'geolocation=(), camera=(), microphone=(self), payment=(), usb=(), browsing-topics=()',
+    );
+    next();
+  });
   app.use(
     cors({
       origin(origin, callback) {

@@ -45,6 +45,7 @@ export function createApiClient({
       }
       const error = new Error(translate(result?.error || 'No pudimos conectar con el servidor.'));
       error.status = response.status;
+      if (typeof result?.code === 'string') error.code = result.code;
       throw error;
     }
     return result;

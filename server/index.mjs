@@ -1,5 +1,6 @@
 import { openDatabase } from './db.mjs';
 import { createApp } from './app.mjs';
+process.umask(0o077);
 const db = openDatabase();
 const port = Number(process.env.PORT || 3000);
 const app = createApp(db);

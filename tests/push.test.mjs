@@ -87,6 +87,17 @@ test('real message/date push is private, honors preferences, follows the current
     const demo = (await req('/auth/demo', null, {})).data;
     assert.equal((await req('/push/devices', demo.token, device)).status, 400);
     assert.equal((await req('/push/devices', b.token, device)).status, 201);
+    assert.deepEqual((await req('/push/devices/current', b.token)).data, {
+      enabled: true,
+      kind: 'web',
+    });
+    assert.equal((await req('/push/devices/current', a.token)).data.enabled, false);
+    const originalDevice = db.prepare('SELECT id FROM push_devices').get().id;
+    assert.equal(
+      (await req('/push/devices', b.token, device)).data.id,
+      originalDevice,
+      'refresh preserves the device and its queued deliveries',
+    );
     assert.equal(
       (await req('/push/devices', b.token, { ...device, accountId: a.user.id })).status,
       409,

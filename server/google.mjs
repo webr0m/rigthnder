@@ -36,8 +36,10 @@ export function mountGoogleAuth(
     secure: production,
     sameSite: 'lax',
     path: '/',
-    maxAge: 10 * 60_000,
+    maxAge: 15 * 60_000,
   };
+  const registrationLifetime = 60 * 60_000;
+  const pendingCookieOptions = { ...cookieOptions, maxAge: registrationLifetime };
   const pendingTicket = (req) => req.body?.ticket || cookieValue(req, 'rigthnder_google_pending');
   const nativeHandoff = (res, saved, payload) => {
     const code = randomBytes(32).toString('hex');
@@ -129,7 +131,7 @@ export function mountGoogleAuth(
       hash(state),
       native ? 1 : 0,
       challenge,
-      Date.now() + 10 * 60_000,
+      Date.now() + 15 * 60_000,
       rememberMe ? 1 : 0,
       link?.user_id || null,
       link?.session_hash || null,
@@ -243,15 +245,20 @@ export function mountGoogleAuth(
         db.prepare('INSERT INTO oauth_pending VALUES (?,?,?)').run(
           hash(ticket),
           JSON.stringify(identity),
-          Date.now() + 10 * 60_000,
+          Date.now() + registrationLifetime,
         );
-        payload = { ticket, identity: { name: identity.name, email: identity.email } };
+        payload = {
+          ticket,
+          expiresAt: Date.now() + registrationLifetime,
+          identity: { name: identity.name, email: identity.email },
+          rememberMe: identity.rememberMe,
+        };
       }
       if (saved.native) {
         return nativeHandoff(res, saved, payload);
       }
       if (existing) session(res, existing, !!saved.remember_me);
-      else res.cookie('rigthnder_google_pending', payload.ticket, cookieOptions);
+      else res.cookie('rigthnder_google_pending', payload.ticket, pendingCookieOptions);
       res.redirect(config.publicUrl + (existing ? '/?google=ok' : '/?google=complete'));
     } catch {
       fail('No pudimos verificar tu cuenta de Google. Inténtalo de nuevo.');
@@ -277,16 +284,33 @@ export function mountGoogleAuth(
     }
     res.json(payload);
   });
-  app.get('/api/auth/google/pending', (req, res) => {
-    const ticket = cookieValue(req, 'rigthnder_google_pending');
+  const pending = (req, res) => {
+    const ticket =
+      req.method === 'POST' ? pendingTicket(req) : cookieValue(req, 'rigthnder_google_pending');
     const row =
       ticket &&
       db
         .prepare('SELECT * FROM oauth_pending WHERE ticket_hash=? AND expires_at>?')
         .get(hash(ticket), Date.now());
-    if (!row) return res.status(404).json({ error: 'El registro con Google expiró.' });
+    if (!row)
+      return res
+        .status(404)
+        .json({ code: 'GOOGLE_REGISTRATION_EXPIRED', error: 'El registro con Google expiró.' });
     const identity = JSON.parse(row.payload);
-    res.json({ identity: { name: identity.name, email: identity.email } });
+    res.json({
+      expiresAt: row.expires_at,
+      rememberMe: identity.rememberMe,
+      identity: { name: identity.name, email: identity.email },
+    });
+  };
+  app.get('/api/auth/google/pending', pending);
+  app.post('/api/auth/google/pending', pending);
+  app.delete('/api/auth/google/pending', (req, res) => {
+    const ticket = pendingTicket(req);
+    if (typeof ticket === 'string' && /^[a-f0-9]{64}$/.test(ticket))
+      db.prepare('DELETE FROM oauth_pending WHERE ticket_hash=?').run(hash(ticket));
+    res.clearCookie('rigthnder_google_pending', pendingCookieOptions);
+    res.json({ ok: true });
   });
   app.post('/api/auth/google/complete', (req, res) => {
     const ticket = pendingTicket(req);
@@ -295,7 +319,12 @@ export function mountGoogleAuth(
       db
         .prepare('SELECT * FROM oauth_pending WHERE ticket_hash=? AND expires_at>?')
         .get(hash(ticket), Date.now());
-    if (!row) return res.status(401).json({ error: 'Vuelve a iniciar sesión con Google.' });
+    if (!row)
+      return res.status(401).json({
+        code: 'GOOGLE_REGISTRATION_EXPIRED',
+        error:
+          'Tu validación de Google venció. Tus datos del formulario se conservan; vuelve a validar Google para continuar.',
+      });
     const p = parse(
       z.object({
         name: z.string().trim().min(2).max(40),
@@ -354,7 +383,7 @@ export function mountGoogleAuth(
       JSON.stringify({ appearance: p.appearance, language: p.language }),
       id,
     );
-    res.clearCookie('rigthnder_google_pending', cookieOptions);
+    res.clearCookie('rigthnder_google_pending', pendingCookieOptions);
     res
       .status(201)
       .json(

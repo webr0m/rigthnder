@@ -5,6 +5,29 @@ import { api, API_URL } from './api';
 import { createAdsController } from './ads-controller.mjs';
 import { adConfig } from './ads-config.mjs';
 let verifier = '';
+const flowKey = 'onlyfachos-google-flow',
+  pendingKey = 'onlyfachos-google-pending';
+const secureAuth = async () => (await import('@aparajita/capacitor-secure-storage')).SecureStorage;
+async function savedAuth(key) {
+  const value = await (await secureAuth()).get(key, false, false);
+  if (!value) return null;
+  const data = typeof value === 'string' ? JSON.parse(value) : value;
+  if (data.expiresAt <= Date.now()) {
+    await (await secureAuth()).remove(key, false);
+    return null;
+  }
+  return data;
+}
+export async function pendingGoogleRegistration() {
+  return Capacitor.isNativePlatform() ? savedAuth(pendingKey) : null;
+}
+export async function rememberGoogleRegistration(value) {
+  if (Capacitor.isNativePlatform())
+    await (await secureAuth()).set(pendingKey, JSON.stringify(value), false, false);
+}
+export async function clearGoogleRegistration() {
+  if (Capacitor.isNativePlatform()) await (await secureAuth()).remove(pendingKey, false);
+}
 const adsEnabled = import.meta.env.VITE_ADMOB_ENABLED !== 'false';
 export const adsAvailable = () => Capacitor.isNativePlatform() && adsEnabled;
 const ads = createAdsController({
@@ -26,6 +49,9 @@ async function googleChallenge() {
     v.toString(16).padStart(2, '0'),
   ).join('');
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+  await (
+    await secureAuth()
+  ).set(flowKey, JSON.stringify({ verifier, expiresAt: Date.now() + 15 * 60_000 }), false, false);
   return btoa(String.fromCharCode(...new Uint8Array(digest)))
     .replaceAll('+', '-')
     .replaceAll('/', '_')
@@ -56,12 +82,17 @@ export async function googleLogin(rememberMe = true) {
 }
 export async function listenGoogle(onResult, onError) {
   if (!Capacitor.isNativePlatform()) return () => {};
-  const handle = async ({ url }) => {
+  const seen = new Set();
+  const handle = async ({ url }, initial = false) => {
     if (!url.startsWith('com.rigthnder.app://auth')) return;
+    if (seen.has(url)) return;
+    seen.add(url);
     try {
       await Browser.close();
       const params = new URL(url).searchParams;
       if (params.get('error')) throw new Error(params.get('error'));
+      verifier ||= (await savedAuth(flowKey))?.verifier || '';
+      if (!verifier && initial) return;
       if (!verifier)
         throw new Error('Vuelve a pulsar Continuar con Google para completar el acceso.');
       const result = await api('/auth/google/exchange', {
@@ -69,12 +100,15 @@ export async function listenGoogle(onResult, onError) {
         body: { code: params.get('code'), verifier },
       });
       verifier = '';
+      await (await secureAuth()).remove(flowKey, false);
       await onResult(result);
     } catch (error) {
       onError(error.message);
     }
   };
   const listener = await App.addListener('appUrlOpen', handle);
+  const launch = await App.getLaunchUrl();
+  if (launch?.url) await handle(launch, true);
   return () => listener.remove();
 }
 export async function startAds({ silent = false } = {}) {

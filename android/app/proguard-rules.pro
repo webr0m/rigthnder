@@ -1,3 +1,11 @@
+# Preserve the WebView bridge and runtime plugin annotations while allowing R8
+# to optimize the rest of the release. Capacitor supplies plugin keep rules.
+-keepattributes RuntimeVisibleAnnotations,AnnotationDefault,SourceFile,LineNumberTable
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+-keep class com.rigthnder.app.OnlyFachosDevicePlugin { *; }
+
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.

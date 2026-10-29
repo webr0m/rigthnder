@@ -1,6 +1,9 @@
 import { Capacitor } from '@capacitor/core';
 import { api } from './api';
 import { t } from './locale.mjs';
+import { boundedPush, registerNativePush } from './push-registration.mjs';
+import { registerPlugin } from '@capacitor/core';
+const device = registerPlugin('OnlyFachosDevice');
 const native = Capacitor.isNativePlatform();
 const marker = 'onlyfachos-push-user';
 let userEpoch = 0,
@@ -8,7 +11,7 @@ let userEpoch = 0,
 let handles = [],
   nativeToken,
   activeUser,
-  pendingRegistration;
+  registering = false;
 const readMarker = () => {
   try {
     return localStorage.getItem(marker);
@@ -29,7 +32,8 @@ const supportedWeb = () =>
   'Notification' in window;
 const plugin = async () => (await import('@capacitor/push-notifications')).PushNotifications;
 async function webSubscription() {
-  return (await navigator.serviceWorker.getRegistration('/'))?.pushManager.getSubscription();
+  const registration = await boundedPush(navigator.serviceWorker.getRegistration('/'));
+  return registration ? boundedPush(registration.pushManager.getSubscription()) : null;
 }
 async function saveWeb(subscription, accountId) {
   return api('/push/devices', {
@@ -38,18 +42,28 @@ async function saveWeb(subscription, accountId) {
   });
 }
 export async function pushStatus(userId) {
-  const config = await api('/push/config');
+  const config = await boundedPush(api('/push/config'));
   const available = native
     ? Capacitor.getPlatform() === 'android' && config.android
     : supportedWeb() && config.web;
   const permission =
     native && available
-      ? (await (await plugin()).checkPermissions()).receive
+      ? (await boundedPush((await plugin()).checkPermissions())).receive
       : !native && 'Notification' in window
         ? Notification.permission
         : 'default';
-  const denied = permission === 'denied';
-  return { available, enabled: readMarker() === userId && permission === 'granted', denied };
+  const system =
+    native && available ? await boundedPush(device.notificationStatus()).catch(() => ({})) : {};
+  const denied = permission === 'denied' || system.enabled === false || system.channelBlocked;
+  const local = native || (supportedWeb() && !!(await webSubscription()));
+  const registered =
+    available && permission === 'granted' && readMarker() === userId && local
+      ? await boundedPush(api('/push/devices/current'))
+      : { enabled: false };
+  return { available, enabled: !!(registered.enabled && !denied), denied };
+}
+export async function openPushSettings() {
+  if (native && Capacitor.getPlatform() === 'android') await device.openNotificationSettings();
 }
 export async function enablePush(userId) {
   const epoch = userEpoch,
@@ -68,67 +82,66 @@ export async function enablePush(userId) {
     check();
     if (permission.receive !== 'granted')
       throw Error(t('Permite las notificaciones en los ajustes del dispositivo.'));
-    await sdk.createChannel({
-      id: 'onlyfachos-activity',
-      name: 'OnlyFachos',
-      importance: 3,
-      visibility: 0,
-    });
+    await boundedPush(
+      sdk.createChannel({
+        id: 'onlyfachos-activity',
+        name: 'OnlyFachos',
+        importance: 3,
+        visibility: 0,
+      }),
+    );
     check();
-    await new Promise(async (resolve, reject) => {
-      const timer = setTimeout(() => {
-        pendingRegistration = undefined;
-        reject(Error(t('No pudimos registrar las notificaciones. Inténtalo otra vez.')));
-      }, 20_000);
-      pendingRegistration = {
-        userId,
-        epoch,
-        operation,
-        resolve: () => {
-          clearTimeout(timer);
-          resolve();
-        },
-        reject: (error) => {
-          clearTimeout(timer);
-          reject(error);
-        },
-      };
-      try {
-        await sdk.register();
-      } catch (error) {
-        pendingRegistration = undefined;
-        clearTimeout(timer);
-        reject(error);
-      }
-    });
+    const system = await boundedPush(device.notificationStatus()).catch(() => ({}));
+    if (system.enabled === false || system.channelBlocked)
+      throw Error(t('Permite las notificaciones en los ajustes del dispositivo.'));
+    registering = true;
+    try {
+      await registerNativePush(
+        sdk,
+        (token) =>
+          boundedPush(
+            api('/push/devices', {
+              method: 'POST',
+              body: { kind: 'android', accountId: userId, token },
+            }),
+          ),
+        check,
+      );
+    } finally {
+      registering = false;
+    }
   } else {
     // Called only from the user's enable button, never at startup.
     if (!supportedWeb())
       throw Error(t('Las notificaciones aún no están disponibles en este dispositivo.'));
     if ((await Notification.requestPermission()) !== 'granted')
       throw Error(t('Permite las notificaciones en los ajustes del dispositivo.'));
-    const config = await api('/push/config');
+    const config = await boundedPush(api('/push/config'));
     check();
     if (!config.web)
       throw Error(t('Las notificaciones aún no están disponibles en este dispositivo.'));
-    const registration = await navigator.serviceWorker.register('/push-sw.js', {
-      scope: '/',
-      updateViaCache: 'none',
-    });
-    await navigator.serviceWorker.ready;
+    const registration = await boundedPush(
+      navigator.serviceWorker.register('/push-sw.js', {
+        scope: '/',
+        updateViaCache: 'none',
+      }),
+    );
+    await boundedPush(navigator.serviceWorker.ready);
     const publicKey = Uint8Array.from(
       atob(config.publicKey.replace(/-/g, '+').replace(/_/g, '/')),
       (c) => c.charCodeAt(0),
     );
     const subscription =
-      (await registration.pushManager.getSubscription()) ||
-      (await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: publicKey,
-      }));
+      (await boundedPush(registration.pushManager.getSubscription())) ||
+      (await boundedPush(
+        registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: publicKey,
+        }),
+      ));
     try {
       check();
-      await saveWeb(subscription, userId);
+      await boundedPush(saveWeb(subscription, userId));
     } catch (error) {
       if (activeUser === userId && userEpoch === epoch)
         await subscription.unsubscribe().catch(() => {});
@@ -140,17 +153,17 @@ export async function enablePush(userId) {
 }
 export async function disablePush() {
   // Remove server deliveries first; an unsuccessful disable must not claim success.
-  await api('/push/devices', { method: 'DELETE' });
+  await boundedPush(api('/push/devices', { method: 'DELETE' }));
   await forgetPush();
 }
 export async function forgetPush() {
   activation++;
-  pendingRegistration?.reject(Error(t('La cuenta cambió. Activa las notificaciones de nuevo.')));
-  pendingRegistration = undefined;
   writeMarker('');
   nativeToken = undefined;
   if (native) {
-    await (await plugin()).unregister().catch(() => {});
+    const sdk = await plugin();
+    await sdk.unregister().catch(() => {});
+    await sdk.removeAllDeliveredNotifications().catch(() => {});
   } else if (supportedWeb()) {
     await (await webSubscription())?.unsubscribe().catch(() => {});
   }
@@ -186,12 +199,7 @@ export async function listenPush(userId, onOpen) {
   const sdk = await plugin();
   handles = await Promise.all([
     sdk.addListener('registration', async (token) => {
-      const pending = pendingRegistration;
-      const requested =
-        pendingRegistration?.userId === userId &&
-        pendingRegistration.epoch === epoch &&
-        pendingRegistration.operation === activation;
-      if (activeUser !== userId || userEpoch !== epoch || (!requested && readMarker() !== userId))
+      if (registering || activeUser !== userId || userEpoch !== epoch || readMarker() !== userId)
         return;
       nativeToken = token.value;
       try {
@@ -199,24 +207,7 @@ export async function listenPush(userId, onOpen) {
           method: 'POST',
           body: { kind: 'android', accountId: userId, token: nativeToken },
         });
-        if (
-          requested &&
-          pending === pendingRegistration &&
-          activeUser === userId &&
-          userEpoch === epoch
-        )
-          pending?.resolve();
-      } catch (error) {
-        if (pending === pendingRegistration) pending?.reject(error);
-      } finally {
-        if (pending === pendingRegistration) pendingRegistration = undefined;
-      }
-    }),
-    sdk.addListener('registrationError', () => {
-      pendingRegistration?.reject(
-        Error(t('No pudimos registrar las notificaciones. Inténtalo otra vez.')),
-      );
-      pendingRegistration = undefined;
+      } catch {}
     }),
     sdk.addListener('pushNotificationActionPerformed', () => {
       if (activeUser === userId && userEpoch === epoch) onOpen();

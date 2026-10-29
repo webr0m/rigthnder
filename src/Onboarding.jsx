@@ -1,8 +1,9 @@
 import { t, getLanguage } from './locale.mjs';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Plus, X, Camera, Check, LoaderCircle } from 'lucide-react';
 import { Button } from './Shared';
 import { birthdateError, birthdateBounds } from '../server/birthdate.mjs';
+import { registrationDrafts } from './onboarding-store';
 
 export async function compressPhoto(file) {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
@@ -148,32 +149,56 @@ const empty = {
   countryCount: 0,
   sensitiveConsent: false,
 };
-export default function Onboarding({ user, identity, onSave, onCancel, busy, initialStep = 1 }) {
-  const [step, setStep] = useState(initialStep),
+export default function Onboarding({
+  user,
+  identity,
+  onSave,
+  onCancel,
+  onReauthenticate,
+  initialData,
+  reauthenticate = false,
+  rememberMe = true,
+  busy,
+  initialStep = 1,
+}) {
+  const restored = !user && initialData?.identity?.email === identity?.email ? initialData : null;
+  const [step, setStep] = useState(restored?.step || initialStep),
     [error, setError] = useState(''),
     [birthError, setBirthError] = useState(''),
     [uploading, setUploading] = useState(false);
   const [draft, setDraft] = useState(() => ({
-    name: user?.name || identity?.name || '',
-    birthdate: user?.birthdate || '',
-    gender: ['hombre', 'mujer'].includes(user?.gender) ? user.gender : '',
-    city: user?.city || '',
-    occupation: user?.occupation || '',
-    bio: user?.bio?.slice(0, 200) || '',
-    lookingFor: user?.lookingFor || 'todos',
+    ...restored?.draft,
+    name: restored?.draft?.name || user?.name || identity?.name || '',
+    birthdate: restored?.draft?.birthdate || user?.birthdate || '',
+    gender:
+      restored?.draft?.gender || (['hombre', 'mujer'].includes(user?.gender) ? user.gender : ''),
+    city: restored?.draft?.city || user?.city || '',
+    occupation: restored?.draft?.occupation || user?.occupation || '',
+    bio: restored?.draft?.bio || user?.bio?.slice(0, 200) || '',
+    lookingFor: restored?.draft?.lookingFor || user?.lookingFor || 'todos',
   }));
   const [c, setC] = useState(() => ({
     ...empty,
     ...user?.community,
-    nationalities: user?.community?.nationalities?.length ? user.community.nationalities : [''],
-    photos: user?.community?.photos?.length
-      ? user.community.photos
-      : user?.photo
-        ? [user.photo]
-        : [],
+    ...restored?.c,
+    nationalities:
+      restored?.c?.nationalities ||
+      (user?.community?.nationalities?.length ? user.community.nationalities : ['']),
+    photos:
+      restored?.c?.photos ||
+      (user?.community?.photos?.length ? user.community.photos : user?.photo ? [user.photo] : []),
   }));
-  const [terms, setTerms] = useState(!!user),
-    [consent, setConsent] = useState(!!user);
+  const [terms, setTerms] = useState(restored?.terms || !!user),
+    [consent, setConsent] = useState(restored?.consent || !!user),
+    [needsGoogle, setNeedsGoogle] = useState(reauthenticate),
+    [renewing, setRenewing] = useState(false);
+  const snapshot = () => ({ identity, draft, c, step, terms, consent, rememberMe });
+  useEffect(() => {
+    if (!identity?.email || user) return;
+    const timer = setTimeout(() => registrationDrafts.save(snapshot()).catch(() => {}), 300);
+    return () => clearTimeout(timer);
+  }, [draft, c, step, terms, consent, identity?.email]);
+  useEffect(() => setNeedsGoogle(reauthenticate), [reauthenticate]);
   const abroad = c.region === 'Fuera de Chile';
   const update = (key, value) => setC((v) => ({ ...v, [key]: value }));
   const field = (key, value) => setDraft((v) => ({ ...v, [key]: value }));
@@ -234,6 +259,7 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
         valuesConsent: consent,
       });
     } catch (e) {
+      if (e.code === 'GOOGLE_REGISTRATION_EXPIRED') setNeedsGoogle(true);
       setError(e.message);
     }
   }
@@ -831,6 +857,33 @@ export default function Onboarding({ user, identity, onSave, onCancel, busy, ini
         <p className="form-error" role="alert">
           {t(error)}
         </p>
+      )}
+      {identity && needsGoogle && (
+        <div className="form-error">
+          <p>
+            {t(
+              'Tu progreso se conserva en este dispositivo. Vuelve a validar Google para continuar desde este paso.',
+            )}
+          </p>
+          <button
+            type="button"
+            className="secondary"
+            disabled={renewing}
+            onClick={async () => {
+              setRenewing(true);
+              try {
+                await registrationDrafts.save(snapshot());
+                await onReauthenticate();
+              } catch (error) {
+                setError(error.message);
+              } finally {
+                setRenewing(false);
+              }
+            }}
+          >
+            {t('Volver a validar con Google')}
+          </button>
+        </div>
       )}
       <div className="wizard-footer">
         <Button disabled={busy || uploading}>
