@@ -95,7 +95,7 @@ function Modal({ title, children, onClose, className = '' }) {
 }
 
 function Safety({ profile, onDone, notify }) {
-  const [reason, setReason] = useState('Perfil falso'),
+  const [reason, setReason] = useState(''),
     [details, setDetails] = useState(''),
     [alsoBlock, setAlsoBlock] = useState(true),
     [loading, setLoading] = useState(false),
@@ -179,7 +179,11 @@ function Safety({ profile, onDone, notify }) {
           'La denuncia es privada. No compartimos tu identidad ni tu mensaje con el perfil denunciado.',
         )}
       </p>
-      <Button disabled={loading || reportDone} className="danger" onClick={() => action('reports')}>
+      <Button
+        disabled={loading || reportDone || !reason}
+        className="danger"
+        onClick={() => action('reports')}
+      >
         <Flag size={17} />
         {reportDone ? t('Denuncia registrada') : t('Enviar denuncia')}
       </Button>

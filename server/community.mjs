@@ -137,6 +137,15 @@ export function mountCommunity(
   },
 ) {
   const any = (id) => db.prepare('SELECT * FROM users WHERE id=?').get(id);
+  const messageRate = new Map();
+  function tooManyMessages(userId) {
+    const now = Date.now();
+    const recent = (messageRate.get(userId) || []).filter((t) => now - t < 60_000);
+    if (recent.length >= 30) return true;
+    recent.push(now);
+    messageRate.set(userId, recent);
+    return false;
+  }
   const messagesFor = (id) =>
     db.prepare('SELECT * FROM messages WHERE match_id=? ORDER BY created_at,rowid').all(id);
   function conversation(req, m) {
@@ -343,6 +352,8 @@ export function mountCommunity(
   });
   app.post('/api/conversations/:id/messages', auth, (req, res) => {
     const m = accessibleMatch(req, req.params.id);
+    if (tooManyMessages(req.user.id))
+      return res.status(429).json({ error: 'Demasiados mensajes. Espera un momento.' });
     const p = parse(
       z.object({
         kind: z.enum(['text', 'sticker', 'image', 'audio']).default('text'),

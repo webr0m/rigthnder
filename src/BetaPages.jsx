@@ -173,7 +173,7 @@ export function BetaAccount({ user, onEdit, onPreview, onSettings, saveSettings,
       .catch((e) => notify(e.message, true));
   }, [user.id]);
   const c = user.community || {},
-    photos = c.photos || [user.photo];
+    photos = c.photos?.length ? c.photos : user.photo ? [user.photo] : [];
   const complete = [
     !!user.name,
     !!user.bio,

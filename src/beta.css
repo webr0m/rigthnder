@@ -727,6 +727,9 @@ progress::-webkit-progress-value {
 .chat-person.is-unread strong {
   color: var(--gold);
 }
+:root[data-theme='light'] .chat-person.is-unread strong {
+  color: #8a6d00;
+}
 .chat-filter-empty {
   padding: 30px;
   text-align: center;
