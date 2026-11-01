@@ -17,20 +17,21 @@ Los pasos siguientes describen la instalación original y conservan los nombres 
 ## Paquete
 
 ```sh
-pnpm build
 node scripts/package-hosting.mjs
 ```
 
-El script genera una carpeta de publicación nueva bajo `.deploy/`, con `dist`, backend, entrada Passenger, dependencias del servidor y una configuración inicial sin secretos. Excluye la base local y las credenciales. Comprimir el contenido incluyendo `.env` para subirlo.
+El script recompila frontend y backend y genera una carpeta nueva bajo `.deploy/` con `dist`, `server-build`, fuentes del backend, entrada Passenger, dependencias del servidor y `DEPLOYMENT.txt`. Incluye `.env.example` solo como referencia; **no incluye `.env` real ni base de datos**. Comprime el contenido de esa carpeta para subirlo.
 
-La configuración inicial activa la demo para mostrar el MVP. Desactivar `DEMO_ENABLED` al preparar el servicio real. Google requiere añadir sus credenciales al `.env` privado del servidor y reiniciar; no editar secretos en GitHub/GitLab.
+En una actualización del sitio activo, conserva sin cambios su `.env`, la ruta `DATABASE_PATH` y el archivo SQLite; no crees otro Node app ni cambies DNS. Antes de reemplazar archivos, crea un respaldo del código, `.env` y una copia consistente de SQLite. **No copies `.env.example` sobre el `.env` activo** ni subas una base local. El backend se sirve mediante el Node app de Passenger; no requiere un `.htaccess` de SPA.
+
+Para una instalación nueva, `.env.example` activa la demo de muestra y deja credenciales externas vacías. Configura los valores y secretos en un `.env` privado en el hosting, nunca en GitHub/GitLab.
 
 ## cPanel
 
-1. Crear el dominio `rigthnder.webrom.lat` sin compartir document root con el dominio principal. Document root: `/home/jyscqqde/rigthnder.webrom.lat`.
-2. Subir y extraer el paquete en `/home/jyscqqde/rigthnder-app` (fuera del directorio público).
-3. En **Setup Node.js App**, crear una aplicación Node 24, modo Production, root `rigthnder-app`, URL `rigthnder.webrom.lat/`, startup `app.cjs`.
-4. Ejecutar **Run NPM Install**, luego Restart. El paquete del hosting contiene solo dependencias del backend; no hay que compilar Vite en el hosting.
+1. En cPanel, identifica el Node app **existente** asociado a `onlyfachos.webrom.cc` y conserva su document root, application root y variables de entorno.
+2. Sube y extrae el paquete en el application root existente, sin reemplazar `.env` ni los datos persistentes.
+3. En **Setup Node.js App**, conserva Node 24, modo Production y startup `app.cjs` del servicio existente.
+4. Ejecuta **Run NPM Install** y reinicia Passenger. El paquete del hosting contiene solo dependencias del backend; no hay que compilar Vite en el hosting.
 5. Conservar la base en `/home/jyscqqde/rigthnder-data/rigthnder.sqlite`. No copiar la base de pruebas local.
 6. Verificar el certificado del origen antes de usar Cloudflare Full (strict). En este hosting, el certificado Cloudflare Origin existente cubre Rigthnder y requiere el proxy activo; un navegador que acceda directamente al origen no confía en esa CA.
 

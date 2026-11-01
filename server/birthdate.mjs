@@ -1,13 +1,24 @@
 // Shared by the registration form and both email/Google registration endpoints.
+// The age gate follows the civil calendar in the service's primary market.
+function currentCivilDate(now) {
+  const parts = new Intl.DateTimeFormat('en', {
+    timeZone: 'America/Santiago',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(now);
+  return Object.fromEntries(
+    parts
+      .filter(({ type }) => ['year', 'month', 'day'].includes(type))
+      .map(({ type, value }) => [type, Number(value)]),
+  );
+}
+
 export function ageOf(birthdate, now = new Date()) {
-  const birth = new Date(`${birthdate}T00:00:00Z`);
+  const { year, month, day } = currentCivilDate(now);
+  const [birthYear, birthMonth, birthDay] = birthdate.split('-').map(Number);
   return (
-    now.getUTCFullYear() -
-    birth.getUTCFullYear() -
-    (now.getUTCMonth() < birth.getUTCMonth() ||
-    (now.getUTCMonth() === birth.getUTCMonth() && now.getUTCDate() < birth.getUTCDate())
-      ? 1
-      : 0)
+    year - birthYear - (month < birthMonth || (month === birthMonth && day < birthDay) ? 1 : 0)
   );
 }
 
@@ -23,9 +34,8 @@ export function birthdateError(value, now = new Date()) {
 }
 
 export function birthdateBounds(now = new Date()) {
-  const year = now.getUTCFullYear(),
-    month = now.getUTCMonth(),
-    day = now.getUTCDate();
+  const { year, month: monthNumber, day } = currentCivilDate(now);
+  const month = monthNumber - 1;
   // Date normalizes leap days; clamp the maximum to the last day of February.
   const max = new Date(
     Date.UTC(

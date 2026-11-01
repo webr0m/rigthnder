@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
+import android.view.Window;
+import android.view.WindowManager;
 import androidx.core.app.NotificationManagerCompat;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -39,6 +41,21 @@ public class OnlyFachosDevicePlugin extends Plugin {
             }
             try { getActivity().startActivity(intent); call.resolve(); }
             catch (Exception error) { call.reject("No se pudieron abrir los ajustes de notificaciones."); }
+        });
+    }
+
+    @PluginMethod
+    public void setScreenCaptureProtection(PluginCall call) {
+        boolean enabled = call.getBoolean("enabled", true);
+        if (getActivity() == null) {
+            call.reject("No se pudo actualizar la protección de pantalla.");
+            return;
+        }
+        getActivity().runOnUiThread(() -> {
+            Window window = getActivity().getWindow();
+            if (enabled) window.addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+            else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+            call.resolve();
         });
     }
 }

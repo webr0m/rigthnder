@@ -27,6 +27,7 @@ import {
   startAds,
   stopAds,
   privacyAds,
+  setScreenCaptureProtection,
   pendingGoogleRegistration,
   rememberGoogleRegistration,
   clearGoogleRegistration,
@@ -716,6 +717,9 @@ export default function App({ demoOnly = false }) {
       stopAds().catch(() => {});
     };
   }, [ready, user?.id, tab, !!wizard, !!modal, !!profileView, !!service, !!recovery]);
+  useEffect(() => {
+    setScreenCaptureProtection(Boolean(user)).catch(() => {});
+  }, [user?.id]);
   useEffect(() => {
     if (!user) {
       sessionExpired.current = false;

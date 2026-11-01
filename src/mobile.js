@@ -1,10 +1,11 @@
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { api, API_URL } from './api';
 import { createAdsController } from './ads-controller.mjs';
 import { adConfig } from './ads-config.mjs';
 let verifier = '';
+const device = registerPlugin('OnlyFachosDevice');
 const flowKey = 'onlyfachos-google-flow',
   pendingKey = 'onlyfachos-google-pending';
 const secureAuth = async () => (await import('@aparajita/capacitor-secure-storage')).SecureStorage;
@@ -120,6 +121,10 @@ export async function startAds({ silent = false } = {}) {
 }
 export async function stopAds() {
   if (adsAvailable()) return ads.stop();
+}
+export async function setScreenCaptureProtection(enabled) {
+  if (Capacitor.getPlatform() !== 'android') return;
+  await device.setScreenCaptureProtection({ enabled: Boolean(enabled) });
 }
 export async function privacyAds() {
   if (!adsAvailable()) throw Error('No hay cookies publicitarias ni anuncios en la web.');

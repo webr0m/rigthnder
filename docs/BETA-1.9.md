@@ -21,11 +21,13 @@ La activación instala sus propios listeners antes de pedir el token Android, es
 
 Android deshabilita respaldos y tráfico HTTP, restringe FileProvider a fotos propias de la app y archivos compartidos de caché, y mantiene el permiso explícito de notificaciones. El servidor impide incrustación en marcos, objetos y bases de URL externas, restringe capacidades del navegador y protege los nuevos archivos privados con permisos restrictivos. SQLite y la configuración privada se conservaron durante el despliegue; no se migró a Firebase.
 
+En la revisión posterior de seguridad, la edad civil se calcula en `America/Santiago` para impedir el desfase de UTC cerca de medianoche; el envío admite 30 mensajes por minuto por cuenta y los bloqueos cierran el acceso de ambos participantes. Android activa `FLAG_SECURE` mientras hay una sesión para evitar capturas y vistas previas de pantallas privadas. El paquete de actualización de Namecheap excluye `.env` y SQLite.
+
 Android `10011` activa R8, reducción de recursos, mapeo de desofuscación integrado y `WindowCompat.enableEdgeToEdge`. Google Mobile Ads `25.5.0` ya era la versión comprobada más reciente: las APIs obsoletas detectadas por Play procedían de sus SDK; no se parchean binarios del proveedor ni se promete que el aviso desaparezca antes del nuevo análisis.
 
 ## Verificación
 
-- 66 pruebas automáticas: identidad OAuth y caducidad, privacidad, sesiones, recuperación, chat/citas, cifrado/caducidad/alteración del borrador, registro Android inmediato/error/plazo, estado push, reintentos y cambios de cuenta.
+- 68 pruebas automáticas: identidad OAuth y caducidad, privacidad, sesiones, recuperación, chat/citas, cifrado/caducidad/alteración del borrador, registro Android inmediato/error/plazo, estado push, reintentos, edad Chile/UTC y límite de mensajes/bloqueos.
 - Compilación web y del servidor Node; comprobación de rutas públicas, cabeceras, anuncios públicos y configuración de push en HTTPS.
 - Prueba UI con proveedor Google simulado: vencimiento forzado al enviar el paso 3, renovación, recuperación del paso y consentimientos, fotos/bio/fecha conservadas al recargar y finalización correcta. No usa cuentas reales de Google ni crea usuarios de producción.
 - Portada revisada en móvil y escritorio; sin desbordamiento horizontal y con pausa de movimiento efectiva. Demo directa comprobada.

@@ -69,6 +69,36 @@ test('direct conversation needs no likes, is idempotent, and is private to its p
   );
   assert.equal((await req('/conversations', a.token, { targetId: 'demo_lucia' })).status, 404);
 });
+test('messages are rate limited and blocking prevents reopening or messaging either way', async () => {
+  const a = await account('RateLimitA'),
+    b = await account('RateLimitB');
+  const conversation = (await req('/conversations', a.token, { targetId: b.user.id })).data;
+
+  for (let i = 0; i < 30; i++)
+    assert.equal(
+      (await req(`/conversations/${conversation.id}/messages`, a.token, { text: `Mensaje ${i}` }))
+        .status,
+      201,
+    );
+  assert.equal(
+    (await req(`/conversations/${conversation.id}/messages`, a.token, { text: 'Mensaje 31' }))
+      .status,
+    429,
+  );
+
+  assert.equal((await req('/blocks', a.token, { targetId: b.user.id })).status, 201);
+  assert.equal((await req('/conversations', b.token, { targetId: a.user.id })).status, 404);
+  assert.equal(
+    (await req(`/conversations/${conversation.id}/messages`, a.token, { text: 'Bloqueado' }))
+      .status,
+    404,
+  );
+  assert.equal(
+    (await req(`/conversations/${conversation.id}/messages`, b.token, { text: 'Bloqueado' }))
+      .status,
+    404,
+  );
+});
 test('a date needs explicit acceptance from the other participant, cannot be answered twice, and survives reload', async () => {
   const a = await account('DateA'),
     b = await account('DateB'),

@@ -138,8 +138,14 @@ export function mountCommunity(
 ) {
   const any = (id) => db.prepare('SELECT * FROM users WHERE id=?').get(id);
   const messageRate = new Map();
+  let nextMessageRateSweep = 0;
   function tooManyMessages(userId) {
     const now = Date.now();
+    if (now >= nextMessageRateSweep) {
+      for (const [id, timestamps] of messageRate)
+        if (!timestamps.length || now - timestamps.at(-1) >= 60_000) messageRate.delete(id);
+      nextMessageRateSweep = now + 60_000;
+    }
     const recent = (messageRate.get(userId) || []).filter((t) => now - t < 60_000);
     if (recent.length >= 30) return true;
     recent.push(now);
@@ -352,8 +358,6 @@ export function mountCommunity(
   });
   app.post('/api/conversations/:id/messages', auth, (req, res) => {
     const m = accessibleMatch(req, req.params.id);
-    if (tooManyMessages(req.user.id))
-      return res.status(429).json({ error: 'Demasiados mensajes. Espera un momento.' });
     const p = parse(
       z.object({
         kind: z.enum(['text', 'sticker', 'image', 'audio']).default('text'),
@@ -382,6 +386,8 @@ export function mountCommunity(
           .status(400)
           .json({ error: 'El audio debe ser WebM, Ogg o MP4 y pesar menos de 1,5 MB.' });
     }
+    if (tooManyMessages(req.user.id))
+      return res.status(429).json({ error: 'Demasiados mensajes. Espera un momento.' });
     db.prepare(
       'INSERT INTO messages (id,match_id,sender_id,text,created_at,kind) VALUES (?,?,?,?,?,?)',
     ).run(randomUUID(), m.id, req.user.id, p.text.trim(), Date.now(), p.kind);

@@ -35,3 +35,16 @@ test('date input bounds match server age validation, including leap days and bir
     }
   }
 });
+
+test('age gate follows the Chilean civil date across the UTC midnight boundary', () => {
+  const beforeBirthday = new Date('2026-10-30T02:59:59Z'); // Oct 29, 23:59:59 in Santiago
+  const afterBirthday = new Date('2026-10-30T03:00:01Z'); // Oct 30, 00:00:01 in Santiago
+
+  assert.equal(ageOf('2008-10-30', beforeBirthday), 17);
+  assert.ok(birthdateError('2008-10-30', beforeBirthday));
+  assert.equal(birthdateBounds(beforeBirthday).max, '2008-10-29');
+
+  assert.equal(ageOf('2008-10-30', afterBirthday), 18);
+  assert.equal(birthdateError('2008-10-30', afterBirthday), '');
+  assert.equal(birthdateBounds(afterBirthday).max, '2008-10-30');
+});
