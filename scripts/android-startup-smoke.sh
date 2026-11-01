@@ -5,7 +5,7 @@ mkdir -p android-startup-results
 # Distinguish an unavailable runner network from an application startup hang.
 network_ready=false
 for attempt in $(seq 1 30); do
-  if adb shell dumpsys connectivity | grep -q 'VALIDATED'; then
+  if adb shell dumpsys connectivity | grep 'VALIDATED' > /dev/null; then
     network_ready=true
     break
   fi
