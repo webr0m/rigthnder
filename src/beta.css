@@ -703,6 +703,16 @@ progress::-webkit-progress-value {
 .proposal-card .button {
   font-size: 14px;
 }
+.proposal-card > .text-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  min-height: 44px;
+}
+.delete-confirmation {
+  margin: 20px 0;
+}
 .proposal-card .beta-actions {
   margin: 12px 0 0;
 }

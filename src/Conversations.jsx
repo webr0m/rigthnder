@@ -602,14 +602,6 @@ export default function Conversations({
                 </Button>
               </div>
             </section>
-            {detail?.proposals?.find((p) => p.status === 'accepted') && (
-              <ConfirmedPlan
-                plan={detail.proposals.find((p) => p.status === 'accepted')}
-                peer={peer}
-                notify={notify}
-                onChange={() => setDialog('plan')}
-              />
-            )}
             {!!detail?.common.length && (
               <div className="chat-common">
                 <strong>{t('EN COMÚN')}</strong>
@@ -619,6 +611,14 @@ export default function Conversations({
               </div>
             )}
             <div className="chat-messages" aria-live="polite">
+              {detail?.proposals?.find((p) => p.status === 'accepted') && (
+                <ConfirmedPlan
+                  plan={detail.proposals.find((p) => p.status === 'accepted')}
+                  peer={peer}
+                  notify={notify}
+                  onChange={() => setDialog('plan')}
+                />
+              )}
               {loading ? (
                 <div className="loading">
                   <LoaderCircle className="spin" />

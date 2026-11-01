@@ -41,6 +41,7 @@ import { BetaAccount, BetaSettings, BetaService, BetaFilters, ProfileDetail } fr
 import LanguagePicker, { useLanguage } from './LanguagePicker';
 import { getLanguage, setLanguage, t, translateCommon } from './locale.mjs';
 import PasswordRecovery from './PasswordRecovery';
+import { localizeFormValidation } from './form-validation.mjs';
 export function Wordmark() {
   return (
     <span className="wordmark">
@@ -272,7 +273,7 @@ function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, init
         <span className="label-strip">
           {login ? t('TU COMUNIDAD TE ESPERA') : t('AQUÍ EMPIEZA LA CONVERSACIÓN')}
         </span>
-        <h2>{login ? t('VOLVISTE, BASADO.') : t('SIN RODEOS.')}</h2>
+        <h2>{login ? t('HOLA, BASADO.') : t('SIN RODEOS.')}</h2>
         <form className="form" onSubmit={submit}>
           <button
             type="button"
@@ -443,6 +444,7 @@ export default function App({ demoOnly = false }) {
     };
   }, []);
   const language = useLanguage();
+  useEffect(() => localizeFormValidation(document, t), []);
   useEffect(() => {
     document.documentElement.lang = language;
     document.title = t('OnlyFachos — Sin swipes. Solo conversación');
@@ -586,7 +588,8 @@ export default function App({ demoOnly = false }) {
   }, [theme]);
   useEffect(() => {
     let alive = true,
-      unlisten;
+      unlisten,
+      initialized = false;
     const startupTimer = setTimeout(() => {
       if (!alive) return;
       alive = false;
@@ -655,6 +658,7 @@ export default function App({ demoOnly = false }) {
         if (location.pathname === '/terminos') setModal('terms');
         if (location.pathname === '/seguridad-infantil') setModal('child-safety');
         if (location.pathname === '/eliminar-cuenta') setModal('account-deletion');
+        initialized = true;
       } catch (e) {
         if (alive) setInitError(e.message);
       } finally {
@@ -663,7 +667,7 @@ export default function App({ demoOnly = false }) {
       }
       // Restore the saved session before consuming a cold-start OAuth link.
       // Otherwise restoreToken() can overwrite a just-completed Google login.
-      if (!alive || demoOnly) return;
+      if (!alive || demoOnly || !initialized) return;
       try {
         const cleanup = await listenGoogle(
           async (r) => {
@@ -1633,16 +1637,18 @@ export default function App({ demoOnly = false }) {
               'Se eliminarán tu perfil, fotos, conversaciones e invitaciones de la base activa. Esta acción no se puede deshacer.',
             )}
           </p>
-          <label className="field">
-            {t('Escribe ELIMINAR para confirmar.')}
-            <input
-              value={deleteConfirmation}
-              onChange={(e) => setDeleteConfirmation(e.target.value)}
-              autoComplete="off"
-              autoCapitalize="characters"
-              spellCheck={false}
-            />
-          </label>
+          <div className="form delete-confirmation">
+            <label>
+              {t('Escribe ELIMINAR para confirmar.')}
+              <input
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+                autoComplete="off"
+                autoCapitalize="characters"
+                spellCheck={false}
+              />
+            </label>
+          </div>
           <Button
             className="danger"
             disabled={

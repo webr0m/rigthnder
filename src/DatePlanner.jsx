@@ -2,6 +2,7 @@ import { t, getLanguage } from './locale.mjs';
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Calendar, MapPin, Shield, Share2 } from 'lucide-react';
 import { Button, Modal } from './Shared';
+import { formatPlanDate } from './plan-date.mjs';
 const localDate = (d) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 export function DatePlanner({ detail, onClose, run }) {
@@ -96,6 +97,7 @@ export function DatePlanner({ detail, onClose, run }) {
                   type="button"
                   key={t}
                   className={hour === t ? 'selected' : ''}
+                  disabled={new Date(day + 'T' + t).getTime() <= Date.now()}
                   onClick={() => setHour(t)}
                 >
                   {t}
@@ -120,7 +122,7 @@ export function DatePlanner({ detail, onClose, run }) {
           <>
             <div className="proposal-summary">
               <Calendar />
-              {new Date(day + 'T' + hour).toLocaleString(getLanguage())}
+              {formatPlanDate(day + 'T' + hour, getLanguage())}
               <small>{zone}</small>
             </div>
             <h3>{t('UN LUGAR QUE LES ACOMODE')}</h3>
@@ -208,7 +210,7 @@ function calendar(plan) {
 }
 export function ConfirmedPlan({ plan, peer, onChange, notify }) {
   async function share() {
-    const text = `Mi plan: ${new Date(plan.day).toLocaleString(getLanguage())} · ${plan.place}. Cita con ${peer.name}.`;
+    const text = `Mi plan: ${formatPlanDate(plan.day, getLanguage())} · ${plan.place}. Cita con ${peer.name}.`;
     try {
       if (navigator.share) await navigator.share({ title: 'Mi plan de cita', text });
       else {
@@ -223,7 +225,7 @@ export function ConfirmedPlan({ plan, peer, onChange, notify }) {
     <section className="confirmed-plan">
       <b>{t('MATCH · CITA CONFIRMADA')}</b>
       <p>
-        {new Date(plan.day).toLocaleString(getLanguage())} · {plan.place}
+        {formatPlanDate(plan.day, getLanguage())} · {plan.place}
       </p>
       <small>
         {t('Horario mostrado en tu zona · ')}

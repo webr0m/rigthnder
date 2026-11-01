@@ -2950,5 +2950,17 @@
   "día de racha": {
     "en": "day streak",
     "de": "Tag in Folge"
+  },
+  "completa este campo.": {
+    "en": "Please complete this field.",
+    "de": "Bitte fülle dieses Feld aus."
+  },
+  "revisa el valor de este campo antes de continuar.": {
+    "en": "Check this value before continuing.",
+    "de": "Prüfe diesen Wert, bevor du fortfährst."
+  },
+  "hola, basado.": {
+    "en": "HELLO THERE.",
+    "de": "HALLO!"
   }
 }
