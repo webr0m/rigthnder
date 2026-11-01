@@ -1,4 +1,30 @@
 import { test } from 'node:test';
+import { createSessionStore as createTimedSessionStore } from '../src/session-store.mjs';
+test('a stalled native storage read expires without deleting the saved credential or overwriting a newer login', async () => {
+  let resolveRead,
+    removed = 0;
+  const store = createTimedSessionStore({
+    native: true,
+    timeoutMs: 10,
+    storage: {
+      get: () =>
+        new Promise((r) => {
+          resolveRead = r;
+        }),
+      set: async () => {},
+      remove: async () => {
+        removed++;
+      },
+    },
+  });
+  await assert.rejects(store.restore(), (e) => e.code === 'STORAGE_TIMEOUT');
+  assert.equal(removed, 0);
+  const token = 'b'.repeat(64);
+  await store.save(token, { rememberMe: true, expiresAt: Date.now() + 60000 });
+  resolveRead({ token: 'a'.repeat(64), expiresAt: Date.now() + 60000 });
+  await new Promise((r) => setImmediate(r));
+  assert.equal(store.getToken(), token);
+});
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import { mkdtempSync, rmSync } from 'node:fs';

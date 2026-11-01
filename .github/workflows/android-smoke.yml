@@ -39,11 +39,7 @@ jobs:
           arch: x86_64
           disable-animations: true
           script: |
-            adb install android/app/build/outputs/apk/release/app-release.apk
-            adb shell am start -W -n com.rigthnder.app/.MainActivity
-            sleep 5
-            adb shell pidof com.rigthnder.app
-            adb shell am force-stop com.rigthnder.app
+            bash scripts/android-startup-smoke.sh
             cd android && ./gradlew :app:connectedDebugAndroidTest --no-daemon -PonlyfachosTestSigning=true
       - uses: actions/upload-artifact@v4
         if: always()
@@ -52,4 +48,6 @@ jobs:
           path: |
             android/app/build/reports/androidTests/
             android/app/build/outputs/androidTest-results/
+            android-startup-results/
+            android/app/build/outputs/apk/release/app-release.apk
           retention-days: 7

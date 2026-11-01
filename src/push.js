@@ -30,7 +30,9 @@ const supportedWeb = () =>
   'serviceWorker' in navigator &&
   'PushManager' in window &&
   'Notification' in window;
-const plugin = async () => (await import('@capacitor/push-notifications')).PushNotifications;
+// Return the module, never the Capacitor proxy: its synthetic .then traps
+// Promise resolution and leaves await pending forever.
+const plugin = () => import('@capacitor/push-notifications');
 async function webSubscription() {
   const registration = await boundedPush(navigator.serviceWorker.getRegistration('/'));
   return registration ? boundedPush(registration.pushManager.getSubscription()) : null;
@@ -48,7 +50,7 @@ export async function pushStatus(userId) {
     : supportedWeb() && config.web;
   const permission =
     native && available
-      ? (await boundedPush((await plugin()).checkPermissions())).receive
+      ? (await boundedPush((await plugin()).PushNotifications.checkPermissions())).receive
       : !native && 'Notification' in window
         ? Notification.permission
         : 'default';
@@ -76,7 +78,7 @@ export async function enablePush(userId) {
   if (native) {
     if (!(await pushStatus(userId)).available)
       throw Error(t('Las notificaciones aún no están disponibles en este dispositivo.'));
-    const sdk = await plugin();
+    const sdk = (await plugin()).PushNotifications;
     check();
     const permission = await sdk.requestPermissions();
     check();
@@ -161,7 +163,7 @@ export async function forgetPush() {
   writeMarker('');
   nativeToken = undefined;
   if (native) {
-    const sdk = await plugin();
+    const sdk = (await plugin()).PushNotifications;
     await sdk.unregister().catch(() => {});
     await sdk.removeAllDeliveredNotifications().catch(() => {});
   } else if (supportedWeb()) {
@@ -196,7 +198,7 @@ export async function listenPush(userId, onOpen) {
     };
   }
   if (Capacitor.getPlatform() !== 'android') return () => {};
-  const sdk = await plugin();
+  const sdk = (await plugin()).PushNotifications;
   handles = await Promise.all([
     sdk.addListener('registration', async (token) => {
       if (registering || activeUser !== userId || userEpoch !== epoch || readMarker() !== userId)

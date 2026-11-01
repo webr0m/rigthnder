@@ -1,3 +1,4 @@
+import { withDeadline } from './deadline.mjs';
 export function createApiClient({
   baseUrl = '',
   native = false,
@@ -6,32 +7,52 @@ export function createApiClient({
   expired = () => {},
   translate = (value) => value,
   fetch: send = globalThis.fetch,
+  timeoutMs = 15_000,
 }) {
   const failure = () => new Error(translate('No pudimos conectar con el servidor.'));
   return async function api(path, options = {}) {
     const bearer = sessions.getToken(),
       started = generation();
-    let response;
+    let response, result;
+    const controller = new AbortController();
+    const abort = () => controller.abort(options.signal?.reason);
+    if (options.signal?.aborted) abort();
+    else options.signal?.addEventListener('abort', abort, { once: true });
     try {
-      response = await send(baseUrl + '/api' + path, {
-        credentials: native ? 'omit' : 'include',
-        ...options,
-        headers: {
-          ...(options.body ? { 'Content-Type': 'application/json' } : {}),
-          ...(bearer ? { Authorization: 'Bearer ' + bearer } : {}),
-          ...options.headers,
-        },
-        body: options.body ? JSON.stringify(options.body) : undefined,
-      });
-    } catch {
+      [response, result] = await withDeadline(
+        (async () => {
+          const response = await send(baseUrl + '/api' + path, {
+            credentials: native ? 'omit' : 'include',
+            ...options,
+            headers: {
+              ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+              ...(bearer ? { Authorization: 'Bearer ' + bearer } : {}),
+              ...options.headers,
+            },
+            body: options.body ? JSON.stringify(options.body) : undefined,
+            signal: controller.signal,
+          });
+          let result;
+          try {
+            result = await response.json();
+          } catch {
+            if (response.ok) throw failure();
+            result = {};
+          }
+          return [response, result];
+        })(),
+        timeoutMs,
+        translate(
+          'El servidor está tardando demasiado. Comprueba tu conexión y vuelve a intentarlo.',
+        ),
+        'REQUEST_TIMEOUT',
+        () => controller.abort(),
+      );
+    } catch (error) {
+      if (error.code === 'REQUEST_TIMEOUT') throw error;
       throw failure();
-    }
-    let result;
-    try {
-      result = await response.json();
-    } catch {
-      if (response.ok) throw failure();
-      result = {};
+    } finally {
+      options.signal?.removeEventListener('abort', abort);
     }
     if (started !== generation()) {
       const error = new Error(translate('Tu sesión cambió. Vuelve a intentarlo.'));

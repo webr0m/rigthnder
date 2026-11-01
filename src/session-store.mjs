@@ -1,5 +1,11 @@
 // The web uses HttpOnly cookies. Only the native adapter may persist a bearer token.
-export function createSessionStore({ native = false, storage, now = Date.now } = {}) {
+import { withDeadline } from './deadline.mjs';
+export function createSessionStore({
+  native = false,
+  storage,
+  now = Date.now,
+  timeoutMs = 8000,
+} = {}) {
   let token = '';
   let pending = Promise.resolve();
   const enqueue = (operation) => {
@@ -18,7 +24,12 @@ export function createSessionStore({ native = false, storage, now = Date.now } =
       enqueue(async () => {
         if (!native) return;
         token = '';
-        const saved = await storage.get();
+        const saved = await withDeadline(
+          storage.get(),
+          timeoutMs,
+          'No pudimos leer el acceso guardado. Tus datos siguen guardados; vuelve a intentarlo.',
+          'STORAGE_TIMEOUT',
+        );
         if (valid(saved)) token = saved.token;
         else if (saved !== null) await storage.remove();
       }),

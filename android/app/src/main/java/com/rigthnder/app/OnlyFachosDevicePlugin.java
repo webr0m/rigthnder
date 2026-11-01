@@ -7,6 +7,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.view.Window;
 import android.view.WindowManager;
+import android.util.Log;
 import androidx.core.app.NotificationManagerCompat;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -16,6 +17,19 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 
 @CapacitorPlugin(name = "OnlyFachosDevice")
 public class OnlyFachosDevicePlugin extends Plugin {
+    // Fixed, non-personal milestones let release tests detect a live process
+    // whose WebView never reaches a usable screen. No account data is logged.
+    @PluginMethod
+    public void reportStartup(PluginCall call) {
+        String screen = call.getString("screen", "");
+        if (!java.util.Arrays.asList("access", "community", "onboarding", "recovery", "error").contains(screen)) {
+            call.reject("Invalid startup screen");
+            return;
+        }
+        Log.i("OnlyFachosStartup", "screen=" + screen);
+        call.resolve();
+    }
+
     @PluginMethod
     public void notificationStatus(PluginCall call) {
         boolean blocked = false;

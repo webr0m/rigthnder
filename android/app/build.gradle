@@ -7,8 +7,8 @@ android {
         applicationId "com.rigthnder.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode project.hasProperty('onlyfachosVersionCode') ? Integer.parseInt(project.property('onlyfachosVersionCode').toString()) : 10011
-        versionName "1.0.0-beta.1.9"
+        versionCode project.hasProperty('onlyfachosVersionCode') ? Integer.parseInt(project.property('onlyfachosVersionCode').toString()) : 10013
+        versionName "1.0.0-beta.1.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

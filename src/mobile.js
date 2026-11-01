@@ -8,13 +8,15 @@ let verifier = '';
 const device = registerPlugin('OnlyFachosDevice');
 const flowKey = 'onlyfachos-google-flow',
   pendingKey = 'onlyfachos-google-pending';
-const secureAuth = async () => (await import('@aparajita/capacitor-secure-storage')).SecureStorage;
+// Return the module, never the Capacitor proxy: its synthetic .then traps
+// Promise resolution and leaves await pending forever.
+const secureAuth = () => import('@aparajita/capacitor-secure-storage');
 async function savedAuth(key) {
-  const value = await (await secureAuth()).get(key, false, false);
+  const value = await (await secureAuth()).SecureStorage.get(key, false, false);
   if (!value) return null;
   const data = typeof value === 'string' ? JSON.parse(value) : value;
   if (data.expiresAt <= Date.now()) {
-    await (await secureAuth()).remove(key, false);
+    await (await secureAuth()).SecureStorage.remove(key, false);
     return null;
   }
   return data;
@@ -24,10 +26,11 @@ export async function pendingGoogleRegistration() {
 }
 export async function rememberGoogleRegistration(value) {
   if (Capacitor.isNativePlatform())
-    await (await secureAuth()).set(pendingKey, JSON.stringify(value), false, false);
+    await (await secureAuth()).SecureStorage.set(pendingKey, JSON.stringify(value), false, false);
 }
 export async function clearGoogleRegistration() {
-  if (Capacitor.isNativePlatform()) await (await secureAuth()).remove(pendingKey, false);
+  if (Capacitor.isNativePlatform())
+    await (await secureAuth()).SecureStorage.remove(pendingKey, false);
 }
 const adsEnabled = import.meta.env.VITE_ADMOB_ENABLED !== 'false';
 export const adsAvailable = () => Capacitor.isNativePlatform() && adsEnabled;
@@ -52,7 +55,12 @@ async function googleChallenge() {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
   await (
     await secureAuth()
-  ).set(flowKey, JSON.stringify({ verifier, expiresAt: Date.now() + 15 * 60_000 }), false, false);
+  ).SecureStorage.set(
+    flowKey,
+    JSON.stringify({ verifier, expiresAt: Date.now() + 15 * 60_000 }),
+    false,
+    false,
+  );
   return btoa(String.fromCharCode(...new Uint8Array(digest)))
     .replaceAll('+', '-')
     .replaceAll('/', '_')
@@ -101,7 +109,7 @@ export async function listenGoogle(onResult, onError) {
         body: { code: params.get('code'), verifier },
       });
       verifier = '';
-      await (await secureAuth()).remove(flowKey, false);
+      await (await secureAuth()).SecureStorage.remove(flowKey, false);
       await onResult(result);
     } catch (error) {
       onError(error.message);
@@ -125,6 +133,10 @@ export async function stopAds() {
 export async function setScreenCaptureProtection(enabled) {
   if (Capacitor.getPlatform() !== 'android') return;
   await device.setScreenCaptureProtection({ enabled: Boolean(enabled) });
+}
+export async function reportStartup(screen) {
+  if (Capacitor.getPlatform() !== 'android') return;
+  await device.reportStartup({ screen });
 }
 export async function privacyAds() {
   if (!adsAvailable()) throw Error('No hay cookies publicitarias ni anuncios en la web.');

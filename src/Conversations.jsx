@@ -21,6 +21,7 @@ import { api } from './api';
 import { Button, Modal, Photo } from './Shared';
 import { Chips, compressPhoto } from './Onboarding';
 import { DatePlanner, ConfirmedPlan } from './DatePlanner';
+import { formatPlanDate } from './plan-date.mjs';
 const PLANS = ['Un café', 'Una cena', 'Un asado', 'Un paseo', 'Sorpréndeme'];
 const STICKERS = [
   'BASADO',
@@ -111,10 +112,8 @@ function DateDialog({ mode, invitationId, proposalId, detail, user, onClose, run
             <small>{t('EL PLAN')}</small>
             <b>{t(accepted?.plan || 'Un plan juntos')}</b>
             <p>
-              {accepted?.day
-                ? new Date(accepted.day).toLocaleString(getLanguage())
-                : t('Día por elegir')}{' '}
-              · {accepted?.place || t('Lugar por elegir')}
+              {accepted?.day ? formatPlanDate(accepted.day, getLanguage()) : t('Día por elegir')} ·{' '}
+              {accepted?.place || t('Lugar por elegir')}
             </p>
           </div>
           <p>{t('Ahora no lleguen tarde.')}</p>
@@ -532,7 +531,7 @@ export default function Conversations({
                 </p>
                 <small>
                   {c.streak > 0
-                    ? '🔥 ' + c.streak + t(' días de racha')
+                    ? '🔥 ' + c.streak + t(c.streak === 1 ? ' día de racha' : ' días de racha')
                     : t('Conversación abierta')}
                 </small>
               </span>
@@ -763,7 +762,7 @@ export default function Conversations({
                                 ? t('PLAN ANTERIOR')
                                 : t('PROPUESTA CERRADA')}
                         </small>
-                        <h3>{new Date(p.day).toLocaleString(getLanguage())}</h3>
+                        <h3>{formatPlanDate(p.day, getLanguage())}</h3>
                         <p>{p.place}</p>
                         <small>
                           {t('Propuesto en ')}
@@ -886,10 +885,8 @@ export default function Conversations({
                         ) : d.status === 'accepted' ? (
                           <>
                             <p>
-                              {d.day
-                                ? new Date(d.day).toLocaleString(getLanguage())
-                                : t('Día por elegir')}{' '}
-                              · {d.place || t('Lugar por elegir')}
+                              {d.day ? formatPlanDate(d.day, getLanguage()) : t('Día por elegir')} ·{' '}
+                              {d.place || t('Lugar por elegir')}
                             </p>
                             <div className="invitation-actions">
                               <button onClick={() => setDialog('plan')}>

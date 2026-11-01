@@ -13,6 +13,7 @@ import { mountGoogleAuth } from './google.mjs';
 import { makeCommunitySchema, mountCommunity } from './community.mjs';
 import { birthdateError } from './birthdate.mjs';
 import { mountRecovery } from './recovery.mjs';
+import { isPageRoute } from './routes.mjs';
 import manifest from '../package.json' with { type: 'json' };
 import { createPushService, mountPush } from './push.mjs';
 
@@ -735,8 +736,11 @@ export function createApp(db, options = {}) {
         },
       }),
     );
-    app.get('/{*path}', (_req, res) =>
-      res.set('Cache-Control', 'no-cache').sendFile(resolve(dist, 'index.html')),
+    app.get('/{*path}', (req, res) =>
+      res
+        .status(isPageRoute(req.path) ? 200 : 404)
+        .set('Cache-Control', 'no-cache')
+        .sendFile(resolve(dist, 'index.html')),
     );
   }
   app.use((error, _req, res, _next) => {

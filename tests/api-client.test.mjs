@@ -6,6 +6,40 @@ const deferred = () => {
   const promise = new Promise((r) => (resolve = r));
   return { promise, resolve };
 };
+test('hung transport/body time out without revoking a session or processing late responses', async () => {
+  let cleared = 0,
+    expired = 0,
+    aborted = false;
+  const waiting = deferred();
+  const api = createApiClient({
+    timeoutMs: 10,
+    sessions: {
+      getToken: () => 'saved',
+      clear: async () => {
+        cleared++;
+      },
+    },
+    expired: () => expired++,
+    fetch: async (_url, { signal }) => {
+      signal.addEventListener('abort', () => {
+        aborted = true;
+      });
+      return waiting.promise;
+    },
+  });
+  await assert.rejects(api('/me'), (error) => error.code === 'REQUEST_TIMEOUT');
+  waiting.resolve(Response.json({ error: 'expired' }, { status: 401 }));
+  await new Promise((r) => setImmediate(r));
+  assert.equal(cleared, 0);
+  assert.equal(expired, 0);
+  assert.equal(aborted, true);
+  const body = createApiClient({
+    timeoutMs: 10,
+    sessions: { getToken: () => '' },
+    fetch: async () => ({ ok: true, json: () => new Promise(() => {}) }),
+  });
+  await assert.rejects(body('/options'), (error) => error.code === 'REQUEST_TIMEOUT');
+});
 test('an old unauthorized response cannot expire a newly signed-in account, even during secure storage clearing', async () => {
   let generation = 0,
     expired = 0,

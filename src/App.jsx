@@ -28,6 +28,7 @@ import {
   stopAds,
   privacyAds,
   setScreenCaptureProtection,
+  reportStartup,
   pendingGoogleRegistration,
   rememberGoogleRegistration,
   clearGoogleRegistration,
@@ -448,6 +449,7 @@ export default function App({ demoOnly = false }) {
   }, [language]);
   const [user, setUser] = useState(null),
     [options, setOptions] = useState({}),
+    [bootPhase, setBootPhase] = useState('session'),
     [ready, setReady] = useState(false),
     [initError, setInitError] = useState('');
   const [tab, setTab] = useState('community'),
@@ -470,6 +472,8 @@ export default function App({ demoOnly = false }) {
   const [profileView, setProfileView] = useState(null),
     [settingsOpen, setSettingsOpen] = useState(false),
     [service, setService] = useState(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  useEffect(() => setDeleteConfirmation(''), [modal]);
   async function saveSettings(patch) {
     try {
       const result = await api('/me/settings', { method: 'PUT', body: patch });
@@ -514,8 +518,9 @@ export default function App({ demoOnly = false }) {
   async function signedIn(r) {
     await setToken(r.token, r.session);
     if (!r.user.demo) {
-      await registrationDrafts.clear().catch(() => {});
-      await clearGoogleRegistration().catch(() => {});
+      // Cleanup must not hold a completed sign-in behind a native bridge.
+      registrationDrafts.clear().catch(() => {});
+      clearGoogleRegistration().catch(() => {});
     }
     setUser(r.user);
     if (r.user.settings?.appearance) setTheme(r.user.settings.appearance);
@@ -526,25 +531,34 @@ export default function App({ demoOnly = false }) {
     setActive(null);
     setReload((v) => v + 1);
   }
-  async function openGoogleWizard(pending) {
+  async function openGoogleWizard(pending, isCurrent = () => true) {
     const draft = await registrationDrafts.load().catch(() => null);
+    if (!isCurrent()) return;
     const matching = draft?.identity?.email === pending.identity.email;
     if (draft && !matching) await registrationDrafts.clear().catch(() => {});
     await rememberGoogleRegistration(pending);
+    if (!isCurrent()) return;
     setWizard({ type: 'google', ...pending, initialData: matching ? draft : null });
   }
-  async function resumeGoogleWizard() {
+  async function resumeGoogleWizard(isCurrent) {
+    setBootPhase('google-storage');
     const stored = await pendingGoogleRegistration().catch(() => null);
+    if (!isCurrent()) return;
     try {
+      setBootPhase('google-pending');
       const pending = await api(
         '/auth/google/pending',
         stored?.ticket ? { method: 'POST', body: { ticket: stored.ticket } } : {},
       );
-      await openGoogleWizard({ ...pending, ...(stored?.ticket ? { ticket: stored.ticket } : {}) });
+      if (!isCurrent()) return;
+      await openGoogleWizard(
+        { ...pending, ...(stored?.ticket ? { ticket: stored.ticket } : {}) },
+        isCurrent,
+      );
     } catch (error) {
       if (error.status !== 404) throw error;
       const draft = await registrationDrafts.load().catch(() => null);
-      if (draft?.identity?.email)
+      if (isCurrent() && draft?.identity?.email)
         setWizard({
           type: 'google',
           identity: draft.identity,
@@ -573,24 +587,47 @@ export default function App({ demoOnly = false }) {
   useEffect(() => {
     let alive = true,
       unlisten;
+    const startupTimer = setTimeout(() => {
+      if (!alive) return;
+      alive = false;
+      setInitError(
+        t(
+          'El inicio está tardando demasiado. Tu sesión y tus datos siguen guardados. Comprueba la conexión y vuelve a intentarlo.',
+        ),
+      );
+      setReady(true);
+    }, 25_000);
     (async () => {
       try {
+        setBootPhase('session');
         await restoreToken();
-      } catch {
-        if (alive) notify('No pudimos restaurar la sesión guardada. Inicia sesión de nuevo.', true);
+      } catch (error) {
+        clearTimeout(startupTimer);
+        if (alive) {
+          setInitError(
+            t(
+              'No pudimos restaurar el acceso guardado. Tus datos siguen guardados. Vuelve a intentarlo.',
+            ),
+          );
+          setReady(true);
+        }
+        return;
       }
       if (!alive) return;
       try {
+        setBootPhase('options');
         const config = await api('/options');
         if (!alive) return;
         setOptions(config);
         const q = new URLSearchParams(location.search);
         if (demoOnly) {
-          await signedIn(await api('/auth/demo', { method: 'POST', body: { rememberMe: false } }));
+          const demo = await api('/auth/demo', { method: 'POST', body: { rememberMe: false } });
+          if (alive) await signedIn(demo);
         } else if (q.get('google') === 'complete') {
-          if (alive) await resumeGoogleWizard();
+          if (alive) await resumeGoogleWizard(() => alive);
         } else if (location.pathname !== '/recuperar-contrasena') {
           try {
+            setBootPhase('account');
             const me = await api('/me');
             if (alive) {
               setUser(me);
@@ -602,9 +639,10 @@ export default function App({ demoOnly = false }) {
             }
           } catch (error) {
             if (error.status !== 401) throw error;
-            if (alive) await resumeGoogleWizard();
+            if (alive) await resumeGoogleWizard(() => alive);
           }
         }
+        if (!alive) return;
         if (q.get('google') === 'linked') {
           setTab('profile');
           setSettingsOpen(true);
@@ -620,6 +658,7 @@ export default function App({ demoOnly = false }) {
       } catch (e) {
         if (alive) setInitError(e.message);
       } finally {
+        clearTimeout(startupTimer);
         if (alive) setReady(true);
       }
       // Restore the saved session before consuming a cold-start OAuth link.
@@ -644,10 +683,25 @@ export default function App({ demoOnly = false }) {
     })();
     return () => {
       alive = false;
+      clearTimeout(startupTimer);
       unlisten?.();
       clearTimeout(toastTimer.current);
     };
   }, []);
+  useEffect(() => {
+    if (!ready) return;
+    reportStartup(
+      initError
+        ? 'error'
+        : recovery
+          ? 'recovery'
+          : user
+            ? 'community'
+            : wizard
+              ? 'onboarding'
+              : 'access',
+    ).catch(() => {});
+  }, [ready, initError, Boolean(user), Boolean(wizard), Boolean(recovery)]);
   useEffect(() => {
     const t = setTimeout(() => setQuery(search), 250);
     return () => clearTimeout(t);
@@ -934,7 +988,7 @@ export default function App({ demoOnly = false }) {
     );
   if (!ready || initError)
     return (
-      <div className="boot">
+      <div className="boot" data-boot-phase={bootPhase}>
         <Wordmark />
         {initError ? (
           <>
@@ -945,6 +999,17 @@ export default function App({ demoOnly = false }) {
           <>
             <LoaderCircle className="spin" />
             <p>{t('Preparando buenas conversaciones…')}</p>
+            <small>
+              {t(
+                {
+                  session: 'Restaurando el acceso guardado…',
+                  options: 'Conectando con OnlyFachos…',
+                  account: 'Comprobando tu sesión…',
+                  'google-storage': 'Comprobando el registro pendiente…',
+                  'google-pending': 'Recuperando el registro…',
+                }[bootPhase],
+              )}
+            </small>
           </>
         )}
       </div>
@@ -1568,9 +1633,21 @@ export default function App({ demoOnly = false }) {
               'Se eliminarán tu perfil, fotos, conversaciones e invitaciones de la base activa. Esta acción no se puede deshacer.',
             )}
           </p>
+          <label className="field">
+            {t('Escribe ELIMINAR para confirmar.')}
+            <input
+              value={deleteConfirmation}
+              onChange={(e) => setDeleteConfirmation(e.target.value)}
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+            />
+          </label>
           <Button
             className="danger"
-            disabled={busy}
+            disabled={
+              busy || deleteConfirmation.trim().toLocaleUpperCase(language) !== t('ELIMINAR')
+            }
             onClick={async () => {
               setBusy(true);
               try {

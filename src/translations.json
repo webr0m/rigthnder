@@ -2898,5 +2898,57 @@
   "firebase no pudo verificar este dispositivo. actualiza la app y vuelve a intentarlo.": {
     "en": "Firebase could not verify this device. Update the app and try again.",
     "de": "Firebase konnte dieses Gerät nicht bestätigen. Aktualisiere die App und versuche es erneut."
+  },
+  "el inicio está tardando demasiado. tu sesión y tus datos siguen guardados. comprueba la conexión y vuelve a intentarlo.": {
+    "en": "Startup is taking too long. Your session and data are still saved. Check your connection and try again.",
+    "de": "Der Start dauert zu lange. Deine Sitzung und Daten sind weiterhin gespeichert. Prüfe deine Verbindung und versuche es erneut."
+  },
+  "no pudimos restaurar el acceso guardado. tus datos siguen guardados. vuelve a intentarlo.": {
+    "en": "We could not restore your saved sign-in. Your data is still saved. Please try again.",
+    "de": "Deine gespeicherte Anmeldung konnte nicht wiederhergestellt werden. Deine Daten sind weiterhin gespeichert. Bitte versuche es erneut."
+  },
+  "no pudimos leer el acceso guardado. tus datos siguen guardados; vuelve a intentarlo.": {
+    "en": "We could not read your saved sign-in. Your data is still saved; please try again.",
+    "de": "Deine gespeicherte Anmeldung konnte nicht gelesen werden. Deine Daten sind weiterhin gespeichert; bitte versuche es erneut."
+  },
+  "el servidor está tardando demasiado. comprueba tu conexión y vuelve a intentarlo.": {
+    "en": "The server is taking too long. Check your connection and try again.",
+    "de": "Der Server braucht zu lange. Prüfe deine Verbindung und versuche es erneut."
+  },
+  "restaurando el acceso guardado…": {
+    "en": "Restoring your saved sign-in…",
+    "de": "Gespeicherte Anmeldung wird wiederhergestellt…"
+  },
+  "conectando con onlyfachos…": {
+    "en": "Connecting to OnlyFachos…",
+    "de": "Verbindung mit OnlyFachos wird hergestellt…"
+  },
+  "comprobando tu sesión…": {
+    "en": "Checking your session…",
+    "de": "Sitzung wird geprüft…"
+  },
+  "comprobando el registro pendiente…": {
+    "en": "Checking your unfinished registration…",
+    "de": "Unvollständige Registrierung wird geprüft…"
+  },
+  "recuperando el registro…": {
+    "en": "Restoring your registration…",
+    "de": "Registrierung wird wiederhergestellt…"
+  },
+  "escribe eliminar para confirmar.": {
+    "en": "Type DELETE to confirm.",
+    "de": "Gib LÖSCHEN zur Bestätigung ein."
+  },
+  "eliminar": {
+    "en": "DELETE",
+    "de": "LÖSCHEN"
+  },
+  "esta página no existe.": {
+    "en": "This page does not exist.",
+    "de": "Diese Seite existiert nicht."
+  },
+  "día de racha": {
+    "en": "day streak",
+    "de": "Tag in Folge"
   }
 }
