@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p android-startup-results
+# sys.boot_completed can be set before the emulator has a network route.
+# Distinguish an unavailable runner network from an application startup hang.
+network_ready=false
+for attempt in $(seq 1 30); do
+  if adb shell dumpsys connectivity | grep -q 'VALIDATED'; then
+    network_ready=true
+    break
+  fi
+  sleep 2
+done
+if [ "$network_ready" != true ]; then
+  adb shell dumpsys connectivity > android-startup-results/network-unavailable.log
+  echo 'Emulator network did not become validated.' >&2
+  exit 1
+fi
 adb install -r android/app/build/outputs/apk/release/app-release.apk
 for launch in first-install cold-start; do
   adb shell am force-stop com.rigthnder.app
