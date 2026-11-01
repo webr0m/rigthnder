@@ -1,3 +1,13 @@
+# Beta 1.10 · 1 de noviembre de 2026
+
+Web actualizada en **https://onlyfachos.webrom.cc**, conservando la base activa y las 79 cuentas existentes al desplegar, con respaldo coherente privado previo. Corregido el bloqueo nativo del almacenamiento seguro que impedía abrir Android sin una sesión válida y afectaba Google/push. Se completaron los pendientes de interfaz y recuperación. [Auditoría de We2 contrastada con el código](AUDITORIA-2026-11-01.md).
+
+Android **10014** está **disponible para verificadores internos**; la misma compilación se envió a Alpha para el grupo existente. La consola confirma **Cambios en la etapa de revisión**, con verificaciones rápidas en curso. No equivale a aprobación de Alpha ni publicación pública. [Actualizar la beta interna](https://play.google.com/apps/internaltest/4701515858079115212).
+
+73 pruebas correctas, build web y Node correctos, arranque release con AdMob de producción y registro/revocación FCM verificados. Android debug e iOS simulador compilan. Se mantienen los límites de iOS/APNs, aprobación de AdMob y símbolos nativos del proveedor. [Artefactos, hashes y validación](BETA-1.10.md).
+
+## Registro anterior
+
 # Beta 1.9 · 29 de octubre de 2026
 
 Web promocional publicada en **https://onlyfachos.webrom.cc**, con portada panorámica animada, una sola página, tiendas como «Próximamente» y demo directa en [/demo](https://onlyfachos.webrom.cc/demo). El acceso existente permanece en [/app](https://onlyfachos.webrom.cc/app). Se conserva la misma base SQLite y la configuración privada, con respaldo consistente previo al despliegue.

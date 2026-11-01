@@ -1,3 +1,5 @@
+> Actualización beta 1.10: se corrigió la espera infinita del puente nativo y se añadió un plazo de lectura sin borrar el acceso guardado. Ver [BETA-1.10.md](BETA-1.10.md). Google de producción está habilitado en el despliegue actual.
+
 # Inicio de sesión en beta 1.6
 
 En acceso y registro se puede elegir «Mantener mi sesión en este dispositivo» (activado inicialmente). Con la opción activa, la sesión dura hasta 30 días; sin ella, la cookie web es de sesión y el servidor limita el acceso a 12 horas. Algunos navegadores restauran cookies de sesión al recuperar ventanas: en equipos compartidos se debe cerrar sesión explícitamente.

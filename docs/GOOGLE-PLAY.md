@@ -1,8 +1,16 @@
 # OnlyFachos en Google Play
 
-Paquete Android: `com.rigthnder.app`. Beta `1.0.0-beta.1.9`, `10012`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob con IDs propios, anuncios no personalizados y FCM; no hay compras ni suscripciones. `10009` usaba anuncios de prueba y `10008` excluía el SDK publicitario. Se actualizaron Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
+Paquete Android: `com.rigthnder.app`. Beta `1.0.0-beta.1.10`, `10014`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob con IDs propios, anuncios no personalizados y FCM; no hay compras ni suscripciones. `10009` usaba anuncios de prueba y `10008` excluía el SDK publicitario. Se actualizaron Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
 
 Referencia del proveedor: [datos del Google Mobile Ads SDK](https://developers.google.com/admob/android/privacy/play-data-disclosure). Las nuevas compilaciones deben reflejar su configuración efectiva, aun usando anuncios de prueba.
+
+## Actualización 10014 · beta 1.10 · 1 de noviembre de 2026
+
+Corregido el bloqueo de inicio nativo, Google y push. La consola confirma **Disponible para verificadores internos**. El mismo AAB fue promovido a Alpha al 100% del grupo existente y se confirmó su envío: **Cambios en la etapa de revisión**, con verificaciones rápidas en curso. No equivale a publicación pública ni a aprobación final.
+
+73 pruebas; arranque optimizado con configuración AdMob de producción y prueba FCM correctos. La prueba exige llegar al acceso después del renderizado; la comprobación antigua de que existía el proceso Android era insuficiente para detectar este fallo. El AAB y el APK probado tienen los mismos 36 archivos web. [Hashes, CI y límites de validación](BETA-1.10.md), [auditoría completa](AUDITORIA-2026-11-01.md).
+
+Continúa la advertencia no bloqueante de símbolos de `libdatastore_shared_counter.so`, que el proveedor ya distribuye sin símbolos de depuración; el mapeo ReTrace de R8 está incluido. No se reduce el catálogo de dispositivos y se conserva la protección de Play.
 
 ## Actualización 10012 · 1 de noviembre de 2026
 
