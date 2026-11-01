@@ -1,8 +1,16 @@
 # OnlyFachos en Google Play
 
-Paquete Android: `com.rigthnder.app`. Beta `1.0.0-beta.1.9`, `10011`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob con IDs propios, anuncios no personalizados y FCM; no hay compras ni suscripciones. `10009` usaba anuncios de prueba y `10008` excluía el SDK publicitario. Se actualizaron Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
+Paquete Android: `com.rigthnder.app`. Beta `1.0.0-beta.1.9`, `10012`, target SDK 36. API: `https://onlyfachos.webrom.cc`. Incluye AdMob con IDs propios, anuncios no personalizados y FCM; no hay compras ni suscripciones. `10009` usaba anuncios de prueba y `10008` excluía el SDK publicitario. Se actualizaron Anuncios, ID publicitario y Seguridad de datos con identificadores, IP/ubicación aproximada inferida por el SDK, interacciones y diagnósticos; publicidad/medición/prevención de fraude, además de los tokens FCM para funcionalidad de notificaciones. No se recoge GPS ni se comparten perfiles políticos, religión o conversaciones con anunciantes.
 
 Referencia del proveedor: [datos del Google Mobile Ads SDK](https://developers.google.com/admob/android/privacy/play-data-disclosure). Las nuevas compilaciones deben reflejar su configuración efectiva, aun usando anuncios de prueba.
+
+## Actualización 10012 · 1 de noviembre de 2026
+
+- AAB `10012` compilado con AdMob de producción (`ca-app-pub-8258058186888619~2716718044` y banner `/3867194366`), firmado localmente y subido a la prueba cerrada Alpha al 100%. SHA-256 `3D8B20A039851994D5A710ED42FB4CEBDEA39AA95F5871782CB9030C48CE257D`.
+- El artefacto de CI (`advertising=production`, `version_code=10012`) terminó correctamente en la [ejecución 41271857179](https://github.com/webr0m/rigthnder/actions/runs/41271857179); la firma de carga se aplicó después con la clave del titular. `strings.xml` del repositorio conserva el ID de prueba: el ID real solo lo inyecta `scripts/mobile.mjs` cuando `VITE_ADMOB_TEST_MODE=false`.
+- La consola confirma **«Cambios en la etapa de revisión»** y ejecuta verificaciones rápidas antes de enviar el paquete a Google. No equivale a aprobación ni a publicación de producción.
+- Advertencia no bloqueante: el App Bundle contiene código nativo sin símbolos de depuración. No se detectó reducción del catálogo de dispositivos.
+- AdMob: la app existente `ca-app-pub-8258058186888619~2716718044` sigue activa, pero la vinculación con Google Play no está disponible porque `com.rigthnder.app` aún no tiene ficha pública (la URL de Play devuelve 404). La confirmación de AdMob podrá completarse cuando la app se publique; no se creó una app nueva para no invalidar el ID compilado.
 
 ## Actualización beta 1.9 · 29 de octubre de 2026
 
