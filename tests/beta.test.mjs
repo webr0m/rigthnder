@@ -199,6 +199,60 @@ test('date time and venue require the other participant; rejected changes preser
     400,
   );
 });
+test('an expired pending proposal cannot be accepted but may be declined', async () => {
+  const a = await account('PastPlanA'),
+    b = await account('PastPlanB');
+  const conv = (await req('/conversations', a.token, { targetId: b.user.id })).data.id;
+  const plan = (
+    await req('/conversations/' + conv + '/proposals', a.token, {
+      day: new Date(Date.now() + 86400000).toISOString(),
+      place: 'Café público',
+      timezone: 'Europe/Berlin',
+    })
+  ).data.id;
+  db.prepare('UPDATE date_proposals SET day=? WHERE id=?').run(
+    new Date(Date.now() - 1000).toISOString(),
+    plan,
+  );
+  assert.equal(
+    (await req('/proposals/' + plan + '/answer', b.token, { accept: true })).status,
+    400,
+  );
+  assert.equal(
+    (await req('/proposals/' + plan + '/answer', b.token, { accept: false })).status,
+    200,
+  );
+});
+
+test('accepted invitation adopts the confirmed proposal plan without a parallel confirmed state', async () => {
+  const a = await account('InvitePlanBetaA'),
+    b = await account('InvitePlanBetaB');
+  const conv = (await req('/conversations', a.token, { targetId: b.user.id })).data.id;
+  const invitation = (
+    await req('/conversations/' + conv + '/invitations', a.token, { plan: 'Un café' })
+  ).data.id;
+  assert.equal(
+    (await req('/invitations/' + invitation + '/answer', b.token, { accept: true })).status,
+    200,
+  );
+  const plan = {
+    day: new Date(Date.now() + 2 * 86400000).toISOString(),
+    place: 'Café confirmado, Madrid',
+    timezone: 'Europe/Madrid',
+  };
+  const proposal = (await req('/conversations/' + conv + '/proposals', a.token, plan)).data.id;
+  assert.equal(
+    (await req('/proposals/' + proposal + '/answer', b.token, { accept: true })).status,
+    200,
+  );
+  const detail = (await req('/conversations/' + conv, a.token)).data,
+    confirmedInvitation = detail.invitations.find((item) => item.id === invitation),
+    confirmedProposals = detail.proposals.filter((item) => item.status === 'accepted');
+  assert.equal(confirmedInvitation.day, plan.day);
+  assert.equal(confirmedInvitation.place, plan.place);
+  assert.equal(confirmedProposals.length, 1);
+  assert.equal(detail.proposals.find((item) => item.status === 'accepted').id, proposal);
+});
 test('visits are deduplicated, referent filters use actual data and verified filter cannot fabricate users', async () => {
   const a = await account('FilterBetaA'),
     b = await account('FilterBetaB');

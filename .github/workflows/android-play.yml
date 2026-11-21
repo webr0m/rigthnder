@@ -13,7 +13,7 @@ on:
       version_code:
         description: Android version code; use a new number before uploading to Play
         required: true
-        default: '10014'
+        default: '10015'
         type: string
 permissions:
   contents: read

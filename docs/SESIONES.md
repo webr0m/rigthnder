@@ -8,7 +8,7 @@ La web usa una cookie HttpOnly, Secure en producción y SameSite=Lax. Android e 
 
 La preferencia también se conserva durante OAuth de Google, ligada al estado validado por el servidor. Google sigue requiriendo sus credenciales de producción para activarse.
 
-Cerrar sesión conserva el comportamiento previo: revoca todas las sesiones de la cuenta. Recuperar la contraseña o eliminar la cuenta también invalida los accesos anteriores. Los tokens caducados o rechazados se eliminan del almacenamiento móvil.
+Cerrar sesión conserva el comportamiento previo: revoca todas las sesiones de la cuenta. Cambiar la contraseña desde Ajustes conserva únicamente la sesión que la solicita y revoca los accesos anteriores; recuperar la contraseña o eliminar la cuenta también invalida los accesos anteriores. Los tokens caducados o rechazados se eliminan del almacenamiento móvil.
 
 La migración añade remember_me a oauth_states; conserva usuarios, contraseñas y sesiones existentes, que mantienen su vencimiento original.
 

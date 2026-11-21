@@ -144,6 +144,20 @@ test('Google OAuth: state binding, verified identity, adult onboarding, one-use 
       body: JSON.stringify({ ticket: expiredTicket }),
     });
     assert.equal(invalid.status, 404);
+    db.prepare("UPDATE users SET moderation_status='blocked' WHERE id=?").run(result.user.id);
+    const restrictedStart = await fetch(base, { redirect: 'manual' });
+    const restrictedState = new URL(restrictedStart.headers.get('location')).searchParams.get(
+      'state',
+    );
+    const restricted = await fetch(base + '/callback?state=' + restrictedState + '&code=mock', {
+      redirect: 'manual',
+      headers: { Cookie: 'rigthnder_oauth_state=' + restrictedState },
+    });
+    assert.match(
+      new URL(restricted.headers.get('location')).searchParams.get('oauth_error'),
+      /restringido/,
+    );
+    assert.doesNotMatch(restricted.headers.get('set-cookie') || '', /rigthnder_session=/);
   } finally {
     await new Promise((resolve) => server.close(resolve));
     db.close();

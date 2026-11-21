@@ -1,6 +1,6 @@
 {
   "name": "rigthnder",
-  "version": "1.0.0-beta.1.10",
+  "version": "1.0.0-beta.1.11",
   "private": true,
   "type": "module",
   "description": "OnlyFachos: comunidad con feed vertical, chat directo y citas de mutuo acuerdo.",
@@ -14,10 +14,11 @@
     "build:server": "node scripts/server-build.mjs",
     "start": "node --env-file-if-exists=.env server/index.mjs",
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
-    "check": "node --check server/app.mjs && node --check server/db.mjs && node --check server/index.mjs && node --check server/community.mjs && node --check server/beta.mjs && node --check scripts/moderation.mjs && node --check server/recovery.mjs && node --check server/mail.mjs",
+    "check": "node --check server/app.mjs && node --check server/db.mjs && node --check server/index.mjs && node --check server/community.mjs && node --check server/beta.mjs && node --check server/moderation.mjs && node --check scripts/moderation.mjs && node --check server/recovery.mjs && node --check server/email-verification.mjs && node --check server/mail.mjs && node --check server/account-access.mjs && node --check server/google.mjs && node --check server/push.mjs",
     "mobile:android": "node scripts/mobile.mjs android",
     "mobile:ios": "node scripts/mobile.mjs ios",
-    "mobile:sync": "cap sync"
+    "mobile:sync": "cap sync",
+    "moderation": "node scripts/moderation.mjs"
   },
   "dependencies": {
     "@aparajita/capacitor-secure-storage": "8.0.1",

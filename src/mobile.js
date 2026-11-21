@@ -1,11 +1,11 @@
-import { Capacitor, registerPlugin } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 import { App } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 import { api, API_URL } from './api';
 import { createAdsController } from './ads-controller.mjs';
 import { adConfig } from './ads-config.mjs';
+import { device } from './native-device.mjs';
 let verifier = '';
-const device = registerPlugin('OnlyFachosDevice');
 const flowKey = 'onlyfachos-google-flow',
   pendingKey = 'onlyfachos-google-pending';
 // Return the module, never the Capacitor proxy: its synthetic .then traps

@@ -2,8 +2,7 @@ import { Capacitor } from '@capacitor/core';
 import { api } from './api';
 import { t } from './locale.mjs';
 import { boundedPush, registerNativePush } from './push-registration.mjs';
-import { registerPlugin } from '@capacitor/core';
-const device = registerPlugin('OnlyFachosDevice');
+import { device } from './native-device.mjs';
 const native = Capacitor.isNativePlatform();
 const marker = 'onlyfachos-push-user';
 let userEpoch = 0,

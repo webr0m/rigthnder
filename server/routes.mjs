@@ -8,5 +8,7 @@ const pages = new Set([
   '/eliminar-cuenta',
   '/recuperar-contrasena',
   '/restablecer-contrasena',
+  '/verificar-correo',
+  '/moderation',
 ]);
 export const isPageRoute = (pathname) => pages.has(pathname.replace(/\/$/, '') || '/');

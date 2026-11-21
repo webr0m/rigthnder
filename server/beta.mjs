@@ -195,6 +195,8 @@ export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMa
         .json({ error: 'Solo la otra persona puede aceptar. En demo usa la simulación.' });
     if (row.status !== 'pending')
       return res.status(409).json({ error: 'Esta propuesta ya fue respondida.' });
+    if (p.accept && Date.parse(row.day) <= Date.now())
+      return res.status(400).json({ error: 'Elige una fecha futura.' });
     db.exec('BEGIN');
     try {
       if (p.accept)
@@ -205,6 +207,10 @@ export function mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMa
         p.accept ? 'accepted' : 'declined',
         row.id,
       );
+      if (p.accept)
+        db.prepare(
+          "UPDATE date_invitations SET day=?,place=? WHERE conversation_id=? AND status='accepted'",
+        ).run(row.day, row.place, row.conversation_id);
       const actor = p.demo
         ? match.user_a === req.user.id
           ? match.user_b

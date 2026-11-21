@@ -1,6 +1,6 @@
 # OnlyFachos
 
-**Código beta `1.0.0-beta.1.10`**. Corregido el bloqueo de inicio de Android, Google y push en el puente de almacenamiento seguro. Web promocional y acceso actualizados; Android `10014` está disponible para verificadores internos. 73 pruebas y arranque de release/FCM verificados con AdMob de producción; Android debug e iOS simulador compilan. La disponibilidad pública y la aprobación de AdMob siguen pendientes. [Estado del despliegue](docs/ESTADO.md), [cambios de beta 1.10](docs/BETA-1.10.md), [auditoría y comparación con We2](docs/AUDITORIA-2026-11-01.md). Las compilaciones de desarrollo usan anuncios de prueba por defecto.
+**Código beta `1.0.0-beta.1.11`**. Auditoría de registro con Google, verificación de correo, sesiones, moderación y citas. Se conserva el acceso de las cuentas anteriores y se exige confirmar el correo a las nuevas cuentas con contraseña cuando hay transporte de correo. [Auditoría y validación](docs/AUDITORIA-2026-11-21.md), [estado de distribución](docs/ESTADO.md). Las compilaciones de desarrollo usan anuncios de prueba por defecto.
 
 **Sin swipes. Solo conversación.** Comunidad de citas para mayores de 18 años: feed vertical, perfiles con referentes, chat directo y citas aceptadas por ambas personas. Rediseño de Rigthnder a partir de los mockups claro/oscuro aportados por el usuario. MIT.
 
@@ -30,7 +30,7 @@ Abre http://localhost:3000 para la portada, `/demo` para la demo directa y `/app
 6. **Quedar:** quien propone ya expresa su consentimiento. Solo la otra persona puede aceptar o rechazar. Se confirma la cita cuando acepta; ambos pueden coordinar día, hora y lugar en el chat. Rechazar conserva la conversación. Usuarios externos no pueden ver ni responder invitaciones.
 7. **Controlar:** bloquear y denunciar desde cualquier perfil/chat; editar el perfil, descargar datos o eliminar la cuenta desde «Perfil». El bloqueo retira la conversación y sus registros asociados.
 
-La recuperación por correo está en «Inicia sesión → Olvidé mi contraseña». El enlace vence en 30 minutos y cierra las sesiones anteriores al cambiar la contraseña. [Configurar el envío](docs/RECUPERACION.md).
+La recuperación por correo está en «Inicia sesión → Olvidé mi contraseña». El enlace vence en 30 minutos y cierra las sesiones anteriores al cambiar la contraseña. Desde «Perfil → Ajustes» se puede cambiar la contraseña: exige la actual, conserva la sesión solicitante y revoca las anteriores. Las cuentas de correo/contraseña deben confirmar su dirección antes del primer acceso; Google queda verificado automáticamente y la confirmación no inicia sesión. [Configurar recuperación](docs/RECUPERACION.md) · [Verificación de correo](docs/VERIFICACION.md) · [Sesiones](docs/SESIONES.md).
 
 ## Demo y límites
 
@@ -40,7 +40,7 @@ Los modos claro y oscuro se cambian con el sol/luna; se guarda únicamente la pr
 
 Apple, GIFs y PRO no están habilitados; no hay cobros ni suscripciones. Google requiere credenciales OAuth privadas y puede vincularse desde Perfil → Ajustes tras confirmar la contraseña. AdMob se incluye con anuncios de prueba en las nuevas compilaciones nativas; el SDK espera a que UMP permita solicitar anuncios. No hay anuncios web ni se envían perfiles u opiniones a anunciantes. Push necesita configuración del servidor y autorización de cada dispositivo; consulta [notificaciones](docs/PUSH.md). La publicación real y las compilaciones de Play se detallan en [Estado](docs/ESTADO.md).
 
-Este MVP todavía requiere moderación operativa, verificación del correo, límites de abuso a escala, contacto y políticas definitivas del operador, respaldos y pruebas de dispositivos para un lanzamiento abierto. La edad es declarada y los mensajes no tienen cifrado de extremo a extremo. [Operación](docs/OPERACION.md).
+El MVP ya incluye un panel privado de moderación en `/moderation`, con estados de denuncia, suspensión/bloqueo y auditoría de decisiones. Todavía requiere límites de abuso a escala, contacto y políticas definitivas del operador, respaldos y pruebas de dispositivos para un lanzamiento abierto. La edad es declarada y los mensajes no tienen cifrado de extremo a extremo. [Operación](docs/OPERACION.md).
 
 ## Configuración y colaboración
 

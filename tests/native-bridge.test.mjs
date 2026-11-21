@@ -13,6 +13,7 @@ test('native cold start, Google proof/draft cleanup and push do not assimilate C
     marker = new Map(),
     listeners = new Map();
   let thenReads = 0,
+    pluginRegistrations = 0,
     registered = false,
     browserUrl = '';
   const proxy = (methods) =>
@@ -31,6 +32,7 @@ test('native cold start, Google proof/draft cleanup and push do not assimilate C
       },
     );
   globalThis.__onlyfachosNativeFixture = {
+    pluginRegistrations: 0,
     storage: proxy({
       get: async (key) => storage.get(key) ?? null,
       set: async (key, value) => {
@@ -109,7 +111,7 @@ test('native cold start, Google proof/draft cleanup and push do not assimilate C
             b.onLoad({ filter: /.*/, namespace: 'native-fixture' }, ({ path }) => {
               if (path === '@capacitor/core')
                 return stub(
-                  "export const Capacitor={isNativePlatform:()=>true,getPlatform:()=> 'android'}; export const registerPlugin=()=>globalThis.__onlyfachosNativeFixture.device;",
+                  "export const Capacitor={isNativePlatform:()=>true,getPlatform:()=> 'android'}; export const registerPlugin=()=>{globalThis.__onlyfachosNativeFixture.pluginRegistrations++; return globalThis.__onlyfachosNativeFixture.device;};",
                 );
               const [name, key] = {
                 '@capacitor/app': ['App', 'app'],
@@ -130,6 +132,7 @@ test('native cold start, Google proof/draft cleanup and push do not assimilate C
       ],
     });
     const mobile = await import(pathToFileURL(output));
+    assert.equal(globalThis.__onlyfachosNativeFixture.pluginRegistrations, 1);
     const within = (work) => withDeadline(work, 1000, 'Native bridge did not settle');
     assert.equal(
       await within(mobile.pendingGoogleRegistration()),

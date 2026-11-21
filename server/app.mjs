@@ -13,9 +13,13 @@ import { mountGoogleAuth } from './google.mjs';
 import { makeCommunitySchema, mountCommunity } from './community.mjs';
 import { birthdateError } from './birthdate.mjs';
 import { mountRecovery } from './recovery.mjs';
+import { createRecoveryMailer } from './mail.mjs';
+import { issueEmailVerification, mountEmailVerification } from './email-verification.mjs';
 import { isPageRoute } from './routes.mjs';
 import manifest from '../package.json' with { type: 'json' };
 import { createPushService, mountPush } from './push.mjs';
+import { mountModeration } from './moderation.mjs';
+import { assertAccountAccess, refreshSuspensions } from './account-access.mjs';
 
 const scryptAsync = promisify(scrypt);
 const hash = (text) => createHash('sha256').update(text).digest('hex');
@@ -189,12 +193,24 @@ export function createApp(db, options = {}) {
     }
     return result.data;
   }
-  function session(res, user, rememberMe = true) {
+  function session(res, user, rememberMe = true, expectedPassword) {
+    refreshSuspensions(db);
     const token = randomBytes(32).toString('hex');
     const duration = (rememberMe ? 30 * 24 : 12) * 60 * 60_000;
     const expiresAt = Date.now() + duration;
-    db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now());
-    db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(hash(token), user.id, expiresAt);
+    db.exec('BEGIN IMMEDIATE');
+    try {
+      user = getUser(user.id);
+      assertAccountAccess(user);
+      if (expectedPassword !== undefined && user.password !== expectedPassword)
+        throw Object.assign(new Error('Correo o contraseña incorrectos.'), { status: 401 });
+      db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now());
+      db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(hash(token), user.id, expiresAt);
+      db.exec('COMMIT');
+    } catch (error) {
+      db.exec('ROLLBACK');
+      throw error;
+    }
     res.cookie('rigthnder_session', token, {
       httpOnly: true,
       secure: production,
@@ -209,6 +225,7 @@ export function createApp(db, options = {}) {
     };
   }
   function auth(req, res, next) {
+    refreshSuspensions(db);
     const token =
       req.headers.authorization?.replace(/^Bearer /, '') ||
       req.headers.cookie
@@ -223,6 +240,12 @@ export function createApp(db, options = {}) {
         .get(hash(token), Date.now());
     req.user = found && getUser(found.user_id);
     if (!req.user) return res.status(401).json({ error: 'Inicia sesión para continuar.' });
+    try {
+      assertAccountAccess(req.user);
+    } catch (error) {
+      db.prepare('DELETE FROM sessions WHERE token_hash=?').run(hash(token));
+      return res.status(error.status).json({ error: error.message, code: error.code });
+    }
     req.sessionHash = hash(token);
     if (Date.now() - req.user.last_seen > 60_000) {
       req.user.last_seen = Date.now();
@@ -237,6 +260,8 @@ export function createApp(db, options = {}) {
       target.id === req.user.id ||
       !!target.demo !== !!req.user.demo ||
       (req.user.demo && !target.seed) ||
+      target.moderation_status !== 'active' ||
+      (target.email_verification_required && !target.email_verified_at) ||
       blocked(req.user.id, id)
     ) {
       const error = new Error('Ese perfil no está disponible.');
@@ -247,7 +272,13 @@ export function createApp(db, options = {}) {
   }
   function accessibleMatch(req, id) {
     const match = db
-      .prepare('SELECT * FROM matches WHERE id=? AND (user_a=? OR user_b=?)')
+      .prepare(
+        `SELECT m.* FROM matches m
+         JOIN users a ON a.id=m.user_a
+         JOIN users b ON b.id=m.user_b
+         WHERE m.id=? AND (m.user_a=? OR m.user_b=?)
+           AND a.moderation_status='active' AND b.moderation_status='active'`,
+      )
       .get(id, req.user.id, req.user.id);
     if (!match || blocked(match.user_a, match.user_b)) {
       const error = new Error('Conversación no disponible.');
@@ -276,6 +307,17 @@ export function createApp(db, options = {}) {
     communitySchema,
     fetch: options.fetch,
   });
+  const recoveryMailer =
+    options.recoveryMailer === undefined ? createRecoveryMailer() : options.recoveryMailer;
+  const passwordRecoveryEnabled = mountRecovery(app, db, {
+    production,
+    parse,
+    recoveryMailer,
+  });
+  const emailVerificationEnabled = mountEmailVerification(app, db, {
+    parse,
+    mailer: recoveryMailer,
+  });
   app.get('/api/options', (_req, res) =>
     res.json({
       values: VALUES,
@@ -283,13 +325,9 @@ export function createApp(db, options = {}) {
       demoEnabled,
       googleEnabled,
       passwordRecoveryEnabled,
+      emailVerificationEnabled,
     }),
   );
-  const passwordRecoveryEnabled = mountRecovery(app, db, {
-    production,
-    parse,
-    recoveryMailer: options.recoveryMailer,
-  });
   app.post('/api/auth/demo', (_req, res) => {
     if (!demoEnabled) return res.status(403).json({ error: 'La demostración está desactivada.' });
     const { rememberMe } = parse(
@@ -372,6 +410,7 @@ export function createApp(db, options = {}) {
         name: z.string().trim().min(2).max(40),
         city: z.string().trim().min(2).max(60),
         gender: z.enum(['mujer', 'hombre']),
+        verificationFlow: z.boolean().default(false),
       }),
       req.body,
     );
@@ -381,8 +420,8 @@ export function createApp(db, options = {}) {
       now = new Date().toISOString();
     try {
       db.prepare(
-        `INSERT INTO users (id,email,password,name,birthdate,gender,city,values_json,interests_json,consent_at,created_at)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+        `INSERT INTO users (id,email,password,name,birthdate,gender,city,values_json,interests_json,consent_at,created_at,email_verification_required)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
       ).run(
         id,
         data.email,
@@ -395,6 +434,7 @@ export function createApp(db, options = {}) {
         JSON.stringify(['Café']),
         now,
         now,
+        emailVerificationEnabled ? 1 : 0,
       );
     } catch (error) {
       if (error.message.includes('UNIQUE'))
@@ -419,7 +459,24 @@ export function createApp(db, options = {}) {
       JSON.stringify({ appearance: data.appearance, language: data.language }),
       id,
     );
-    res.status(201).json(session(res, getUser(id), data.rememberMe));
+    const created = getUser(id);
+    if (emailVerificationEnabled) {
+      issueEmailVerification(db, recoveryMailer, created, data.language);
+      // Older installed apps treat a 201 as an authenticated session. Never
+      // let them enter the feed with an undefined token after this upgrade.
+      if (!data.verificationFlow)
+        return res
+          .status(403)
+          .json({
+            code: 'EMAIL_VERIFICATION_REQUIRED',
+            error: 'La cuenta se creó. Confirma tu correo y luego inicia sesión.',
+          });
+      return res.status(201).json({
+        user: { ...ownProfile(created), email: created.email, birthdate: created.birthdate },
+        emailVerificationRequired: true,
+      });
+    }
+    res.status(201).json(session(res, created, data.rememberMe));
   });
   app.post('/api/auth/login', async (req, res) => {
     const data = parse(
@@ -433,7 +490,7 @@ export function createApp(db, options = {}) {
       }),
       req.body,
     );
-    const user = db.prepare('SELECT * FROM users WHERE email=? AND demo=0').get(data.email);
+    let user = db.prepare('SELECT * FROM users WHERE email=? AND demo=0').get(data.email);
     const [salt, stored] = (user?.password || 'invalid:00'.repeat(1)).split(':');
     const calculated = await scryptAsync(data.password, salt, 64);
     const expected = stored?.length === 128 ? Buffer.from(stored, 'hex') : Buffer.alloc(64);
@@ -443,7 +500,7 @@ export function createApp(db, options = {}) {
       getUser(user.id)?.password !== user.password
     )
       return res.status(401).json({ error: 'Correo o contraseña incorrectos.' });
-    res.json(session(res, user, data.rememberMe));
+    res.json(session(res, user, data.rememberMe, user.password));
   });
   app.post('/api/auth/logout', auth, (req, res) => {
     db.prepare('DELETE FROM sessions WHERE user_id=?').run(req.user.id);
@@ -453,6 +510,55 @@ export function createApp(db, options = {}) {
       sameSite: 'lax',
       path: '/',
     });
+    res.json({ ok: true });
+  });
+  app.post('/api/me/password', auth, async (req, res) => {
+    const { currentPassword, newPassword } = parse(
+      z.object({
+        currentPassword: z.string().max(128),
+        newPassword: z.string().min(10).max(128),
+      }),
+      req.body,
+    );
+    if (!req.user.password) return res.status(400).json({ error: 'Esta cuenta usa Google.' });
+    const [salt, stored] = req.user.password.split(':');
+    const calculated = await scryptAsync(currentPassword, salt, 64);
+    const expected = stored?.length === 128 ? Buffer.from(stored, 'hex') : Buffer.alloc(64);
+    if (!timingSafeEqual(expected, calculated))
+      return res.status(403).json({ error: 'La contraseña actual no es correcta.' });
+    const nextSalt = randomBytes(16).toString('hex');
+    const nextKey = await scryptAsync(newPassword, nextSalt, 64);
+    db.exec('BEGIN IMMEDIATE');
+    try {
+      const current = getUser(req.user.id);
+      if (
+        !current ||
+        !db
+          .prepare('SELECT 1 FROM sessions WHERE token_hash=? AND user_id=? AND expires_at>?')
+          .get(req.sessionHash, req.user.id, Date.now())
+      )
+        throw Object.assign(new Error('Inicia sesión para continuar.'), { status: 401 });
+      assertAccountAccess(current);
+      if (current.password !== req.user.password)
+        throw Object.assign(new Error('Tu contraseña cambió. Vuelve a intentarlo.'), {
+          status: 409,
+        });
+      db.prepare('UPDATE users SET password=? WHERE id=?').run(
+        `${nextSalt}:${nextKey.toString('hex')}`,
+        req.user.id,
+      );
+      db.prepare('DELETE FROM sessions WHERE user_id=? AND token_hash<>?').run(
+        req.user.id,
+        req.sessionHash,
+      );
+      db.prepare('DELETE FROM password_resets WHERE user_id=?').run(req.user.id);
+      db.prepare('DELETE FROM oauth_link_tickets WHERE user_id=?').run(req.user.id);
+      db.prepare('DELETE FROM oauth_states WHERE link_user_id=?').run(req.user.id);
+      db.exec('COMMIT');
+    } catch (error) {
+      db.exec('ROLLBACK');
+      throw error;
+    }
     res.json({ ok: true });
   });
   app.get('/api/me', auth, (req, res) =>
@@ -504,6 +610,7 @@ export function createApp(db, options = {}) {
     const rows = db
       .prepare(
         `SELECT u.* FROM users u WHERE u.id != ? AND u.demo=? AND u.seed=?
+      AND u.moderation_status='active' AND (u.email_verification_required=0 OR u.email_verified_at IS NOT NULL)
       AND NOT EXISTS (SELECT 1 FROM swipes s WHERE s.user_id=? AND s.target_id=u.id)
       AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.user_id=? AND b.target_id=u.id) OR (b.user_id=u.id AND b.target_id=?))
       AND NOT EXISTS (SELECT 1 FROM matches m WHERE (m.user_a=? AND m.user_b=u.id) OR (m.user_b=? AND m.user_a=u.id))
@@ -586,7 +693,11 @@ export function createApp(db, options = {}) {
   });
   app.get('/api/matches', auth, (req, res) => {
     const rows = db
-      .prepare('SELECT * FROM matches WHERE user_a=? OR user_b=? ORDER BY created_at DESC')
+      .prepare(
+        `SELECT m.* FROM matches m JOIN users a ON a.id=m.user_a JOIN users b ON b.id=m.user_b
+        WHERE (m.user_a=? OR m.user_b=?) AND a.moderation_status='active' AND b.moderation_status='active'
+        ORDER BY m.created_at DESC`,
+      )
       .all(req.user.id, req.user.id);
     res.json(
       rows
@@ -708,7 +819,21 @@ export function createApp(db, options = {}) {
     });
   });
   app.delete('/api/me', auth, (req, res) => {
-    db.prepare('DELETE FROM users WHERE id=?').run(req.user.id);
+    db.exec('BEGIN IMMEDIATE');
+    try {
+      db.prepare(
+        `UPDATE moderation_audit SET
+        actor_user_id=CASE WHEN actor_user_id=? THEN '' ELSE actor_user_id END,
+        target_user_id=CASE WHEN target_user_id=? THEN '' ELSE target_user_id END,
+        report_id='',reason='Cuenta eliminada.',metadata_json='{}'
+        WHERE actor_user_id=? OR target_user_id=?`,
+      ).run(req.user.id, req.user.id, req.user.id, req.user.id);
+      db.prepare('DELETE FROM users WHERE id=?').run(req.user.id);
+      db.exec('COMMIT');
+    } catch (error) {
+      db.exec('ROLLBACK');
+      throw error;
+    }
     res.clearCookie('rigthnder_session', { path: '/' });
     res.json({ ok: true });
   });
@@ -725,6 +850,7 @@ export function createApp(db, options = {}) {
   });
   mountBeta(app, db, { auth, parse, accessibleTarget, accessibleMatch, push });
   mountPush(app, db, { auth, parse, push });
+  mountModeration(app, db, { auth, origins, parse });
   app.use('/api', (_req, res) => res.status(404).json({ error: 'Ruta no encontrada.' }));
   const dist = resolve(options.distDirectory || 'dist');
   if (existsSync(dist)) {
@@ -754,6 +880,9 @@ export function createApp(db, options = {}) {
     if (status >= 500) console.error('Error del servidor:', error.message);
     res.status(status).json({
       error: status >= 500 ? 'No pudimos completar la solicitud. Intenta de nuevo.' : error.message,
+      ...(['EMAIL_VERIFICATION_REQUIRED', 'ACCOUNT_RESTRICTED'].includes(error.code)
+        ? { code: error.code }
+        : {}),
     });
   });
   return app;

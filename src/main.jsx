@@ -2,14 +2,17 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import Marketing from './Marketing.jsx';
+import ModerationPage from './ModerationPage.jsx';
 import { Capacitor } from '@capacitor/core';
 import { isPageRoute } from '../server/routes.mjs';
 import { t } from './locale.mjs';
+import { isPasswordRecoveryPath } from './app-routes.mjs';
 import './styles.css';
 import './mobile-feed.css';
 import './beta.css';
 import './safe-area.css';
 const demoOnly = /^\/demo\/?$/.test(location.pathname);
+const moderationOnly = /^\/moderation\/?$/.test(location.pathname);
 const authReturn =
   new URLSearchParams(location.search).has('google') ||
   new URLSearchParams(location.search).has('oauth_error') ||
@@ -18,7 +21,7 @@ const useApp =
   Capacitor.isNativePlatform() ||
   demoOnly ||
   authReturn ||
-  /^\/(app|recuperar-contrasena|restablecer-contrasena)\/?$/.test(location.pathname);
+  isPasswordRecoveryPath(location.pathname) || /^\/(app|verificar-correo)\/?$/.test(location.pathname);
 createRoot(document.getElementById('root')).render(
   !Capacitor.isNativePlatform() && !isPageRoute(location.pathname) ? (
     <main className="boot">
@@ -28,6 +31,8 @@ createRoot(document.getElementById('root')).render(
         {t('Volver a la portada')}
       </a>
     </main>
+  ) : moderationOnly ? (
+    <ModerationPage />
   ) : useApp ? (
     <App demoOnly={demoOnly} />
   ) : (

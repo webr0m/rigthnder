@@ -241,6 +241,8 @@ export function mountCommunity(
     let rows = db
       .prepare(
         `SELECT u.* FROM users u WHERE u.id!=? AND u.demo=? AND u.seed=?
+      AND u.moderation_status='active'
+      AND (u.email_verification_required=0 OR u.email_verified_at IS NOT NULL)
       AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.user_id=? AND b.target_id=u.id) OR (b.user_id=u.id AND b.target_id=?)) ORDER BY u.created_at DESC,u.id`,
       )
       .all(req.user.id, req.user.demo, req.user.demo ? 1 : 0, req.user.id, req.user.id)
@@ -321,7 +323,13 @@ export function mountCommunity(
   });
   app.get('/api/conversations', auth, (req, res) => {
     const rows = db
-      .prepare('SELECT * FROM matches WHERE user_a=? OR user_b=?')
+      .prepare(
+        `SELECT m.* FROM matches m
+         JOIN users a ON a.id=m.user_a
+         JOIN users b ON b.id=m.user_b
+         WHERE (m.user_a=? OR m.user_b=?)
+           AND a.moderation_status='active' AND b.moderation_status='active'`,
+      )
       .all(req.user.id, req.user.id);
     res.json(
       rows

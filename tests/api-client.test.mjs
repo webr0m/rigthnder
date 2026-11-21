@@ -6,6 +6,28 @@ const deferred = () => {
   const promise = new Promise((r) => (resolve = r));
   return { promise, resolve };
 };
+
+test('account restrictions revoke local access while ordinary permission errors preserve it', async () => {
+  for (const code of ['ACCOUNT_RESTRICTED', 'PERMISSION_DENIED']) {
+    let cleared = 0,
+      expired = 0;
+    const api = createApiClient({
+      sessions: {
+        getToken: () => 'saved',
+        clear: async () => {
+          cleared++;
+        },
+      },
+      expired: () => {
+        expired++;
+      },
+      fetch: async () => Response.json({ error: 'Denied', code }, { status: 403 }),
+    });
+    await assert.rejects(api('/me'), (error) => error.status === 403);
+    assert.equal(cleared, code === 'ACCOUNT_RESTRICTED' ? 1 : 0);
+    assert.equal(expired, code === 'ACCOUNT_RESTRICTED' ? 1 : 0);
+  }
+});
 test('hung transport/body time out without revoking a session or processing late responses', async () => {
   let cleared = 0,
     expired = 0,

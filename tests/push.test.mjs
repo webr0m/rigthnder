@@ -235,5 +235,15 @@ test('push retries survive service restart, expired endpoints are removed and ex
   last.enqueue('sender', 'recipient', 'messages');
   await last.drain();
   await last.close();
+  db.prepare('UPDATE sessions SET expires_at=?').run(Date.now() + 60000);
+  const restricted = createPushService(db, {
+    vapid,
+    sendWeb: () => assert.fail('a restricted sender must never generate a push'),
+  });
+  db.prepare("UPDATE users SET moderation_status='blocked' WHERE id='sender'").run();
+  restricted.enqueue('sender', 'recipient', 'messages');
+  await restricted.drain();
+  await restricted.close();
+  assert.equal(db.prepare('SELECT count(*) AS n FROM push_outbox').get().n, 0);
   db.close();
 });

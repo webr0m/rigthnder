@@ -1,5 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 import {
+  ArrowLeft,
   ArrowRight,
   Bell,
   Check,
@@ -41,7 +43,10 @@ import { BetaAccount, BetaSettings, BetaService, BetaFilters, ProfileDetail } fr
 import LanguagePicker, { useLanguage } from './LanguagePicker';
 import { getLanguage, setLanguage, t, translateCommon } from './locale.mjs';
 import PasswordRecovery from './PasswordRecovery';
+import EmailVerification from './EmailVerification';
 import { localizeFormValidation } from './form-validation.mjs';
+import { pendingGoogleRequest } from './google-pending.mjs';
+import { isPasswordRecoveryPath, isEmailVerificationPath } from './app-routes.mjs';
 export function Wordmark() {
   return (
     <span className="wordmark">
@@ -215,7 +220,16 @@ export function ProfileCard({ profile: p, onWrite, onSafety, onOpen }) {
     </article>
   );
 }
-function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, initialLogin }) {
+function Access({
+  options,
+  notify,
+  onLogin,
+  onRegister,
+  onVerificationRequired,
+  onLegal,
+  onRecover,
+  initialLogin,
+}) {
   const [rememberMe, setRememberMe] = useState(true);
   const [googleBusy, setGoogleBusy] = useState(false);
   const [login, setLogin] = useState(Boolean(initialLogin)),
@@ -230,6 +244,10 @@ function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, init
     try {
       await onLogin(await api('/auth/login', { method: 'POST', body: data }));
     } catch (e) {
+      if (e.code === 'EMAIL_VERIFICATION_REQUIRED') {
+        onVerificationRequired?.(data.email);
+        return;
+      }
       setError(e.message);
     } finally {
       setBusy(false);
@@ -417,22 +435,84 @@ function Access({ options, notify, onLogin, onRegister, onLegal, onRecover, init
     </div>
   );
 }
+function EmailVerificationReturn({ status, onBack, onRetry }) {
+  const success = status === 'success';
+  const pending = !status;
+  return (
+    <section className="recovery-panel" aria-labelledby="verification-return-title">
+      <div className="recovery-icon">
+        {pending ? <LoaderCircle className="spin" /> : success ? <Check /> : <X />}
+      </div>
+      <span className="label-strip">{t('ACTIVA TU CUENTA')}</span>
+      <h1 id="verification-return-title">
+        {t(
+          pending
+            ? 'VERIFICANDO CORREO'
+            : success
+              ? 'CORREO CONFIRMADO'
+              : status === 'retry'
+                ? 'No pudimos conectar con OnlyFachos.'
+                : 'ENLACE NO VÁLIDO',
+        )}
+      </h1>
+      <p role={pending ? 'status' : 'alert'}>
+        {t(
+          pending
+            ? 'Estamos comprobando tu enlace. No se iniciará ninguna sesión automáticamente.'
+            : success
+              ? 'Tu correo quedó confirmado. Ya puedes iniciar sesión con tu contraseña.'
+              : status === 'retry'
+                ? 'Revisa tu conexión e inténtalo de nuevo.'
+                : 'El enlace no es válido o ya venció. Solicita una confirmación nueva desde el acceso.',
+        )}
+      </p>
+      {status === 'retry' && (
+        <button className="button" onClick={onRetry}>
+          {t('Reintentar')}
+        </button>
+      )}
+      {!pending && (
+        <a className="button" href="/app">
+          {t('IR A INICIAR SESIÓN')}
+        </a>
+      )}
+      <button className="text-link recovery-back" type="button" onClick={onBack}>
+        <ArrowLeft size={16} />
+        {t('Volver a iniciar sesión')}
+      </button>
+    </section>
+  );
+}
 export default function App({ demoOnly = false }) {
   const [recovery, setRecovery] = useState(() =>
-    location.pathname === '/recuperar-contrasena'
+    isPasswordRecoveryPath(location.pathname)
       ? { token: new URLSearchParams(location.hash.slice(1)).get('token') ?? undefined }
       : null,
   );
+  const [verificationLink, setVerificationLink] = useState(() => {
+    if (!isEmailVerificationPath(location.pathname)) return null;
+    const fragment = new URLSearchParams(location.hash.slice(1));
+    return { token: fragment.get('token') ?? '', lang: fragment.get('lang') };
+  });
+  const [verificationRequired, setVerificationRequired] = useState(null);
   const [loginRequested, setLoginRequested] = useState(true);
   useEffect(() => {
     const syncRecovery = () => {
-      if (location.pathname === '/recuperar-contrasena') {
+      if (isPasswordRecoveryPath(location.pathname)) {
         const fragment = new URLSearchParams(location.hash.slice(1));
         setRecovery({ token: fragment.get('token') ?? undefined });
+        setVerificationLink(null);
+        const lang = fragment.get('lang');
+        if (['es', 'en', 'de'].includes(lang)) setLanguage(lang);
+      } else if (isEmailVerificationPath(location.pathname)) {
+        const fragment = new URLSearchParams(location.hash.slice(1));
+        setRecovery(null);
+        setVerificationLink({ token: fragment.get('token') ?? '', lang: fragment.get('lang') });
         const lang = fragment.get('lang');
         if (['es', 'en', 'de'].includes(lang)) setLanguage(lang);
       } else {
         setRecovery(null);
+        setVerificationLink(null);
       }
     };
     syncRecovery();
@@ -476,6 +556,31 @@ export default function App({ demoOnly = false }) {
     [service, setService] = useState(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   useEffect(() => setDeleteConfirmation(''), [modal]);
+  useEffect(() => {
+    if (!ready || !verificationLink || verificationLink.status) return;
+    let alive = true;
+    if (!/^[a-f0-9]{64}$/.test(verificationLink.token)) {
+      setVerificationLink((current) => (current ? { ...current, status: 'error' } : current));
+      return;
+    }
+    api('/auth/verify-email', {
+      method: 'POST',
+      body: { token: verificationLink.token },
+    })
+      .then(() => {
+        if (alive) setVerificationLink((current) => ({ ...current, status: 'success' }));
+      })
+      .catch((error) => {
+        if (alive)
+          setVerificationLink((current) => ({
+            ...current,
+            status: error.status === 400 ? 'error' : 'retry',
+          }));
+      });
+    return () => {
+      alive = false;
+    };
+  }, [ready, verificationLink?.token, verificationLink?.status]);
   async function saveSettings(patch) {
     try {
       const result = await api('/me/settings', { method: 'PUT', body: patch });
@@ -542,24 +647,13 @@ export default function App({ demoOnly = false }) {
     if (!isCurrent()) return;
     setWizard({ type: 'google', ...pending, initialData: matching ? draft : null });
   }
-  async function resumeGoogleWizard(isCurrent) {
+  async function resumeGoogleWizard(isCurrent, returned = false) {
     setBootPhase('google-storage');
     const stored = await pendingGoogleRegistration().catch(() => null);
     if (!isCurrent()) return;
-    try {
-      setBootPhase('google-pending');
-      const pending = await api(
-        '/auth/google/pending',
-        stored?.ticket ? { method: 'POST', body: { ticket: stored.ticket } } : {},
-      );
-      if (!isCurrent()) return;
-      await openGoogleWizard(
-        { ...pending, ...(stored?.ticket ? { ticket: stored.ticket } : {}) },
-        isCurrent,
-      );
-    } catch (error) {
-      if (error.status !== 404) throw error;
-      const draft = await registrationDrafts.load().catch(() => null);
+    const draft = await registrationDrafts.load().catch(() => null);
+    if (!isCurrent()) return;
+    const restoreDraft = () => {
       if (isCurrent() && draft?.identity?.email)
         setWizard({
           type: 'google',
@@ -568,6 +662,24 @@ export default function App({ demoOnly = false }) {
           rememberMe: draft.rememberMe,
           reauthenticate: true,
         });
+    };
+    const request = pendingGoogleRequest(stored, {
+      native: Capacitor.isNativePlatform(),
+      returned,
+      hasDraft: !!draft?.identity?.email,
+    });
+    if (!request) return restoreDraft();
+    try {
+      setBootPhase('google-pending');
+      const pending = await api('/auth/google/pending', request);
+      if (!isCurrent()) return;
+      await openGoogleWizard(
+        { ...pending, ...(stored?.ticket ? { ticket: stored.ticket } : {}) },
+        isCurrent,
+      );
+    } catch (error) {
+      if (error.status !== 404) throw error;
+      restoreDraft();
     }
   }
   useEffect(() => {
@@ -627,8 +739,11 @@ export default function App({ demoOnly = false }) {
           const demo = await api('/auth/demo', { method: 'POST', body: { rememberMe: false } });
           if (alive) await signedIn(demo);
         } else if (q.get('google') === 'complete') {
-          if (alive) await resumeGoogleWizard(() => alive);
-        } else if (location.pathname !== '/recuperar-contrasena') {
+          if (alive) await resumeGoogleWizard(() => alive, true);
+        } else if (
+          !isPasswordRecoveryPath(location.pathname) &&
+          !isEmailVerificationPath(location.pathname)
+        ) {
           try {
             setBootPhase('account');
             const me = await api('/me');
@@ -916,19 +1031,28 @@ export default function App({ demoOnly = false }) {
         setReload((v) => v + 1);
         notify('Perfil guardado. Ya tiene tu toque.');
       } else {
-        await signedIn(
-          await api(wizard.type === 'google' ? '/auth/google/complete' : '/auth/register', {
+        const result = await api(
+          wizard.type === 'google' ? '/auth/google/complete' : '/auth/register',
+          {
             method: 'POST',
             body: {
               ...wizard.credentials,
               ...data,
+              verificationFlow: true,
               appearance: theme,
               language: getLanguage(),
               ...(wizard.ticket ? { ticket: wizard.ticket } : {}),
             },
-          }),
+          },
         );
-        notify('Bienvenido a la comunidad.');
+        if (result.emailVerificationRequired) {
+          registrationDrafts.clear().catch(() => {});
+          setWizard(null);
+          setVerificationRequired({ email: result.user.email });
+        } else {
+          await signedIn(result);
+          notify('Bienvenido a la comunidad.');
+        }
       }
     } finally {
       setBusy(false);
@@ -968,6 +1092,27 @@ export default function App({ demoOnly = false }) {
     }
   }
   const safety = (p) => setModal({ type: 'safety', profile: p });
+  if (ready && !initError && verificationLink)
+    return (
+      <div className="recovery-shell">
+        <header className="recovery-header">
+          <Wordmark />
+          <LanguagePicker />
+          <button className="icon-button" aria-label={t('Cambiar tema')} onClick={toggleTheme}>
+            {theme === 'dark' ? <Sun /> : <Moon />}
+          </button>
+        </header>
+        <EmailVerificationReturn
+          status={verificationLink.status}
+          onRetry={() => setVerificationLink((current) => ({ ...current, status: null }))}
+          onBack={() => {
+            history.replaceState({}, '', '/');
+            setVerificationLink(null);
+            setLoginRequested(true);
+          }}
+        />
+      </div>
+    );
   if (ready && !initError && recovery)
     return (
       <div className="recovery-shell">
@@ -1029,6 +1174,20 @@ export default function App({ demoOnly = false }) {
           <Button onClick={() => location.reload()}>Volver a explorar</Button>
           <a href="/">Volver a la portada</a>
         </div>
+      ) : !user && verificationRequired ? (
+        <div className="recovery-shell">
+          <header className="recovery-header">
+            <Wordmark />
+            <LanguagePicker />
+          </header>
+          <EmailVerification
+            email={verificationRequired.email}
+            onBack={() => {
+              setVerificationRequired(null);
+              setLoginRequested(true);
+            }}
+          />
+        </div>
       ) : !user && !wizard ? (
         <>
           <div className="access-language">
@@ -1046,6 +1205,7 @@ export default function App({ demoOnly = false }) {
             notify={notify}
             onLogin={signedIn}
             onRegister={(credentials) => setWizard({ type: 'create', credentials })}
+            onVerificationRequired={(email) => setVerificationRequired({ email })}
             onLegal={setModal}
             initialLogin={loginRequested}
             onRecover={() => {

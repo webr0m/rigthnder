@@ -60,7 +60,12 @@ export function createApiClient({
       throw error;
     }
     if (!response.ok) {
-      if (response.status === 401 && !path.startsWith('/auth/') && started === generation()) {
+      if (
+        (response.status === 401 ||
+          (response.status === 403 && result?.code === 'ACCOUNT_RESTRICTED')) &&
+        !path.startsWith('/auth/') &&
+        started === generation()
+      ) {
         if (bearer) await sessions.clear(bearer).catch(() => {});
         if (started === generation()) expired();
       }

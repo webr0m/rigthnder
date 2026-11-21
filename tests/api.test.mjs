@@ -48,6 +48,24 @@ async function account(name) {
   ).data;
 }
 
+test('simultaneous password changes cannot both overwrite the same credential', async () => {
+  const a = await account('ConcurrentPassword');
+  const results = await Promise.all(
+    ['Concurrent-new-password-A', 'Concurrent-new-password-B'].map((newPassword) =>
+      request('/me/password', {
+        token: a.token,
+        method: 'POST',
+        body: {
+          currentPassword: 'Rigthnder-test-2026',
+          newPassword,
+        },
+      }),
+    ),
+  );
+  assert.equal(results.filter((result) => result.status === 200).length, 1);
+  assert.ok(results.some((result) => [400, 409].includes(result.status)));
+});
+
 test('age gate uses exact birthday and rejects invalid dates, minors and missing consent', async () => {
   assert.equal(ageOf('2008-10-15', new Date('2026-10-14T12:00:00Z')), 17);
   const body = {
@@ -108,6 +126,44 @@ test('registration, password verification and private sessions', async () => {
     false,
   );
 });
+test('authenticated password change keeps the current session and revokes previous sessions', async () => {
+  const accountData = await account('PasswordChange');
+  const secondLogin = await request('/auth/login', {
+    method: 'POST',
+    body: { email: 'passwordchange@example.com', password: 'Rigthnder-test-2026' },
+  });
+  assert.equal(secondLogin.status, 200);
+  const changed = await request('/me/password', {
+    token: accountData.token,
+    method: 'POST',
+    body: {
+      currentPassword: 'Rigthnder-test-2026',
+      newPassword: 'New-rigthnder-password-2026',
+    },
+  });
+  assert.equal(changed.status, 200);
+  assert.equal((await request('/me', { token: accountData.token })).status, 200);
+  assert.equal((await request('/me', { token: secondLogin.data.token })).status, 401);
+  assert.equal(
+    (
+      await request('/auth/login', {
+        method: 'POST',
+        body: { email: 'passwordchange@example.com', password: 'Rigthnder-test-2026' },
+      })
+    ).status,
+    401,
+  );
+  assert.equal(
+    (
+      await request('/auth/login', {
+        method: 'POST',
+        body: { email: 'passwordchange@example.com', password: 'New-rigthnder-password-2026' },
+      })
+    ).status,
+    200,
+  );
+});
+
 test('demo is isolated between visitors and from real accounts; public profiles omit private fields', async () => {
   const a = await demo(),
     b = await demo();

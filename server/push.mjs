@@ -150,6 +150,10 @@ export function createPushService(db, config = {}) {
       .get(row.user_id);
     return (
       user &&
+      user.moderation_status === 'active' &&
+      db
+        .prepare("SELECT 1 FROM users WHERE id=? AND moderation_status='active'")
+        .get(row.sender_id) &&
       settingsOf(user)[row.kind] &&
       db
         .prepare('SELECT 1 FROM sessions WHERE token_hash=? AND expires_at>?')

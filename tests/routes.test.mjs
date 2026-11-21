@@ -17,7 +17,15 @@ test('known SPA routes work; missing pages and assets return 404 instead of a fa
     server = createApp(db, { distDirectory: directory }).listen(0, '127.0.0.1');
     await once(server, 'listening');
     const base = `http://127.0.0.1:${server.address().port}`;
-    for (const page of ['/', '/app', '/app/', '/demo', '/privacidad', '/recuperar-contrasena']) {
+    for (const page of [
+        '/',
+        '/app',
+        '/app/',
+        '/demo',
+        '/privacidad',
+        '/recuperar-contrasena',
+        '/moderation',
+      ]) {
       assert.equal((await fetch(base + page)).status, 200, page);
     }
     for (const missing of ['/no-existe', '/assets/no-existe.js']) {

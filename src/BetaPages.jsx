@@ -316,6 +316,8 @@ export function BetaSettings({
     [working, setWorking] = useState(false);
   const [googleLinkOpen, setGoogleLinkOpen] = useState(false),
     [linkError, setLinkError] = useState('');
+  const [passwordOpen, setPasswordOpen] = useState(false),
+    [passwordError, setPasswordError] = useState('');
   const s = user.settings || {};
   const [push, setPush] = useState({ available: false, enabled: false });
   const [pushBusy, setPushBusy] = useState(false),
@@ -420,6 +422,78 @@ export function BetaSettings({
           </form>
         </Modal>
       )}
+      {passwordOpen && (
+        <Modal title={t('Cambiar contraseña')} onClose={() => setPasswordOpen(false)}>
+          <p>{t('Al cambiarla, se cerrarán los accesos anteriores a este dispositivo.')}</p>
+          <form
+            className="form"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const values = new FormData(e.currentTarget);
+              const currentPassword = values.get('currentPassword');
+              const newPassword = values.get('newPassword');
+              const confirmation = values.get('confirmation');
+              setPasswordError('');
+              if (newPassword !== confirmation) {
+                setPasswordError('Las contraseñas no coinciden.');
+                return;
+              }
+              setWorking(true);
+              try {
+                await api('/me/password', {
+                  method: 'POST',
+                  body: { currentPassword, newPassword },
+                });
+                setPasswordOpen(false);
+                notify('Contraseña actualizada.');
+              } catch (error) {
+                setPasswordError(error.message);
+              } finally {
+                setWorking(false);
+              }
+            }}
+          >
+            <label>
+              {t('Contraseña actual')}
+              <input
+                type="password"
+                name="currentPassword"
+                required
+                maxLength={128}
+                autoComplete="current-password"
+              />
+            </label>
+            <label>
+              {t('Nueva contraseña')}
+              <input
+                type="password"
+                name="newPassword"
+                required
+                minLength={10}
+                maxLength={128}
+                autoComplete="new-password"
+              />
+            </label>
+            <label>
+              {t('Repite la nueva contraseña')}
+              <input
+                type="password"
+                name="confirmation"
+                required
+                minLength={10}
+                maxLength={128}
+                autoComplete="new-password"
+              />
+            </label>
+            {passwordError && (
+              <p className="form-error" role="alert">
+                {t(passwordError)}
+              </p>
+            )}
+            <Button disabled={working}>{t('Guardar contraseña')}</Button>
+          </form>
+        </Modal>
+      )}
       <div className="beta-group">
         <div className="beta-row">
           <b>{t('Correo')}</b>
@@ -434,10 +508,20 @@ export function BetaSettings({
             }}
           />
         )}
+        {!user.demo && user.passwordSet && (
+          <Row
+            title={t('Cambiar contraseña')}
+            hint={t('Revoca los accesos anteriores al guardar una nueva.')}
+            onClick={() => {
+              setPasswordError('');
+              setPasswordOpen(true);
+            }}
+          />
+        )}
         <Row
           title={t('Verificación')}
-          value="Sin verificar"
-          onClick={() => onService('verification')}
+          value={user.emailVerified ? t('Verificado') : t('Sin verificar')}
+          onClick={user.emailVerified ? undefined : () => onService('verification')}
         />
         <Row title={t('Suscripción')} value="Gratis" onClick={() => onService('pro')} />
       </div>

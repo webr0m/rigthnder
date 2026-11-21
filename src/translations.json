@@ -983,6 +983,10 @@
     "en": "Not verified",
     "de": "Nicht verifiziert"
   },
+  "verificado": {
+    "en": "Verified",
+    "de": "Verifiziert"
+  },
   "suscripción": {
     "en": "Subscription",
     "de": "Abonnement"
@@ -2580,8 +2584,8 @@
     "de": "Neues Passwort"
   },
   "repite la nueva contraseña": {
-    "en": "Confirm your new password",
-    "de": "Neues Passwort bestätigen"
+    "en": "Repeat the new password",
+    "de": "Neues Passwort wiederholen"
   },
   "guardar contraseña": {
     "en": "Save password",
@@ -2618,6 +2622,62 @@
   "la recuperación por correo no está disponible ahora. inténtalo más tarde.": {
     "en": "Email recovery is currently unavailable. Try again later.",
     "de": "Die Wiederherstellung per E-Mail ist momentan nicht verfügbar. Versuche es später erneut."
+  },
+  "activa tu cuenta": {
+    "en": "Activate your account",
+    "de": "Aktiviere dein Konto"
+  },
+  "confirma tu correo": {
+    "en": "Confirm your email",
+    "de": "Bestätige deine E-Mail"
+  },
+  "confirma tu correo para activar el acceso a onlyfachos.": {
+    "en": "Confirm your email to activate access to OnlyFachos.",
+    "de": "Bestätige deine E-Mail, um den Zugang zu OnlyFachos zu aktivieren."
+  },
+  "enlace enviado": {
+    "en": "Link sent",
+    "de": "Link gesendet"
+  },
+  "si la cuenta necesita verificación, recibirás un enlace. revisa también el correo no deseado.": {
+    "en": "If the account needs verification, you will receive a link. Check your spam folder too.",
+    "de": "Wenn das Konto eine Bestätigung benötigt, erhältst du einen Link. Prüfe auch deinen Spam-Ordner."
+  },
+  "el enlace vence en 24 horas y solo se puede usar una vez.": {
+    "en": "The link expires in 24 hours and can only be used once.",
+    "de": "Der Link läuft in 24 Stunden ab und kann nur einmal verwendet werden."
+  },
+  "reenviar confirmación": {
+    "en": "Resend confirmation",
+    "de": "Bestätigung erneut senden"
+  },
+  "verificando correo": {
+    "en": "Verifying email",
+    "de": "E-Mail wird bestätigt"
+  },
+  "correo confirmado": {
+    "en": "Email confirmed",
+    "de": "E-Mail bestätigt"
+  },
+  "enlace no válido": {
+    "en": "Invalid link",
+    "de": "Ungültiger Link"
+  },
+  "estamos comprobando tu enlace. no se iniciará ninguna sesión automáticamente.": {
+    "en": "We are checking your link. You will not be signed in automatically.",
+    "de": "Wir prüfen deinen Link. Du wirst nicht automatisch angemeldet."
+  },
+  "tu correo quedó confirmado. ya puedes iniciar sesión con tu contraseña.": {
+    "en": "Your email is confirmed. You can now sign in with your password.",
+    "de": "Deine E-Mail ist bestätigt. Du kannst dich jetzt mit deinem Passwort anmelden."
+  },
+  "el enlace no es válido o ya venció. solicita una confirmación nueva desde el acceso.": {
+    "en": "The link is invalid or expired. Request a new confirmation from the sign-in screen.",
+    "de": "Der Link ist ungültig oder abgelaufen. Fordere auf der Anmeldeseite eine neue Bestätigung an."
+  },
+  "ir a iniciar sesión": {
+    "en": "Go to sign in",
+    "de": "Zur Anmeldung"
   },
   "citas recíprocas": {
     "en": "Dates go both ways",
@@ -2750,6 +2810,26 @@
   "vincular": {
     "en": "Link",
     "de": "Verknüpfen"
+  },
+  "cambiar contraseña": {
+    "en": "Change password",
+    "de": "Passwort ändern"
+  },
+  "al cambiarla, se cerrarán los accesos anteriores a este dispositivo.": {
+    "en": "Changing it will sign out previous access sessions.",
+    "de": "Beim Ändern werden vorherige Zugänge abgemeldet."
+  },
+  "revoca los accesos anteriores al guardar una nueva.": {
+    "en": "Saving a new one revokes previous access sessions.",
+    "de": "Beim Speichern eines neuen Passworts werden vorherige Zugänge widerrufen."
+  },
+  "esta cuenta usa google.": {
+    "en": "This account uses Google.",
+    "de": "Dieses Konto verwendet Google."
+  },
+  "la contraseña actual no es correcta.": {
+    "en": "The current password is incorrect.",
+    "de": "Das aktuelle Passwort ist nicht korrekt."
   },
   "contraseña actual": {
     "en": "Current password",
@@ -2962,5 +3042,181 @@
   "hola, basado.": {
     "en": "HELLO THERE.",
     "de": "HALLO!"
+  },
+  "panel privado": {
+    "en": "Private panel",
+    "de": "Privates Panel"
+  },
+  "inicia sesión con una cuenta autorizada para continuar.": {
+    "en": "Sign in with an authorized account to continue.",
+    "de": "Melde dich mit einem autorisierten Konto an, um fortzufahren."
+  },
+  "ir al acceso": {
+    "en": "Go to sign in",
+    "de": "Zum Login"
+  },
+  "cargando panel…": {
+    "en": "Loading panel…",
+    "de": "Panel wird geladen…"
+  },
+  "volver a la app": {
+    "en": "Back to app",
+    "de": "Zurück zur App"
+  },
+  "moderación": {
+    "en": "Moderation",
+    "de": "Moderation"
+  },
+  "actualizar": {
+    "en": "Refresh",
+    "de": "Aktualisieren"
+  },
+  "denuncias": {
+    "en": "Reports",
+    "de": "Meldungen"
+  },
+  "pendientes": {
+    "en": "Pending",
+    "de": "Offen"
+  },
+  "en revisión": {
+    "en": "In review",
+    "de": "In Prüfung"
+  },
+  "resueltas": {
+    "en": "Resolved",
+    "de": "Gelöst"
+  },
+  "descartadas": {
+    "en": "Dismissed",
+    "de": "Verworfen"
+  },
+  "todas": {
+    "en": "All",
+    "de": "Alle"
+  },
+  "no hay denuncias con este estado.": {
+    "en": "There are no reports with this status.",
+    "de": "Es gibt keine Meldungen mit diesem Status."
+  },
+  "cuenta eliminada": {
+    "en": "Deleted account",
+    "de": "Gelöschtes Konto"
+  },
+  "denuncia": {
+    "en": "Report",
+    "de": "Meldung"
+  },
+  "motivo": {
+    "en": "Reason",
+    "de": "Grund"
+  },
+  "detalle": {
+    "en": "Details",
+    "de": "Details"
+  },
+  "denunciante": {
+    "en": "Reporter",
+    "de": "Meldende Person"
+  },
+  "fecha": {
+    "en": "Date",
+    "de": "Datum"
+  },
+  "estado del usuario": {
+    "en": "User status",
+    "de": "Nutzerstatus"
+  },
+  "activo": {
+    "en": "Active",
+    "de": "Aktiv"
+  },
+  "suspendido": {
+    "en": "Suspended",
+    "de": "Gesperrt"
+  },
+  "bloqueado": {
+    "en": "Blocked",
+    "de": "Blockiert"
+  },
+  "motivo de la decisión": {
+    "en": "Decision reason",
+    "de": "Begründung"
+  },
+  "escribe por qué se toma esta decisión": {
+    "en": "Explain why this decision is being made",
+    "de": "Begründe diese Entscheidung"
+  },
+  "revisar": {
+    "en": "Review",
+    "de": "Prüfen"
+  },
+  "resolver": {
+    "en": "Resolve",
+    "de": "Lösen"
+  },
+  "descartar": {
+    "en": "Dismiss",
+    "de": "Verwerfen"
+  },
+  "bloquear usuario": {
+    "en": "Block user",
+    "de": "Nutzer blockieren"
+  },
+  "suspender 72 h": {
+    "en": "Suspend 72 h",
+    "de": "72 Std. sperren"
+  },
+  "restaurar": {
+    "en": "Restore",
+    "de": "Wiederherstellen"
+  },
+  "historial de decisiones": {
+    "en": "Decision history",
+    "de": "Entscheidungsverlauf"
+  },
+  "actividad reciente": {
+    "en": "Recent activity",
+    "de": "Letzte Aktivitäten"
+  },
+  "selecciona una denuncia para revisar sus detalles.": {
+    "en": "Select a report to review its details.",
+    "de": "Wähle eine Meldung aus, um ihre Details zu prüfen."
+  },
+  "todavía no hay decisiones registradas.": {
+    "en": "No decisions have been recorded yet.",
+    "de": "Noch keine Entscheidungen aufgezeichnet."
+  },
+  "¿confirmas cambiar el estado de este usuario?": {
+    "en": "Confirm changing this user’s status?",
+    "de": "Status dieses Nutzers ändern?"
+  },
+  "no tienes permisos de moderación.": {
+    "en": "You do not have moderation permissions.",
+    "de": "Du hast keine Moderationsberechtigung."
+  },
+  "la cuenta se creó. confirma tu correo y luego inicia sesión.": {
+    "en": "Your account was created. Confirm your email, then sign in.",
+    "de": "Dein Konto wurde erstellt. Bestätige deine E-Mail und melde dich dann an."
+  },
+  "revisa tu conexión e inténtalo de nuevo.": {
+    "en": "Check your connection and try again.",
+    "de": "Prüfe deine Verbindung und versuche es erneut."
+  },
+  "tu contraseña cambió. vuelve a intentarlo.": {
+    "en": "Your password changed. Please try again.",
+    "de": "Dein Passwort wurde geändert. Versuche es erneut."
+  },
+  "tu acceso está restringido. contacta con soporte.": {
+    "en": "Your access is restricted. Contact support.",
+    "de": "Dein Zugang ist eingeschränkt. Kontaktiere den Support."
+  },
+  "se requiere un administrador para ese usuario.": {
+    "en": "An administrator is required for this user.",
+    "de": "Für diesen Nutzer ist ein Administrator erforderlich."
+  },
+  "no pudimos conectar con onlyfachos.": {
+    "en": "We could not connect to OnlyFachos.",
+    "de": "Die Verbindung zu OnlyFachos ist fehlgeschlagen."
   }
 }

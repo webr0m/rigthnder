@@ -2,6 +2,7 @@ import { randomBytes, randomUUID, createHash, scrypt, timingSafeEqual } from 'no
 import { promisify } from 'node:util';
 const scryptAsync = promisify(scrypt);
 import { z } from 'zod';
+import { assertAccountAccess, refreshSuspensions } from './account-access.mjs';
 const hash = (v) => createHash('sha256').update(v).digest('hex');
 const cookieValue = (req, name) =>
   req.headers.cookie
@@ -217,11 +218,14 @@ export function mountGoogleAuth(
           .prepare('SELECT id FROM users WHERE google_sub=? AND id<>?')
           .get(info.sub, user.id);
         if (other) return fail('Esa cuenta de Google ya está vinculada a otro perfil.');
-        db.prepare('UPDATE users SET google_sub=? WHERE id=?').run(info.sub, user.id);
+        db.prepare(
+          'UPDATE users SET google_sub=?,email_verified_at=COALESCE(email_verified_at,?) WHERE id=?',
+        ).run(info.sub, Date.now(), user.id);
         return saved.native
           ? nativeHandoff(res, saved, { linked: true })
           : res.redirect(config.publicUrl + '/?google=linked');
       }
+      refreshSuspensions(db);
       const existing = db
         .prepare('SELECT * FROM users WHERE google_sub=? AND demo=0')
         .get(info.sub);
@@ -233,8 +237,13 @@ export function mountGoogleAuth(
           'Este correo ya usa contraseña. Entra con ella y vincula Google desde Perfil → Ajustes.',
         );
       let payload;
-      if (existing) payload = { userId: existing.id, rememberMe: !!saved.remember_me };
-      else {
+      if (existing) {
+        assertAccountAccess({ ...existing, email_verified_at: Date.now() });
+        db.prepare(
+          'UPDATE users SET email_verified_at=COALESCE(email_verified_at,?) WHERE id=?',
+        ).run(Date.now(), existing.id);
+        payload = { userId: existing.id, rememberMe: !!saved.remember_me };
+      } else {
         const ticket = randomBytes(32).toString('hex');
         const identity = {
           sub: info.sub,
@@ -260,8 +269,12 @@ export function mountGoogleAuth(
       if (existing) session(res, existing, !!saved.remember_me);
       else res.cookie('rigthnder_google_pending', payload.ticket, pendingCookieOptions);
       res.redirect(config.publicUrl + (existing ? '/?google=ok' : '/?google=complete'));
-    } catch {
-      fail('No pudimos verificar tu cuenta de Google. Inténtalo de nuevo.');
+    } catch (error) {
+      fail(
+        error.code === 'ACCOUNT_RESTRICTED'
+          ? error.message
+          : 'No pudimos verificar tu cuenta de Google. Inténtalo de nuevo.',
+      );
     }
   });
   app.post('/api/auth/google/exchange', (req, res) => {
@@ -347,11 +360,12 @@ export function mountGoogleAuth(
       now = new Date().toISOString();
     try {
       db.prepare(
-        `INSERT INTO users (id,email,google_sub,name,birthdate,gender,city,values_json,interests_json,consent_at,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+        `INSERT INTO users (id,email,google_sub,email_verified_at,name,birthdate,gender,city,values_json,interests_json,consent_at,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
       ).run(
         id,
         identity.email,
         identity.sub,
+        Date.now(),
         p.name,
         p.birthdate,
         p.gender,

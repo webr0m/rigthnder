@@ -74,5 +74,45 @@ export function createRecoveryMailer(
         disableUrlAccess: true,
       });
     },
+    async sendVerification({ email, token, language }) {
+      const link = new URL('/verificar-correo', origin);
+      link.hash = new URLSearchParams({ token, lang: language }).toString();
+      const copy =
+        {
+          es: [
+            'Confirma tu correo de OnlyFachos',
+            'Confirma tu correo electrónico',
+            'Recibimos tu solicitud para crear una cuenta. Abre este enlace para confirmar tu correo y activar el acceso:',
+            'El enlace vence en 24 horas y solo se puede usar una vez.',
+            'Si no lo solicitaste, ignora este correo. No se ha creado ningún acceso.',
+          ],
+          en: [
+            'Confirm your OnlyFachos email',
+            'Confirm your email address',
+            'We received a request to create an account. Open this link to confirm your email and activate access:',
+            'This link expires in 24 hours and can only be used once.',
+            'If you did not request this, ignore this email. No access was created.',
+          ],
+          de: [
+            'Bestätige deine OnlyFachos-E-Mail',
+            'Bestätige deine E-Mail-Adresse',
+            'Wir haben eine Anfrage zur Erstellung eines Kontos erhalten. Öffne diesen Link, um deine E-Mail zu bestätigen und den Zugang zu aktivieren:',
+            'Dieser Link läuft in 24 Stunden ab und kann nur einmal verwendet werden.',
+            'Falls du dies nicht angefordert hast, ignoriere diese E-Mail. Es wurde kein Zugang erstellt.',
+          ],
+        }[language] || null;
+      if (!copy) throw new Error('Unsupported verification language');
+      const [subject, heading, intro, expiry, ignore] = copy;
+      const safeLink = link.href.replaceAll('&', '&amp;');
+      return transport.sendMail({
+        from: { name: 'OnlyFachos', address: env.MAIL_FROM },
+        to: email,
+        subject,
+        text: `OnlyFachos\n\n${heading}\n\n${intro}\n${link.href}\n\n${expiry}\n\n${ignore}`,
+        html: `<html lang="${language}"><body style="margin:0;background:#f2efe6;color:#151515;font:16px Arial,sans-serif"><main style="max-width:520px;margin:32px auto;padding:28px;background:white;border-radius:20px"><b style="background:#ffdb00;padding:8px">ONLYFACHOS</b><h1 style="font-size:26px;margin-top:32px">${heading}</h1><p>${intro}</p><p style="margin:28px 0"><a href="${safeLink}" style="display:inline-block;padding:16px;background:#ffdb00;color:#111;border-radius:10px;text-decoration:none;font-weight:bold">${heading}</a></p><p>${expiry}</p><p style="color:#555">${ignore}</p><p style="font-size:12px;word-break:break-all">${safeLink}</p></main></body></html>`,
+        disableFileAccess: true,
+        disableUrlAccess: true,
+      });
+    },
   };
 }

@@ -124,10 +124,12 @@ export const DEMO_PROFILES = [
 ];
 
 export function openDatabase(filename = process.env.DATABASE_PATH || './data/rigthnder.sqlite') {
-  if (filename !== ':memory:') mkdirSync(dirname(resolve(filename)), { recursive: true, mode: 0o700 });
+  if (filename !== ':memory:')
+    mkdirSync(dirname(resolve(filename)), { recursive: true, mode: 0o700 });
   const db = new DatabaseSync(filename);
-  if(filename !== ':memory:' && process.platform !== 'win32') {
-    for(const path of [filename,filename+'-wal',filename+'-shm']) if(existsSync(path)) chmodSync(path,0o600);
+  if (filename !== ':memory:' && process.platform !== 'win32') {
+    for (const path of [filename, filename + '-wal', filename + '-shm'])
+      if (existsSync(path)) chmodSync(path, 0o600);
   }
   db.exec(`
     PRAGMA foreign_keys = ON;
@@ -201,11 +203,18 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
     CREATE TABLE IF NOT EXISTS oauth_link_tickets (ticket_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, session_hash TEXT NOT NULL, native INTEGER NOT NULL, challenge TEXT, expires_at INTEGER NOT NULL);
   `);
   // Migración aditiva: conserva cuentas, conversaciones y mensajes de la versión anterior.
+  let verificationGateAdded = false;
   for (const [table, column, definition] of [
     ['users', 'community_json', "TEXT NOT NULL DEFAULT '{}'"],
     ['users', 'last_seen', 'INTEGER NOT NULL DEFAULT 0'],
     ['messages', 'kind', "TEXT NOT NULL DEFAULT 'text'"],
     ['users', 'settings_json', "TEXT NOT NULL DEFAULT '{}'"],
+    ['users', 'moderation_role', "TEXT NOT NULL DEFAULT 'user'"],
+    ['users', 'moderation_status', "TEXT NOT NULL DEFAULT 'active'"],
+    ['users', 'moderation_until', 'INTEGER'],
+    ['users', 'moderation_note', "TEXT NOT NULL DEFAULT ''"],
+    ['users', 'email_verified_at', 'INTEGER'],
+    ['users', 'email_verification_required', 'INTEGER NOT NULL DEFAULT 0'],
     ['reports', 'details', "TEXT NOT NULL DEFAULT ''"],
     ['oauth_states', 'remember_me', 'INTEGER NOT NULL DEFAULT 1'],
     ['oauth_states', 'link_user_id', 'TEXT'],
@@ -216,10 +225,22 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
         .prepare(`PRAGMA table_info(${table})`)
         .all()
         .some((c) => c.name === column)
-    )
+    ) {
       db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+      if (table === 'users' && column === 'email_verification_required')
+        verificationGateAdded = true;
+    }
   }
   db.exec(`
+    CREATE TABLE IF NOT EXISTS email_verifications (
+      token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      expires_at INTEGER NOT NULL, created_at INTEGER NOT NULL, consumed_at INTEGER
+    );
+    CREATE INDEX IF NOT EXISTS email_verifications_user ON email_verifications(user_id);
+    CREATE INDEX IF NOT EXISTS email_verifications_expiry ON email_verifications(expires_at);
+    CREATE TABLE IF NOT EXISTS email_verification_requests (
+      email_hash TEXT PRIMARY KEY, window_start INTEGER NOT NULL, last_sent_at INTEGER NOT NULL, count INTEGER NOT NULL
+    );
     CREATE TABLE IF NOT EXISTS date_invitations (
       id TEXT PRIMARY KEY, conversation_id TEXT NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
       sender_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -255,11 +276,30 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
       created_at INTEGER NOT NULL
     );
     CREATE UNIQUE INDEX IF NOT EXISTS one_pending_proposal ON date_proposals(conversation_id) WHERE status='pending';
+    CREATE TABLE IF NOT EXISTS moderation_audit (
+      id TEXT PRIMARY KEY,
+      actor_user_id TEXT NOT NULL,
+      target_user_id TEXT NOT NULL,
+      report_id TEXT NOT NULL DEFAULT '',
+      action TEXT NOT NULL,
+      from_status TEXT NOT NULL DEFAULT '',
+      to_status TEXT NOT NULL DEFAULT '',
+      reason TEXT NOT NULL,
+      metadata_json TEXT NOT NULL DEFAULT '{}',
+      created_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS users_suspension_expiry ON users(moderation_status,moderation_until);
+    CREATE INDEX IF NOT EXISTS reports_status_created ON reports(status,created_at);
+    CREATE INDEX IF NOT EXISTS moderation_audit_target_time ON moderation_audit(target_user_id,created_at);
+    CREATE INDEX IF NOT EXISTS moderation_audit_created ON moderation_audit(created_at);
     CREATE TABLE IF NOT EXISTS beta_feedback (
       id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       kind TEXT NOT NULL, text TEXT NOT NULL, created_at INTEGER NOT NULL
     );
   `);
+  if (verificationGateAdded)
+    db.exec(`UPDATE users SET email_verification_required=1
+      WHERE EXISTS (SELECT 1 FROM email_verifications v WHERE v.user_id=users.id)`);
   const insert = db.prepare(`INSERT OR IGNORE INTO users
     (id,name,birthdate,gender,city,occupation,photo,bio,values_json,interests_json,prompt,answer,intention,looking_for,demo,seed,consent_at,created_at)
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,1,?,?)`);
@@ -401,6 +441,8 @@ export function ownProfile(user) {
     ...publicProfile(user, true),
     settings: settingsOf(user),
     googleLinked: !!user.google_sub,
+    passwordSet: !!user.password,
+    emailVerified: !!user.email_verified_at,
   };
 }
 export function publicProfile(user, own = false) {

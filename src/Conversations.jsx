@@ -891,7 +891,7 @@ export default function Conversations({
                             <div className="invitation-actions">
                               <button onClick={() => setDialog('plan')}>
                                 <Calendar size={15} />
-                                {t(' Elegir día y lugar')}
+                                {d.day && d.place ? t('Cambiar') : t(' Elegir día y lugar')}
                               </button>
                               <button
                                 onClick={() => setDialog({ mode: 'celebrate', invitationId: d.id })}
