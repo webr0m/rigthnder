@@ -25,11 +25,23 @@ self.addEventListener('notificationclick', (event) => {
       const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
       for (const client of windows)
         if (new URL(client.url).origin === self.location.origin) {
+          const url = new URL(client.url);
+          // The promotional one-page site has no app message listener. Open
+          // the application before focusing it instead of silently dropping
+          // notification clicks on a landing-page tab.
+          if (
+            !/^\/app\/?$/.test(url.pathname) &&
+            !url.searchParams.has('google') &&
+            !url.searchParams.has('open')
+          ) {
+            if (/^\/demo\/?$/.test(url.pathname)) continue;
+            await client.navigate('/app?open=chats');
+          }
           await client.focus();
           client.postMessage({ type: 'onlyfachos:open-chats' });
           return;
         }
-      await self.clients.openWindow('/?open=chats');
+      await self.clients.openWindow('/app?open=chats');
     })(),
   );
 });

@@ -12,6 +12,7 @@ Versión preparada: `1.0.0-beta.1.11`, Android `10015`. Revisión del árbol loc
 - **Moderación:** entradas inválidas devuelven 400, un moderador no sanciona a sus pares ni administradores, y las suspensiones vencen sin exigir que la persona afectada vuelva a iniciar sesión. Los perfiles y chats restringidos quedan fuera de los listados; no se encolan avisos de remitentes restringidos. Una restricción invalida el acceso local, sin confundirla con un error de permisos normal.
 - **Panel:** errores de carga visibles con reintento, paginación de denuncias y descarte de respuestas antiguas al cambiar filtros o selección. No se asignaron roles a cuentas reales.
 - **Privacidad:** al eliminar una cuenta se anonimizan sus referencias, notas y metadatos del historial administrativo conservado.
+- **Push web:** tocar una notificación desde una pestaña de la portada ahora abre la app y los chats; la portada no tenía el receptor de mensajes de la app. Se conserva una app ya abierta y se evita reutilizar la demo.
 - **Citas:** una propuesta que ya venció no puede confirmarse; puede rechazarse. Se conserva la sincronización entre invitación y propuesta confirmada.
 
 ## Validación
