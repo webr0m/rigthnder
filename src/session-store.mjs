@@ -8,6 +8,19 @@ export function createSessionStore({
 } = {}) {
   let token = '';
   let pending = Promise.resolve();
+  let writes = Promise.resolve();
+  const mutate = (operation) => {
+    // Keep the underlying native writes ordered even after the UI deadline.
+    // A late save must not overwrite a later login or undo a queued logout.
+    const work = writes.catch(() => {}).then(operation);
+    writes = work;
+    return withDeadline(
+      work,
+      timeoutMs,
+      'No pudimos actualizar el acceso guardado de este dispositivo. Inténtalo otra vez.',
+      'STORAGE_TIMEOUT',
+    );
+  };
   const enqueue = (operation) => {
     const result = pending.catch(() => {}).then(operation);
     pending = result;
@@ -24,6 +37,12 @@ export function createSessionStore({
       enqueue(async () => {
         if (!native) return;
         token = '';
+        await withDeadline(
+          writes.catch(() => {}),
+          timeoutMs,
+          'No pudimos leer el acceso guardado. Tus datos siguen guardados; vuelve a intentarlo.',
+          'STORAGE_TIMEOUT',
+        );
         const saved = await withDeadline(
           storage.get(),
           timeoutMs,
@@ -31,15 +50,15 @@ export function createSessionStore({
           'STORAGE_TIMEOUT',
         );
         if (valid(saved)) token = saved.token;
-        else if (saved !== null) await storage.remove();
+        else if (saved !== null) await mutate(() => storage.remove());
       }),
     save: (value, { rememberMe = false, expiresAt } = {}) =>
       enqueue(async () => {
         if (!native) return;
         if (rememberMe) {
           if (!valid({ token: value, expiresAt })) throw Error('Invalid saved session');
-          await storage.set({ token: value, expiresAt });
-        } else await storage.remove();
+          await mutate(() => storage.set({ token: value, expiresAt }));
+        } else await mutate(() => storage.remove());
         token = value || '';
       }),
     clear: (expectedToken) =>
@@ -47,7 +66,7 @@ export function createSessionStore({
         // A late response from an old session must not erase a newer sign-in.
         if (expectedToken !== undefined && token !== expectedToken) return;
         token = '';
-        if (native) await storage.remove();
+        if (native) await mutate(() => storage.remove());
       }),
   };
 }

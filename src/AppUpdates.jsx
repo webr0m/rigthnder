@@ -58,6 +58,7 @@ export default function AppUpdates() {
         }
       } catch (e) {
         if (alive && manual) {
+          setInfo(null);
           setError(e.message);
           setHidden(false);
         }

@@ -8,8 +8,8 @@ android {
         applicationId "com.rigthnder.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode project.hasProperty('onlyfachosVersionCode') ? Integer.parseInt(project.property('onlyfachosVersionCode').toString()) : 10017
-        versionName "1.0.0-beta.1.13"
+        versionCode project.hasProperty('onlyfachosVersionCode') ? Integer.parseInt(project.property('onlyfachosVersionCode').toString()) : 10018
+        versionName "1.0.0-beta.1.14"
         buildConfigField "boolean", "ONLYFACHOS_NATIVE_QA", project.hasProperty('onlyfachosTestSigning') ? "true" : "false"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {

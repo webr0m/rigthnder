@@ -35,6 +35,47 @@ import { openDatabase } from '../server/db.mjs';
 import { createApp } from '../server/app.mjs';
 import { createSessionStore } from '../src/session-store.mjs';
 
+test('native writes and expiry cleanup time out; late writes cannot replace a newer saved session', async () => {
+  let finishFirst,
+    saved,
+    calls = 0;
+  const store = createSessionStore({
+    native: true,
+    timeoutMs: 15,
+    storage: {
+      get: async () => saved,
+      set: async (value) => {
+        if (++calls === 1)
+          await new Promise((resolve) => {
+            finishFirst = resolve;
+          });
+        saved = value;
+      },
+      remove: async () => {
+        saved = null;
+      },
+    },
+  });
+  const policy = { rememberMe: true, expiresAt: Date.now() + 60000 };
+  await assert.rejects(store.save('a'.repeat(64), policy), { code: 'STORAGE_TIMEOUT' });
+  assert.equal(store.getToken(), '');
+  const second = store.save('b'.repeat(64), policy);
+  finishFirst();
+  await second;
+  assert.equal(saved.token, 'b'.repeat(64));
+  assert.equal(store.getToken(), saved.token);
+  const cleanup = createSessionStore({
+    native: true,
+    timeoutMs: 10,
+    storage: {
+      get: async () => ({ token: 'expired', expiresAt: 0 }),
+      remove: () => new Promise(() => {}),
+    },
+  });
+  await assert.rejects(cleanup.restore(), { code: 'STORAGE_TIMEOUT' });
+  assert.equal(cleanup.getToken(), '');
+});
+
 test('remembered login survives server restart; temporary login, expiry and revocation', async () => {
   const directory = mkdtempSync(join(tmpdir(), 'onlyfachos-session-'));
   let db, server, base;

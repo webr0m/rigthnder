@@ -22,6 +22,7 @@ import { Button, Modal, Photo } from './Shared';
 import { Chips, compressPhoto } from './Onboarding';
 import { DatePlanner, ConfirmedPlan } from './DatePlanner';
 import { formatPlanDate } from './plan-date.mjs';
+import { sendChatAttachment, acquireChatMicrophone } from './chat-media.mjs';
 const PLANS = ['Un café', 'Una cena', 'Un asado', 'Un paseo', 'Sorpréndeme'];
 const STICKERS = [
   'BASADO',
@@ -261,22 +262,40 @@ export default function Conversations({
     [text, setText] = useState(''),
     [sending, setSending] = useState(false),
     [stickers, setStickers] = useState(false),
-    [dialog, setDialog] = useState(null),
+    [dialog, setDialogState] = useState(null),
     [recording, setRecording] = useState(false),
     [listMode, setListMode] = useState('all'),
     [chatSearch, setChatSearch] = useState('');
   const end = useRef(),
     generation = useRef(0),
+    loadRevision = useRef(0),
+    appliedLoad = useRef(0),
     recorder = useRef(),
     stream = useRef(),
     recordTimer = useRef(),
-    audioChunks = useRef([]),
+    recordPending = useRef(false),
+    dialogEpoch = useRef(0),
     activeRef = useRef(active);
   activeRef.current = active;
+  function setDialog(value) {
+    dialogEpoch.current++;
+    setDialogState(value);
+  }
+  const renderedDialog = dialogEpoch.current;
+  const closeDialog = () => {
+    if (renderedDialog === dialogEpoch.current && active === activeRef.current) setDialog(null);
+  };
   async function load(id = active) {
     if (!id) return;
+    const started = generation.current,
+      revision = ++loadRevision.current;
     const result = await api('/conversations/' + id);
-    if (id === activeRef.current) {
+    if (
+      id === activeRef.current &&
+      started === generation.current &&
+      revision > appliedLoad.current
+    ) {
+      appliedLoad.current = revision;
       setDetail(result);
       const through = Math.max(
         0,
@@ -286,8 +305,8 @@ export default function Conversations({
         await api('/conversations/' + id + '/read', { method: 'POST', body: { through } });
         if (result.unread) await refresh();
       }
+      return result;
     }
-    return result;
   }
   useEffect(() => {
     const v = ++generation.current;
@@ -301,9 +320,6 @@ export default function Conversations({
     setLoading(true);
     const fetchDetail = () =>
       load(active)
-        .then((r) => {
-          if (v === generation.current) setDetail(r);
-        })
         .catch((e) => {
           if (v === generation.current) setError(e.message);
         })
@@ -312,7 +328,10 @@ export default function Conversations({
         });
     fetchDetail();
     const t = setInterval(fetchDetail, 4000);
-    return () => clearInterval(t);
+    return () => {
+      generation.current++;
+      clearInterval(t);
+    };
   }, [active]);
   useEffect(() => {
     end.current?.scrollIntoView({ block: 'nearest' });
@@ -320,6 +339,7 @@ export default function Conversations({
   useEffect(
     () => () => {
       clearTimeout(recordTimer.current);
+      recordPending.current = false;
       if (recorder.current?.state === 'recording') {
         recorder.current.onstop = null;
         recorder.current.stop();
@@ -358,10 +378,13 @@ export default function Conversations({
   async function respond(invite, accept, demo = false) {
     if (sending) return;
     setSending(true);
+    const id = active,
+      started = generation.current;
     try {
       await run('/invitations/' + invite.id + (demo ? '/demo-answer' : '/answer'), 'POST', {
         accept,
       });
+      if (id !== activeRef.current || started !== generation.current) return;
       if (accept) setDialog({ mode: 'celebrate', invitationId: invite.id });
       else notify('Invitación cerrada. Pueden seguir conversando.');
     } catch (e) {
@@ -373,9 +396,12 @@ export default function Conversations({
   async function acceptProposal(proposal, demo = false) {
     if (sending) return;
     setSending(true);
+    const id = active,
+      started = generation.current;
     try {
       await run('/proposals/' + proposal.id + '/answer', 'POST', { accept: true, demo });
-      setDialog({ mode: 'celebrate', proposalId: proposal.id });
+      if (id === activeRef.current && started === generation.current)
+        setDialog({ mode: 'celebrate', proposalId: proposal.id });
     } catch (e) {
       notify(e.message, true);
     } finally {
@@ -383,49 +409,70 @@ export default function Conversations({
     }
   }
   async function upload(e) {
-    const file = e.target.files[0];
+    const input = e.target,
+      file = input.files[0],
+      id = active,
+      started = generation.current;
     if (!file) return;
     try {
-      await send('image', await compressPhoto(file));
+      await sendChatAttachment(
+        () => compressPhoto(file),
+        () => id === activeRef.current && started === generation.current,
+        (content) => send('image', content),
+      );
     } catch (e) {
       notify(e.message, true);
     }
-    e.target.value = '';
+    input.value = '';
   }
   async function record() {
-    if (recording) {
+    if (recording || recorder.current?.state === 'recording') {
       recorder.current?.stop();
       return;
     }
+    if (recordPending.current) return;
     if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder)
       return notify('Este navegador no admite grabación de voz. Puedes seguir escribiendo.', true);
-    const id = active;
+    const id = active,
+      started = generation.current;
+    const current = () => id === activeRef.current && started === generation.current;
+    recordPending.current = true;
+    let microphone;
     try {
-      stream.current = await navigator.mediaDevices.getUserMedia({ audio: true });
-      if (id !== activeRef.current) {
-        stream.current.getTracks().forEach((t) => t.stop());
-        return;
-      }
+      microphone = await acquireChatMicrophone(
+        () => navigator.mediaDevices.getUserMedia({ audio: true }),
+        current,
+      );
+      if (!microphone) return;
+      stream.current = microphone;
       const type = ['audio/webm', 'audio/mp4', 'audio/ogg'].find((t) =>
         MediaRecorder.isTypeSupported(t),
       );
       if (!type) {
-        stream.current.getTracks().forEach((t) => t.stop());
+        microphone.getTracks().forEach((t) => t.stop());
         return notify('No hay un formato de audio compatible.', true);
       }
-      const r = new MediaRecorder(stream.current, { mimeType: type, audioBitsPerSecond: 64000 });
+      const r = new MediaRecorder(microphone, { mimeType: type, audioBitsPerSecond: 64000 });
       recorder.current = r;
-      audioChunks.current = [];
+      const chunks = [];
       r.ondataavailable = (e) => {
-        if (e.data.size) audioChunks.current.push(e.data);
+        if (e.data.size) chunks.push(e.data);
       };
       r.onstop = async () => {
         clearTimeout(recordTimer.current);
         setRecording(false);
-        stream.current?.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(audioChunks.current, { type });
+        microphone.getTracks().forEach((t) => t.stop());
+        const blob = new Blob(chunks, { type });
         if (blob.size > 1_500_000) return notify('El audio es demasiado largo.', true);
-        if (activeRef.current === id) await send('audio', await readData(blob));
+        try {
+          await sendChatAttachment(
+            () => readData(blob),
+            current,
+            (content) => send('audio', content),
+          );
+        } catch {
+          if (current()) notify('No pudimos grabar el audio.', true);
+        }
       };
       r.start();
       setRecording(true);
@@ -433,12 +480,16 @@ export default function Conversations({
         if (r.state === 'recording') r.stop();
       }, 60000);
     } catch (e) {
+      microphone?.getTracks().forEach((track) => track.stop());
+      if (!current()) return;
       notify(
         e.name === 'NotAllowedError'
           ? 'No se concedió permiso al micrófono. Puedes escribir o enviar fotos.'
           : 'No pudimos grabar el audio.',
         true,
       );
+    } finally {
+      if (current()) recordPending.current = false;
     }
   }
   const peer = detail?.profile || conversations.find((c) => c.id === active)?.profile;
@@ -995,7 +1046,7 @@ export default function Conversations({
         )}
       </section>
       {dialog === 'plan' && detail && (
-        <DatePlanner detail={detail} run={run} onClose={() => setDialog(null)} />
+        <DatePlanner detail={detail} run={run} onClose={closeDialog} />
       )}
       {dialog && dialog !== 'plan' && detail && (
         <DateDialog
@@ -1009,7 +1060,7 @@ export default function Conversations({
           proposalId={dialog.proposalId}
           detail={detail}
           user={user}
-          onClose={() => setDialog(null)}
+          onClose={closeDialog}
           run={run}
         />
       )}
