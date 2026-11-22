@@ -28,6 +28,7 @@ import {
   listenGoogle,
   startAds,
   stopAds,
+  pauseAds,
   privacyAds,
   setScreenCaptureProtection,
   reportStartup,
@@ -557,6 +558,36 @@ export default function App({ demoOnly = false }) {
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   useEffect(() => setDeleteConfirmation(''), [modal]);
   useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('onlyfachos:update-safe', {
+        detail:
+          ready &&
+          !initError &&
+          !wizard &&
+          !modal &&
+          !recovery &&
+          !verificationLink &&
+          !verificationRequired &&
+          !service &&
+          !profileView &&
+          !settingsOpen &&
+          tab !== 'chat',
+      }),
+    );
+  }, [
+    ready,
+    initError,
+    !!wizard,
+    !!modal,
+    !!recovery,
+    !!verificationLink,
+    !!verificationRequired,
+    !!service,
+    !!profileView,
+    settingsOpen,
+    tab,
+  ]);
+  useEffect(() => {
     if (!ready || !verificationLink || verificationLink.status) return;
     let alive = true;
     if (!/^[a-f0-9]{64}$/.test(verificationLink.token)) {
@@ -849,9 +880,12 @@ export default function App({ demoOnly = false }) {
         else fn();
       })
       .catch(() => {});
+    const received = () => refresh().catch(() => {});
+    window.addEventListener('onlyfachos:push-received', received);
     return () => {
       alive = false;
       cleanup?.();
+      window.removeEventListener('onlyfachos:push-received', received);
     };
   }, [user?.id]);
   useEffect(() => {
@@ -864,6 +898,8 @@ export default function App({ demoOnly = false }) {
       !wizard &&
       !modal &&
       !profileView &&
+      !settingsOpen &&
+      !findPerson &&
       !service &&
       !recovery;
     let timer;
@@ -872,8 +908,8 @@ export default function App({ demoOnly = false }) {
       const editing = document.activeElement?.matches(
         'input, textarea, select, [contenteditable="true"]',
       );
-      if (!allowed || document.visibilityState === 'hidden' || editing) stopAds().catch(() => {});
-      else timer = setTimeout(() => startAds({ silent: true }).catch(() => {}), 150);
+      if (!allowed || document.visibilityState === 'hidden' || editing) pauseAds().catch(() => {});
+      else timer = setTimeout(() => startAds({ silent: true }).catch(() => {}), 1500);
     };
     sync();
     window.addEventListener('resize', sync);
@@ -887,9 +923,20 @@ export default function App({ demoOnly = false }) {
       document.removeEventListener('visibilitychange', sync);
       document.removeEventListener('focusin', sync);
       document.removeEventListener('focusout', afterBlur);
-      stopAds().catch(() => {});
+      pauseAds().catch(() => {});
     };
-  }, [ready, user?.id, tab, !!wizard, !!modal, !!profileView, !!service, !!recovery]);
+  }, [
+    ready,
+    user?.id,
+    tab,
+    !!wizard,
+    !!modal,
+    !!profileView,
+    !!service,
+    !!recovery,
+    settingsOpen,
+    !!findPerson,
+  ]);
   useEffect(() => {
     setScreenCaptureProtection(Boolean(user)).catch(() => {});
   }, [user?.id]);
@@ -1058,10 +1105,10 @@ export default function App({ demoOnly = false }) {
       setBusy(false);
     }
   }
-  async function logout() {
+  async function logout(allDevices = false) {
     stopAds().catch(() => {});
     try {
-      await logoutSession();
+      await logoutSession(allDevices === true);
     } catch (error) {
       notify(error.message, true);
       return;

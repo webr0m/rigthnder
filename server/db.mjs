@@ -159,6 +159,11 @@ export function openDatabase(filename = process.env.DATABASE_PATH || './data/rig
       p256dh TEXT NOT NULL DEFAULT '', auth TEXT NOT NULL DEFAULT '', updated_at INTEGER NOT NULL
     );
     CREATE INDEX IF NOT EXISTS push_devices_user ON push_devices(user_id);
+    CREATE TABLE IF NOT EXISTS push_delivery_status (
+      device_id TEXT PRIMARY KEY REFERENCES push_devices(id) ON DELETE CASCADE,
+      accepted_at INTEGER, failed_at INTEGER, error_code TEXT NOT NULL DEFAULT '',
+      test_id TEXT NOT NULL DEFAULT '', test_at INTEGER, received_at INTEGER
+    );
     CREATE TABLE IF NOT EXISTS push_outbox (
       id TEXT PRIMARY KEY, device_id TEXT NOT NULL REFERENCES push_devices(id) ON DELETE CASCADE,
       sender_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

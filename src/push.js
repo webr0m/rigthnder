@@ -61,11 +61,22 @@ export async function pushStatus(userId) {
     available && permission === 'granted' && readMarker() === userId && local
       ? await boundedPush(api('/push/devices/current'))
       : { enabled: false };
-  return { available, enabled: !!(registered.enabled && !denied), denied };
+  return {
+    available,
+    enabled: !!(registered.enabled && !denied),
+    denied,
+    delivery: registered.delivery || null,
+  };
 }
 export async function openPushSettings() {
   if (native && Capacitor.getPlatform() === 'android') await device.openNotificationSettings();
 }
+export const testPush = () => boundedPush(api('/push/test', { method: 'POST', body: {} }));
+const receipt = (data) => {
+  if (typeof data?.testId === 'string')
+    return api('/push/receipts', { method: 'POST', body: { testId: data.testId } }).catch(() => {});
+  return Promise.resolve();
+};
 export async function enablePush(userId) {
   const epoch = userEpoch,
     operation = ++activation;
@@ -163,7 +174,7 @@ export async function forgetPush() {
   nativeToken = undefined;
   if (native) {
     const sdk = (await plugin()).PushNotifications;
-    await sdk.unregister().catch(() => {});
+    await boundedPush(device.clearPushRegistration()).catch(() => {});
     await sdk.removeAllDeliveredNotifications().catch(() => {});
   } else if (supportedWeb()) {
     await (await webSubscription())?.unsubscribe().catch(() => {});
@@ -210,8 +221,19 @@ export async function listenPush(userId, onOpen) {
         });
       } catch {}
     }),
-    sdk.addListener('pushNotificationActionPerformed', () => {
-      if (activeUser === userId && userEpoch === epoch) onOpen();
+    sdk.addListener('pushNotificationActionPerformed', (action) => {
+      if (activeUser === userId && userEpoch === epoch) {
+        receipt(action.notification?.data);
+        onOpen();
+      }
+    }),
+    sdk.addListener('pushNotificationReceived', (notification) => {
+      if (activeUser === userId && userEpoch === epoch) {
+        receipt(notification.data).finally(() => {
+          if (activeUser === userId && userEpoch === epoch)
+            window.dispatchEvent(new CustomEvent('onlyfachos:push-received'));
+        });
+      }
     }),
   ]);
   if (

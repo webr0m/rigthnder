@@ -3068,7 +3068,7 @@
     "de": "Moderation"
   },
   "actualizar": {
-    "en": "Refresh",
+    "en": "Update",
     "de": "Aktualisieren"
   },
   "denuncias": {
@@ -3218,5 +3218,117 @@
   "no pudimos conectar con onlyfachos.": {
     "en": "We could not connect to OnlyFachos.",
     "de": "Die Verbindung zu OnlyFachos ist fehlgeschlagen."
+  },
+  "actualización de la app": {
+    "en": "App update",
+    "de": "App-Update"
+  },
+  "no se pudo consultar google play.": {
+    "en": "Could not check Google Play.",
+    "de": "Google Play konnte nicht geprüft werden."
+  },
+  "no se pudo instalar la actualización.": {
+    "en": "Could not install the update.",
+    "de": "Das Update konnte nicht installiert werden."
+  },
+  "no se pudieron buscar actualizaciones.": {
+    "en": "Could not check for updates.",
+    "de": "Updates konnten nicht geprüft werden."
+  },
+  "actualización lista": {
+    "en": "Update ready",
+    "de": "Update bereit"
+  },
+  "descargando actualización…": {
+    "en": "Downloading update…",
+    "de": "Update wird heruntergeladen…"
+  },
+  "hay una actualización disponible": {
+    "en": "An update is available",
+    "de": "Ein Update ist verfügbar"
+  },
+  "tu app está actualizada.": {
+    "en": "Your app is up to date.",
+    "de": "Deine App ist aktuell."
+  },
+  "reiniciar e instalar": {
+    "en": "Restart and install",
+    "de": "Neu starten und installieren"
+  },
+  "más tarde": {
+    "en": "Later",
+    "de": "Später"
+  },
+  "buscar actualizaciones": {
+    "en": "Check for updates",
+    "de": "Nach Updates suchen"
+  },
+  "se buscan automáticamente al abrir la app. la descarga no interrumpe tus conversaciones.": {
+    "en": "Checked automatically when you open the app. Downloading does not interrupt your conversations.",
+    "de": "Beim Öffnen wird automatisch nach Updates gesucht. Der Download unterbricht deine Gespräche nicht."
+  },
+  "probar notificaciones": {
+    "en": "Test notifications",
+    "de": "Benachrichtigungen testen"
+  },
+  "enviando prueba…": {
+    "en": "Sending test…",
+    "de": "Test wird gesendet…"
+  },
+  "prueba enviada. debe aparecer una notificación en este teléfono.": {
+    "en": "Test sent. A notification should appear on this phone.",
+    "de": "Test gesendet. Eine Benachrichtigung sollte auf diesem Telefon erscheinen."
+  },
+  "notificación recibida en este dispositivo.": {
+    "en": "Notification received on this device.",
+    "de": "Benachrichtigung auf diesem Gerät empfangen."
+  },
+  "el servidor no pudo entregar el último aviso. vuelve a probar.": {
+    "en": "The server could not deliver the last notification. Try again.",
+    "de": "Der Server konnte die letzte Benachrichtigung nicht zustellen. Versuche es erneut."
+  },
+  "activa las notificaciones en este dispositivo primero.": {
+    "en": "Enable notifications on this device first.",
+    "de": "Aktiviere zuerst Benachrichtigungen auf diesem Gerät."
+  },
+  "espera un minuto antes de repetir la prueba.": {
+    "en": "Wait one minute before testing again.",
+    "de": "Warte eine Minute, bevor du erneut testest."
+  },
+  "no se pudo enviar la prueba. vuelve a registrar este dispositivo o contacta con soporte.": {
+    "en": "Could not send the test. Register this device again or contact support.",
+    "de": "Der Test konnte nicht gesendet werden. Registriere dieses Gerät erneut oder kontaktiere den Support."
+  },
+  "no hay una actualización disponible para esta cuenta de google play.": {
+    "en": "No update is available for this Google Play account.",
+    "de": "Für dieses Google-Play-Konto ist kein Update verfügbar."
+  },
+  "no se pudo iniciar la actualización.": {
+    "en": "Could not start the update.",
+    "de": "Das Update konnte nicht gestartet werden."
+  },
+  "la actualización todavía no terminó de descargarse.": {
+    "en": "The update has not finished downloading yet.",
+    "de": "Der Download des Updates ist noch nicht abgeschlossen."
+  },
+  "la actualización ya está en curso.": {
+    "en": "The update is already in progress.",
+    "de": "Das Update läuft bereits."
+  },
+  "cerrar sesión en este dispositivo": {
+    "en": "Sign out on this device",
+    "de": "Auf diesem Gerät abmelden"
+  },
+  "cerrar todas las sesiones": {
+    "en": "Sign out on all devices",
+    "de": "Auf allen Geräten abmelden"
+  },
+  "¿quieres cerrar la sesión en todos tus dispositivos?": {
+    "en": "Sign out on all your devices?",
+    "de": "Möchtest du dich auf allen Geräten abmelden?"
+  },
+  "no pudimos cargar la app. tu sesión y tus datos siguen guardados.": {
+    "en": "We could not load the app. Your session and data are still saved.",
+    "de": "Die App konnte nicht geladen werden. Deine Sitzung und deine Daten bleiben gespeichert."
   }
 }

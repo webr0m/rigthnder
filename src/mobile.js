@@ -130,6 +130,9 @@ export async function startAds({ silent = false } = {}) {
 export async function stopAds() {
   if (adsAvailable()) return ads.stop();
 }
+export async function pauseAds() {
+  if (adsAvailable()) return ads.pause();
+}
 export async function setScreenCaptureProtection(enabled) {
   if (Capacitor.getPlatform() !== 'android') return;
   await device.setScreenCaptureProtection({ enabled: Boolean(enabled) });

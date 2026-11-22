@@ -18,7 +18,9 @@ import {
 } from 'lucide-react';
 import { api } from './api';
 import { adsAvailable, linkGoogle } from './mobile';
-import { pushStatus, enablePush, disablePush, openPushSettings } from './push';
+import { pushStatus, enablePush, disablePush, openPushSettings, testPush } from './push';
+import { updatesAvailable } from './app-updates.mjs';
+import { App } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Button, Modal, Photo, locationLabel } from './Shared';
 
@@ -322,18 +324,41 @@ export function BetaSettings({
   const [push, setPush] = useState({ available: false, enabled: false });
   const [pushBusy, setPushBusy] = useState(false),
     [pushError, setPushError] = useState('');
+  const [testBusy, setTestBusy] = useState(false);
   useEffect(() => {
     let alive = true;
-    if (!user.demo)
-      pushStatus(user.id)
-        .then((value) => {
-          if (alive) setPush(value);
+    const refresh = () => {
+      if (!user.demo)
+        return pushStatus(user.id)
+          .then((value) => {
+            if (alive) setPush(value);
+          })
+          .catch((error) => {
+            if (alive) setPushError(error.message);
+          });
+    };
+    refresh();
+    const received = () => refresh();
+    const visible = () => {
+      if (document.visibilityState === 'visible') refresh();
+    };
+    window.addEventListener('onlyfachos:push-received', received);
+    document.addEventListener('visibilitychange', visible);
+    let handle;
+    if (Capacitor.isNativePlatform())
+      App.addListener('appStateChange', ({ isActive }) => {
+        if (isActive) refresh();
+      })
+        .then((h) => {
+          if (alive) handle = h;
+          else h.remove();
         })
-        .catch((error) => {
-          if (alive) setPushError(error.message);
-        });
+        .catch(() => {});
     return () => {
       alive = false;
+      handle?.remove();
+      window.removeEventListener('onlyfachos:push-received', received);
+      document.removeEventListener('visibilitychange', visible);
     };
   }, [user.id]);
   async function unblock(id) {
@@ -538,7 +563,10 @@ export function BetaSettings({
               setPushError('');
               try {
                 if (push.enabled) await disablePush();
-                else await enablePush(user.id);
+                else {
+                  await enablePush(user.id);
+                  if (Capacitor.getPlatform() === 'android') await testPush();
+                }
                 const current = await pushStatus(user.id);
                 setPush(current);
                 if (!push.enabled && !current.enabled)
@@ -556,7 +584,6 @@ export function BetaSettings({
         {[
           ['messages', 'Mensajes nuevos'],
           ['dates', 'Avisos de cita'],
-          ['news', 'Novedades de OnlyFachos'],
         ].map(([key, label]) => (
           <Toggle
             key={key}
@@ -566,6 +593,38 @@ export function BetaSettings({
           />
         ))}
       </div>
+      {!user.demo && push.enabled && (
+        <button
+          className="button secondary"
+          disabled={pushBusy || testBusy}
+          onClick={async () => {
+            setTestBusy(true);
+            setPushError('');
+            try {
+              await testPush();
+              setPush(await pushStatus(user.id));
+              notify('Prueba enviada. Debe aparecer una notificación en este teléfono.');
+            } catch (e) {
+              setPushError(e.message);
+            } finally {
+              setTestBusy(false);
+            }
+          }}
+        >
+          {t(testBusy ? 'Enviando prueba…' : 'Probar notificaciones')}
+        </button>
+      )}
+      {push.delivery?.testAt && (
+        <p className="hint" role="status">
+          {t(
+            push.delivery.receivedAt >= push.delivery.testAt
+              ? 'Notificación recibida en este dispositivo.'
+              : push.delivery.errorCode
+                ? 'El servidor no pudo entregar el último aviso. Vuelve a probar.'
+                : 'Prueba enviada. Debe aparecer una notificación en este teléfono.',
+          )}
+        </p>
+      )}
       {pushBusy && (
         <p className="hint" role="status">
           {t('Completa el permiso del sistema. Estamos registrando este dispositivo…')}
@@ -637,14 +696,32 @@ export function BetaSettings({
       )}
       <h4>{t('AYUDA Y LEGAL')}</h4>
       <div className="beta-group">
+        {updatesAvailable() && (
+          <Row
+            title={t('Buscar actualizaciones')}
+            hint={t(
+              'Se buscan automáticamente al abrir la app. La descarga no interrumpe tus conversaciones.',
+            )}
+            onClick={() => window.dispatchEvent(new CustomEvent('onlyfachos:check-update'))}
+          />
+        )}
         <Row title={t('Normas y condiciones')} onClick={() => onLegal('terms')} />
         <Row title={t('Política de privacidad')} onClick={() => onLegal('privacy')} />
         <Row title={t('Contactar soporte')} onClick={() => onService('support')} />
         <Row title={t('Descargar mis datos')} onClick={exportData} />
       </div>
       <Button className="secondary" onClick={logout}>
-        {t('Cerrar sesión')}
+        {t('Cerrar sesión en este dispositivo')}
       </Button>
+      <button
+        className="text-link"
+        onClick={() => {
+          if (window.confirm(t('¿Quieres cerrar la sesión en todos tus dispositivos?')))
+            logout(true);
+        }}
+      >
+        {t('Cerrar todas las sesiones')}
+      </button>
       <button className="text-link danger-text" onClick={onDelete}>
         {t('Eliminar mi cuenta')}
       </button>

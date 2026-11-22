@@ -51,6 +51,10 @@ export const api = createApiClient({
     if (typeof window !== 'undefined') window.dispatchEvent(new Event('onlyfachos:auth-expired'));
   },
 });
-export async function logoutSession() {
-  await revokeSession(api, () => setToken(''), t);
+export async function logoutSession(allDevices = false) {
+  await revokeSession(
+    (path, options) => api(allDevices ? '/auth/logout-all' : path, options),
+    () => setToken(''),
+    t,
+  );
 }

@@ -58,7 +58,10 @@ test('native cold start, Google proof/draft cleanup and push do not assimilate C
       unregister: async () => {},
       removeAllDeliveredNotifications: async () => {},
     }),
-    device: { notificationStatus: async () => ({ enabled: true, channelBlocked: false }) },
+    device: {
+      notificationStatus: async () => ({ enabled: true, channelBlocked: false }),
+      clearPushRegistration: async () => {},
+    },
     app: { addListener: async () => ({ remove: async () => {} }), getLaunchUrl: async () => null },
     browser: {
       open: async ({ url }) => {

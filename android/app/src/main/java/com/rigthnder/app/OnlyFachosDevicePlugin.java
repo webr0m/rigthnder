@@ -14,9 +14,24 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 @CapacitorPlugin(name = "OnlyFachosDevice")
 public class OnlyFachosDevicePlugin extends Plugin {
+    @PluginMethod public void clearPushRegistration(PluginCall call) {
+        FirebaseMessaging messaging = FirebaseMessaging.getInstance();
+        messaging.setAutoInitEnabled(false);
+        messaging.deleteToken().addOnSuccessListener(result -> call.resolve())
+            .addOnFailureListener(error -> call.reject("No se pudo limpiar el registro de notificaciones."));
+    }
+    @Override public void load() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager manager = getContext().getSystemService(NotificationManager.class);
+            NotificationChannel channel = new NotificationChannel("onlyfachos-activity", "OnlyFachos", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setLockscreenVisibility(android.app.Notification.VISIBILITY_PRIVATE);
+            manager.createNotificationChannel(channel);
+        }
+    }
     // Fixed, non-personal milestones let release tests detect a live process
     // whose WebView never reaches a usable screen. No account data is logged.
     @PluginMethod

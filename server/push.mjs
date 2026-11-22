@@ -3,6 +3,27 @@ import { randomUUID, createSign } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { z } from 'zod';
 import { settingsOf } from './db.mjs';
+import { rateLimit } from 'express-rate-limit';
+
+export function fcmFailure(detail, status) {
+  const provider = detail?.error?.details?.find((x) => typeof x?.errorCode === 'string')?.errorCode;
+  const code =
+    provider === 'UNREGISTERED'
+      ? 'DEVICE_EXPIRED'
+      : status === 401
+        ? 'FCM_AUTHENTICATION'
+        : status === 403
+          ? 'FCM_PERMISSION'
+          : status === 404
+            ? 'FCM_PROJECT'
+            : status === 429
+              ? 'FCM_QUOTA'
+              : 'FCM_UNAVAILABLE';
+  return Object.assign(Error('FCM delivery failed'), {
+    code,
+    statusCode: code === 'DEVICE_EXPIRED' ? 410 : status === 404 ? 503 : status,
+  });
+}
 
 export function validPushEndpoint(value) {
   try {
@@ -26,9 +47,21 @@ export function validPushEndpoint(value) {
 }
 export function pushPayload(kind, language = 'es') {
   const messages = {
-    es: { messages: 'Tienes un mensaje nuevo.', dates: 'Hay novedades sobre una cita.' },
-    en: { messages: 'You have a new message.', dates: 'There is an update about a date.' },
-    de: { messages: 'Du hast eine neue Nachricht.', dates: 'Es gibt Neuigkeiten zu einem Date.' },
+    es: {
+      messages: 'Tienes un mensaje nuevo.',
+      dates: 'Hay novedades sobre una cita.',
+      test: 'Las notificaciones de OnlyFachos están funcionando.',
+    },
+    en: {
+      messages: 'You have a new message.',
+      dates: 'There is an update about a date.',
+      test: 'OnlyFachos notifications are working.',
+    },
+    de: {
+      messages: 'Du hast eine neue Nachricht.',
+      dates: 'Es gibt Neuigkeiten zu einem Date.',
+      test: 'OnlyFachos-Benachrichtigungen funktionieren.',
+    },
   };
   return {
     title: 'OnlyFachos',
@@ -38,6 +71,21 @@ export function pushPayload(kind, language = 'es') {
   };
 }
 export function createPushService(db, config = {}) {
+  const send = config.fetch || globalThis.fetch;
+  function delivery(deviceId, error) {
+    if (!db.prepare('SELECT 1 FROM push_devices WHERE id=?').get(deviceId)) return;
+    db.prepare(`INSERT OR IGNORE INTO push_delivery_status(device_id) VALUES (?)`).run(deviceId);
+    if (error)
+      db.prepare('UPDATE push_delivery_status SET failed_at=?,error_code=? WHERE device_id=?').run(
+        Date.now(),
+        error.code || 'PUSH_UNAVAILABLE',
+        deviceId,
+      );
+    else
+      db.prepare(
+        "UPDATE push_delivery_status SET accepted_at=?,error_code='' WHERE device_id=?",
+      ).run(Date.now(), deviceId);
+  }
   const vapid = config.vapid || {
     publicKey: process.env.WEB_PUSH_PUBLIC_KEY,
     privateKey: process.env.WEB_PUSH_PRIVATE_KEY,
@@ -84,16 +132,17 @@ export function createPushService(db, config = {}) {
       const signature = createSign('RSA-SHA256')
         .update(unsigned)
         .sign(fcm.private_key, 'base64url');
-      const response = await fetch('https://oauth2.googleapis.com/token', {
+      const response = await send('https://oauth2.googleapis.com/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
           assertion: unsigned + '.' + signature,
         }),
-        signal: AbortSignal.timeout(10_000),
+        signal: AbortSignal.timeout(5_000),
       });
-      if (!response.ok) throw Error('FCM authentication failed');
+      if (!response.ok)
+        throw Object.assign(Error('FCM authentication failed'), { code: 'FCM_AUTHENTICATION' });
       const result = await response.json();
       if (!result.access_token) throw Error('FCM authentication failed');
       accessToken = result.access_token;
@@ -107,7 +156,7 @@ export function createPushService(db, config = {}) {
   const sendAndroid =
     config.sendAndroid ||
     (async (token, payload) => {
-      const response = await fetch(
+      const response = await send(
         'https://fcm.googleapis.com/v1/projects/' +
           encodeURIComponent(fcm.project_id) +
           '/messages:send',
@@ -121,24 +170,24 @@ export function createPushService(db, config = {}) {
             message: {
               token,
               notification: { title: payload.title, body: payload.body },
-              data: { open: 'chats' },
+              data: { open: 'chats', ...payload.data },
               android: {
-                priority: 'normal',
+                priority: 'high',
                 ttl: '300s',
                 notification: { channel_id: 'onlyfachos-activity', tag: payload.tag },
               },
             },
           }),
-          signal: AbortSignal.timeout(10_000),
+          signal: AbortSignal.timeout(7_000),
         },
       );
       if (!response.ok) {
         const detail = await response.json().catch(() => ({}));
-        const error = Error('FCM delivery failed');
-        error.statusCode = detail.error?.details?.some((x) => x.errorCode === 'UNREGISTERED')
-          ? 410
-          : response.status;
-        throw error;
+        if (response.status === 401) {
+          accessToken = undefined;
+          tokenUntil = 0;
+        }
+        throw fcmFailure(detail, response.status);
       }
     });
   let running,
@@ -199,9 +248,11 @@ export function createPushService(db, config = {}) {
               payload,
             );
           else await sendAndroid(row.destination, payload);
+          if (!closed) delivery(row.device_id);
           if (!closed) db.prepare('DELETE FROM push_outbox WHERE id=?').run(row.id);
         } catch (error) {
           if (closed) break;
+          delivery(row.device_id, error);
           if ([404, 410].includes(error.statusCode))
             db.prepare('DELETE FROM push_devices WHERE id=?').run(row.device_id);
           else if (row.attempts >= 2) db.prepare('DELETE FROM push_outbox WHERE id=?').run(row.id);
@@ -223,6 +274,34 @@ export function createPushService(db, config = {}) {
       web: webEnabled,
       android: androidEnabled,
       publicKey: webEnabled ? vapid.publicKey : null,
+    },
+    async test(device, language) {
+      const testId = randomUUID();
+      db.prepare('INSERT OR IGNORE INTO push_delivery_status(device_id) VALUES (?)').run(device.id);
+      db.prepare(
+        'UPDATE push_delivery_status SET test_id=?,test_at=?,received_at=NULL WHERE device_id=?',
+      ).run(testId, Date.now(), device.id);
+      const payload = { ...pushPayload('test', language), data: { testId } };
+      try {
+        if (device.kind === 'android') await sendAndroid(device.destination, payload);
+        else
+          await sendWeb(
+            { endpoint: device.destination, keys: { p256dh: device.p256dh, auth: device.auth } },
+            payload,
+          );
+        delivery(device.id);
+        return { accepted: true, testId };
+      } catch (error) {
+        delivery(device.id, error);
+        if (error.statusCode === 410)
+          db.prepare('DELETE FROM push_devices WHERE id=?').run(device.id);
+        throw Object.assign(
+          Error(
+            'No se pudo enviar la prueba. Vuelve a registrar este dispositivo o contacta con soporte.',
+          ),
+          { status: 503 },
+        );
+      }
     },
     enqueue(senderId, recipientId, kind) {
       if (!['messages', 'dates'].includes(kind) || senderId === recipientId) return;
@@ -272,9 +351,55 @@ export function mountPush(app, db, { auth, parse, push }) {
   app.get('/api/push/config', (_req, res) => res.json(push.config));
   app.get('/api/push/devices/current', auth, (req, res) => {
     const row = db
-      .prepare('SELECT kind FROM push_devices WHERE user_id=? AND session_hash=?')
+      .prepare(
+        `SELECT d.kind,s.accepted_at,s.failed_at,s.error_code,s.test_at,s.received_at
+        FROM push_devices d LEFT JOIN push_delivery_status s ON s.device_id=d.id
+        WHERE d.user_id=? AND d.session_hash=?`,
+      )
       .get(req.user.id, req.sessionHash);
-    res.json({ enabled: !!row, kind: row?.kind || null });
+    res.json({
+      enabled: !!row,
+      kind: row?.kind || null,
+      delivery: row
+        ? {
+            acceptedAt: row.accepted_at,
+            failedAt: row.failed_at,
+            errorCode: row.error_code || '',
+            testAt: row.test_at,
+            receivedAt: row.received_at,
+          }
+        : null,
+    });
+  });
+  app.post(
+    '/api/push/test',
+    auth,
+    rateLimit({ windowMs: 15 * 60000, limit: 3, standardHeaders: 'draft-8', legacyHeaders: false }),
+    async (req, res) => {
+      if (req.user.demo)
+        return res.status(400).json({ error: 'Las notificaciones requieren una cuenta real.' });
+      const device = db
+        .prepare('SELECT * FROM push_devices WHERE user_id=? AND session_hash=?')
+        .get(req.user.id, req.sessionHash);
+      if (!device || !push.config[device.kind])
+        return res
+          .status(409)
+          .json({ error: 'Activa las notificaciones en este dispositivo primero.' });
+      const last = db
+        .prepare('SELECT test_at FROM push_delivery_status WHERE device_id=?')
+        .get(device.id);
+      if (last?.test_at > Date.now() - 60000)
+        return res.status(429).json({ error: 'Espera un minuto antes de repetir la prueba.' });
+      res.json(await push.test(device, settingsOf(req.user).language));
+    },
+  );
+  app.post('/api/push/receipts', auth, (req, res) => {
+    const { testId } = parse(z.object({ testId: z.uuid() }), req.body);
+    db.prepare(
+      `UPDATE push_delivery_status SET received_at=COALESCE(received_at,?) WHERE test_id=? AND test_at>?
+      AND device_id IN (SELECT id FROM push_devices WHERE user_id=? AND session_hash=?)`,
+    ).run(Date.now(), testId, Date.now() - 10 * 60000, req.user.id, req.sessionHash);
+    res.json({ ok: true });
   });
   app.post('/api/push/devices', auth, (req, res) => {
     if (req.user.demo)

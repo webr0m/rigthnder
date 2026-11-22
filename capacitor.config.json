@@ -13,6 +13,7 @@
     ]
   },
   "plugins": {
+    "PushNotifications": { "presentationOptions": ["alert", "sound"] },
     "SystemBars": {
       "insetsHandling": "css",
       "initialViewportFitValueHint": "contain",

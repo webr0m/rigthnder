@@ -14,7 +14,10 @@ self.addEventListener('push', (event) => {
       tag: ['onlyfachos-messages', 'onlyfachos-dates'].includes(payload.tag)
         ? payload.tag
         : 'onlyfachos',
-      data: { url: '/?open=chats' },
+      data: {
+        url: '/?open=chats',
+        testId: typeof payload.data?.testId === 'string' ? payload.data.testId : undefined,
+      },
     }),
   );
 });

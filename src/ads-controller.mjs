@@ -9,7 +9,11 @@ export function createAdsController({ load, placement, height }) {
   let pending = Promise.resolve(),
     starting,
     requested = false,
-    currentKey = '';
+    currentKey = '',
+    visible = false,
+    measuredHeight = 0,
+    retryAfter = 0,
+    consentChecked = false;
   const enqueue = (fn) => {
     const result = pending.catch(() => {}).then(fn);
     pending = result;
@@ -18,6 +22,8 @@ export function createAdsController({ load, placement, height }) {
   const clearLayout = () => {
     requested = false;
     currentKey = '';
+    visible = false;
+    measuredHeight = 0;
     height(0);
   };
   const remove = async () => {
@@ -31,11 +37,13 @@ export function createAdsController({ load, placement, height }) {
     try {
       handles.push(
         await AdMob.addListener(events.SizeChanged, (size) => {
-          if (desired && requested) height(Math.max(0, Number(size?.height) || 0));
+          if (requested) measuredHeight = Math.min(120, Math.max(0, Number(size?.height) || 0));
+          if (desired && requested && visible) height(measuredHeight);
         }),
       );
       handles.push(
         await AdMob.addListener(events.FailedToLoad, () => {
+          retryAfter = Date.now() + 60_000;
           clearLayout();
           enqueue(remove).catch(() => {});
         }),
@@ -55,21 +63,36 @@ export function createAdsController({ load, placement, height }) {
       const result = enqueue(async () => {
         if (!valid()) return false;
         const config = placement();
-        if (requested && currentKey === config.key) return true;
+        if (requested && currentKey === config.key) {
+          if (!visible) {
+            await sdk.AdMob.resumeBanner();
+            if (!valid()) {
+              await sdk.AdMob.hideBanner();
+              return false;
+            }
+            visible = true;
+            height(measuredHeight);
+          }
+          return true;
+        }
+        if (Date.now() < retryAfter) return false;
         sdk ??= await load();
         if (!valid()) return false;
         const { AdMob, AdmobConsentStatus, MaxAdContentRating, BannerAdSize, BannerAdPosition } =
           sdk;
         // Remove the old ad before refreshing consent or rotating the layout.
         if (requested) await remove();
-        let consent = await AdMob.requestConsentInfo();
-        if (!valid()) return false;
-        if (consent.status === AdmobConsentStatus.REQUIRED && consent.isConsentFormAvailable)
-          consent = await AdMob.showConsentForm();
-        if (!valid()) return false;
-        if (!consent.canRequestAds) {
-          clearLayout();
-          return false;
+        if (!consentChecked) {
+          let consent = await AdMob.requestConsentInfo();
+          if (!valid()) return false;
+          if (consent.status === AdmobConsentStatus.REQUIRED && consent.isConsentFormAvailable)
+            consent = await AdMob.showConsentForm();
+          if (!valid()) return false;
+          if (!consent.canRequestAds) {
+            clearLayout();
+            return false;
+          }
+          consentChecked = true;
         }
         if (!initialized) {
           await AdMob.initialize({ maxAdContentRating: MaxAdContentRating.Teen });
@@ -79,6 +102,7 @@ export function createAdsController({ load, placement, height }) {
         await subscribe();
         if (!valid()) return false;
         requested = true;
+        visible = true;
         currentKey = config.key;
         try {
           await AdMob.showBanner({
@@ -90,6 +114,7 @@ export function createAdsController({ load, placement, height }) {
             margin: config.margin,
           });
         } catch (error) {
+          retryAfter = Date.now() + 60_000;
           clearLayout();
           throw error;
         }
@@ -107,6 +132,16 @@ export function createAdsController({ load, placement, height }) {
         .catch(() => {});
       return result;
     },
+    pause() {
+      desired = false;
+      revision++;
+      starting = undefined;
+      visible = false;
+      height(0);
+      return enqueue(async () => {
+        if (requested) await sdk.AdMob.hideBanner();
+      });
+    },
     stop() {
       desired = false;
       revision++;
@@ -115,6 +150,7 @@ export function createAdsController({ load, placement, height }) {
       return enqueue(remove);
     },
     privacy() {
+      consentChecked = false;
       revision++;
       starting = undefined;
       clearLayout();

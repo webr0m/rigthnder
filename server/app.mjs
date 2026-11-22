@@ -465,12 +465,10 @@ export function createApp(db, options = {}) {
       // Older installed apps treat a 201 as an authenticated session. Never
       // let them enter the feed with an undefined token after this upgrade.
       if (!data.verificationFlow)
-        return res
-          .status(403)
-          .json({
-            code: 'EMAIL_VERIFICATION_REQUIRED',
-            error: 'La cuenta se creó. Confirma tu correo y luego inicia sesión.',
-          });
+        return res.status(403).json({
+          code: 'EMAIL_VERIFICATION_REQUIRED',
+          error: 'La cuenta se creó. Confirma tu correo y luego inicia sesión.',
+        });
       return res.status(201).json({
         user: { ...ownProfile(created), email: created.email, birthdate: created.birthdate },
         emailVerificationRequired: true,
@@ -503,6 +501,16 @@ export function createApp(db, options = {}) {
     res.json(session(res, user, data.rememberMe, user.password));
   });
   app.post('/api/auth/logout', auth, (req, res) => {
+    db.prepare('DELETE FROM sessions WHERE token_hash=?').run(req.sessionHash);
+    res.clearCookie('rigthnder_session', {
+      httpOnly: true,
+      secure: production,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.json({ ok: true });
+  });
+  app.post('/api/auth/logout-all', auth, (req, res) => {
     db.prepare('DELETE FROM sessions WHERE user_id=?').run(req.user.id);
     res.clearCookie('rigthnder_session', {
       httpOnly: true,

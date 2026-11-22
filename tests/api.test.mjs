@@ -48,6 +48,21 @@ async function account(name) {
   ).data;
 }
 
+test('device logout preserves other sessions while explicit logout-all revokes them', async () => {
+  const a = await account('DeviceLogout');
+  const b = (
+    await request('/auth/login', {
+      method: 'POST',
+      body: { email: 'devicelogout@example.com', password: 'Rigthnder-test-2026' },
+    })
+  ).data;
+  assert.equal((await request('/auth/logout', { token: a.token, method: 'POST' })).status, 200);
+  assert.equal((await request('/me', { token: a.token })).status, 401);
+  assert.equal((await request('/me', { token: b.token })).status, 200);
+  assert.equal((await request('/auth/logout-all', { token: b.token, method: 'POST' })).status, 200);
+  assert.equal((await request('/me', { token: b.token })).status, 401);
+});
+
 test('simultaneous password changes cannot both overwrite the same credential', async () => {
   const a = await account('ConcurrentPassword');
   const results = await Promise.all(

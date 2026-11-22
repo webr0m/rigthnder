@@ -16,7 +16,14 @@ function fixture() {
     privacyOptionsRequirementStatus: 'NOT_REQUIRED',
   };
   const AdMob = Object.fromEntries(
-    ['initialize', 'showBanner', 'removeBanner', 'showPrivacyOptionsForm'].map((k) => [
+    [
+      'initialize',
+      'showBanner',
+      'removeBanner',
+      'hideBanner',
+      'resumeBanner',
+      'showPrivacyOptionsForm',
+    ].map((k) => [
       k,
       async (value) => {
         calls.push([k, value]);
@@ -80,6 +87,33 @@ test('denied consent never initializes the ad SDK or requests an ad', async () =
     f.calls.map((x) => x[0]),
     ['consent'],
   );
+});
+
+test('temporary private screens hide and resume one banner without refreshing ads or repeating consent', async () => {
+  const f = fixture();
+  await f.controller.start();
+  f.events.size({ height: 60 });
+  await f.controller.pause();
+  assert.equal(f.sizes.at(-1), 0);
+  await f.controller.start();
+  assert.equal(f.sizes.at(-1), 60);
+  assert.equal(f.calls.filter(([method]) => method === 'showBanner').length, 1);
+  assert.equal(f.calls.filter(([method]) => method === 'consent').length, 1);
+  assert.deepEqual(
+    f.calls.slice(-2).map(([method]) => method),
+    ['hideBanner', 'resumeBanner'],
+  );
+});
+
+test('failed ad inventory collapses the reserved space and cannot cause a refresh loop', async () => {
+  const f = fixture();
+  await f.controller.start();
+  f.events.size({ height: 60 });
+  f.events.failed();
+  await f.controller.pause();
+  await f.controller.start();
+  assert.equal(f.sizes.at(-1), 0);
+  assert.equal(f.calls.filter(([method]) => method === 'showBanner').length, 1);
 });
 test('leaving while consent loads cannot display an ad after logout', async () => {
   const f = fixture(),
