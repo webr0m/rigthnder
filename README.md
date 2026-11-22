@@ -1,6 +1,6 @@
 # OnlyFachos
 
-**Código beta `1.0.0-beta.1.12`**. Web publicada y Android `10016` disponible en prueba interna. Actualizaciones flexibles de Google Play, prueba y diagnóstico de push por dispositivo, sesiones independientes y banner AdMob discreto. Se conserva SQLite y el acceso de las cuentas anteriores. La distribución pública sigue pendiente de aprobación de Google; la recepción push en teléfono físico requiere validación. [Cambios y pruebas](docs/BETA-1.12.md), [estado de distribución](docs/ESTADO.md). Las compilaciones de desarrollo usan anuncios de prueba por defecto.
+**Código beta `1.0.0-beta.1.13`**. Web publicada y Android `10017` disponible en prueba interna. Corregido el permiso push en Android optimizado con R8 y comprobado el diálogo real de permiso y registro FCM en emulador. Actualizaciones flexibles de Google Play, diagnóstico push por dispositivo, sesiones independientes y banner AdMob discreto. Se conserva SQLite. La distribución pública sigue pendiente de Google; la recepción push en teléfono físico requiere validación. [Corrección y pruebas](docs/BETA-1.13.md), [estado de distribución](docs/ESTADO.md). Las compilaciones de desarrollo usan anuncios de prueba por defecto.
 
 **Sin swipes. Solo conversación.** Comunidad de citas para mayores de 18 años: feed vertical, perfiles con referentes, chat directo y citas aceptadas por ambas personas. Rediseño de Rigthnder a partir de los mockups claro/oscuro aportados por el usuario. MIT.
 

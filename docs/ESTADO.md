@@ -1,3 +1,13 @@
+# Beta 1.13 · 22 de noviembre de 2026
+
+Web **https://onlyfachos.webrom.cc** actualizada a `1.0.0-beta.1.13`, misma SQLite, respaldo y 18 cuentas reales preservadas. Android **10017 disponible para verificadores internos** desde las 10:20 de Chile. [Actualizar beta interna](https://play.google.com/apps/internaltest/4701515858079115212).
+
+El mismo paquete está enviado a Alpha: «Cambios en la etapa de revisión», con verificaciones rápidas en curso. Se sustituyó la revisión anterior de 10016. Esto no confirma disponibilidad en Alpha ni publicación pública.
+
+Corregido `undefined (reading receive)` al consultar el permiso push: R8 eliminaba metadatos de Capacitor 8.5.3. Se conservan las interfaces de anotación y se validan las respuestas. 110 pruebas correctas y una prueba del puente JS/nativo en un APK release optimizado que muestra el diálogo de Android, confirma el permiso y registra/revoca un token Firebase real. La credencial privada del servidor confirma el permiso IAM de envío FCM; la recepción en teléfono físico no se da por comprobada. [Causa, compilación y límites](BETA-1.13.md).
+
+## Registro anterior
+
 # Beta 1.12 · 22 de noviembre de 2026
 
 Web **https://onlyfachos.webrom.cc** actualizada a `1.0.0-beta.1.12`, con respaldo y ensayo de migración; se conserva SQLite y sus 18 cuentas reales. Actualizaciones flexibles oficiales de Google Play, diagnóstico y prueba de push por dispositivo, cierre de sesión independiente y banner AdMob discreto. [Cambios, evidencias y límites](BETA-1.12.md).
