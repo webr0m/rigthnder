@@ -13,7 +13,7 @@ on:
       version_code:
         description: Android version code; use a new number before uploading to Play
         required: true
-        default: '10016'
+        default: '10017'
         type: string
 permissions:
   contents: read
@@ -67,6 +67,10 @@ jobs:
                   assert descriptor in dex, f'Missing optimized native component: {original}'
               assert b'com.google.android.gms.permission.AD_ID' in manifest
               assert b'android.permission.POST_NOTIFICATIONS' in manifest
+              for annotation in ('com.getcapacitor.annotation.CapacitorPlugin', 'com.getcapacitor.annotation.Permission', 'com.getcapacitor.annotation.PermissionCallback', 'com.getcapacitor.PluginMethod'):
+                  assert annotation + ' -> ' + annotation + ':' in mapping, 'R8 stripped permission annotation: ' + annotation
+              assert not any('native-push-qa' in name for name in bundle.namelist()), 'CI probe must not ship to Play'
+              assert b'onlyfachosPushProbe' not in dex, 'CI entry point must be removed from Play'
               assert 'BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map' in bundle.namelist(), 'Missing embedded R8 mapping'
               resources = bundle.read('base/resources.pb')
               app_id = (json.load(open('mobile-ads.json'))['android']['appId']

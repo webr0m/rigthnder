@@ -1,6 +1,12 @@
 # Preserve the WebView bridge and runtime plugin annotations while allowing R8
 # to optimize the rest of the release. Capacitor supplies plugin keep rules.
 -keepattributes RuntimeVisibleAnnotations,AnnotationDefault,SourceFile,LineNumberTable
+# Capacitor reads these annotation interfaces reflectively. Attributes alone do
+# not prevent R8 full mode from folding PluginHandle.pluginAnnotation to null.
+# Backport of ionic-team/capacitor#8646; keep optimization for the rest of the app.
+-keep @interface com.getcapacitor.annotation.** { *; }
+-keep @interface com.getcapacitor.PluginMethod { *; }
+-keep @interface com.getcapacitor.NativePlugin { *; }
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;
 }

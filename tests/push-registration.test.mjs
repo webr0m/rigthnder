@@ -1,7 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { registerNativePush } from '../src/push-registration.mjs';
+import { registerNativePush, readPushPermission } from '../src/push-registration.mjs';
 const noop = () => {};
+test('missing or malformed native permission responses fail safely without granting permission', () => {
+  for (const result of [undefined, null, {}, { receive: 'unknown' }, { receive: true }])
+    assert.throws(() => readPushPermission(result), { code: 'PUSH_PERMISSION_UNAVAILABLE' });
+  for (const receive of ['granted', 'denied', 'prompt', 'prompt-with-rationale'])
+    assert.equal(readPushPermission({ receive }), receive);
+});
 function sdkFixture(register) {
   const listeners = new Map(),
     removed = [];

@@ -3331,6 +3331,10 @@
     "en": "We could not load the app. Your session and data are still saved.",
     "de": "Die App konnte nicht geladen werden. Deine Sitzung und deine Daten bleiben gespeichert."
   },
+  "no se pudo comprobar el permiso de notificaciones. actualiza la app desde google play y vuelve a intentarlo.": {
+    "en": "Could not check notification permission. Update the app from Google Play and try again.",
+    "de": "Die Benachrichtigungsberechtigung konnte nicht geprüft werden. Aktualisiere die App über Google Play und versuche es erneut."
+  },
   "no disponible": {
     "en": "Unavailable",
     "de": "Nicht verfügbar"

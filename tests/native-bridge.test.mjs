@@ -15,7 +15,9 @@ test('native cold start, Google proof/draft cleanup and push do not assimilate C
   let thenReads = 0,
     pluginRegistrations = 0,
     registered = false,
-    browserUrl = '';
+    browserUrl = '',
+    checkedPermission = { receive: 'granted' },
+    requestedPermission = { receive: 'granted' };
   const proxy = (methods) =>
     new Proxy(
       {},
@@ -43,8 +45,8 @@ test('native cold start, Google proof/draft cleanup and push do not assimilate C
       },
     }),
     push: proxy({
-      checkPermissions: async () => ({ receive: 'granted' }),
-      requestPermissions: async () => ({ receive: 'granted' }),
+      checkPermissions: async () => checkedPermission,
+      requestPermissions: async () => requestedPermission,
       createChannel: async () => {},
       addListener: async (event, handler) => {
         const set = listeners.get(event) || new Set();
@@ -157,6 +159,20 @@ test('native cold start, Google proof/draft cleanup and push do not assimilate C
     assert.equal((await within(mobile.pushStatus('fixture-user'))).enabled, true);
     await within(mobile.disablePush());
     assert.equal(registered, false);
+    checkedPermission = undefined;
+    await assert.rejects(within(mobile.pushStatus('fixture-user')), {
+      code: 'PUSH_PERMISSION_UNAVAILABLE',
+    });
+    await assert.rejects(within(mobile.enablePush('fixture-user')), {
+      code: 'PUSH_PERMISSION_UNAVAILABLE',
+    });
+    assert.equal(registered, false);
+    checkedPermission = { receive: 'granted' };
+    requestedPermission = undefined;
+    await assert.rejects(within(mobile.enablePush('fixture-user')), {
+      code: 'PUSH_PERMISSION_UNAVAILABLE',
+    });
+    assert.equal(registered, false, 'an undefined permission result must not register a device');
     stop();
     assert.equal(thenReads, 0, 'no plugin proxy may be returned across an async boundary');
   } finally {

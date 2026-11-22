@@ -1,7 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { api } from './api';
 import { t } from './locale.mjs';
-import { boundedPush, registerNativePush } from './push-registration.mjs';
+import { boundedPush, registerNativePush, readPushPermission } from './push-registration.mjs';
 import { device } from './native-device.mjs';
 const native = Capacitor.isNativePlatform();
 const marker = 'onlyfachos-push-user';
@@ -49,7 +49,7 @@ export async function pushStatus(userId) {
     : supportedWeb() && config.web;
   const permission =
     native && available
-      ? (await boundedPush((await plugin()).PushNotifications.checkPermissions())).receive
+      ? readPushPermission(await boundedPush((await plugin()).PushNotifications.checkPermissions()))
       : !native && 'Notification' in window
         ? Notification.permission
         : 'default';
@@ -90,9 +90,9 @@ export async function enablePush(userId) {
       throw Error(t('Las notificaciones aún no están disponibles en este dispositivo.'));
     const sdk = (await plugin()).PushNotifications;
     check();
-    const permission = await sdk.requestPermissions();
+    const permission = readPushPermission(await boundedPush(sdk.requestPermissions(), 90_000));
     check();
-    if (permission.receive !== 'granted')
+    if (permission !== 'granted')
       throw Error(t('Permite las notificaciones en los ajustes del dispositivo.'));
     await boundedPush(
       sdk.createChannel({
@@ -236,14 +236,21 @@ export async function listenPush(userId, onOpen) {
       }
     }),
   ]);
-  if (
-    readMarker() === userId &&
-    (await sdk.checkPermissions()).receive === 'granted' &&
-    userEpoch === epoch &&
-    activeUser === userId &&
-    readMarker() === userId
-  )
-    await sdk.register();
+  if (readMarker() === userId) {
+    try {
+      const permission = readPushPermission(await boundedPush(sdk.checkPermissions()));
+      if (
+        permission === 'granted' &&
+        userEpoch === epoch &&
+        activeUser === userId &&
+        readMarker() === userId
+      )
+        await boundedPush(sdk.register());
+    } catch {
+      // Settings reports the failure. Still return the cleanup below so a
+      // failed restore cannot leave listeners attached to an old account.
+    }
+  }
   const current = handles;
   return () => {
     if (userEpoch === epoch) {

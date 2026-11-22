@@ -11,6 +11,19 @@ export function pushFailure(error) {
   return new Error('No pudimos registrar las notificaciones. Inténtalo otra vez.');
 }
 
+// Missing native metadata must never be treated as permission granted. In an
+// affected optimized APK Capacitor can resolve undefined instead of a record.
+export function readPushPermission(result) {
+  if (!['granted', 'denied', 'prompt', 'prompt-with-rationale'].includes(result?.receive))
+    throw Object.assign(
+      new Error(
+        'No se pudo comprobar el permiso de notificaciones. Actualiza la app desde Google Play y vuelve a intentarlo.',
+      ),
+      { code: 'PUSH_PERMISSION_UNAVAILABLE' },
+    );
+  return result.receive;
+}
+
 export async function boundedPush(work, milliseconds = 20_000) {
   let timer;
   try {
