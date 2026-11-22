@@ -1,3 +1,13 @@
+# Beta 1.11 · verificación del 22 de noviembre de 2026
+
+Web **https://onlyfachos.webrom.cc** actualizada a `1.0.0-beta.1.11`. Misma SQLite, respaldo coherente previo y ensayo de migración que preservó las 18 cuentas reales existentes. Corregidos Google web, activación de correo, compatibilidad con clientes anteriores, sesiones, moderación, citas vencidas y apertura de chats desde notificaciones. [Auditoría](AUDITORIA-2026-11-21.md).
+
+Android **10015** está **disponible para verificadores internos y para el grupo cerrado Alpha**, comprobado en Google Play el 22 de noviembre. No es disponibilidad pública en producción. [Actualizar la beta interna](https://play.google.com/apps/internaltest/4701515858079115212).
+
+102 pruebas correctas en CI; web y servidor compilan. Arranque Android optimizado correcto en instalación limpia y segundo arranque; registro y revocación FCM correctos. Android debug e iOS simulador compilan. Se mantienen los límites de prueba en teléfono físico, distribución iOS/APNs, aprobación publicitaria y símbolos nativos del proveedor. [Artefactos y verificación](BETA-1.11.md).
+
+## Registro anterior
+
 # Beta 1.10 · 1 de noviembre de 2026
 
 Web actualizada en **https://onlyfachos.webrom.cc**, conservando la base activa y las 79 cuentas existentes al desplegar, con respaldo coherente privado previo. Corregido el bloqueo nativo del almacenamiento seguro que impedía abrir Android sin una sesión válida y afectaba Google/push. Se completaron los pendientes de interfaz y recuperación. [Auditoría de We2 contrastada con el código](AUDITORIA-2026-11-01.md).

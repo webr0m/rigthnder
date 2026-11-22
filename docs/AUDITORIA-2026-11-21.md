@@ -1,6 +1,6 @@
 # Auditoría · 21 de noviembre de 2026
 
-Versión preparada: `1.0.0-beta.1.11`, Android `10015`. Revisión del árbol local, incluidas las funciones de verificación, contraseña y moderación que estaban sin publicar. El estado inicial se preservó en un parche privado antes de editar. Los datos de las pruebas son ficticios y la base de QA está en memoria.
+Versión publicada en web: `1.0.0-beta.1.11`, Android `10015`. Revisión del árbol local, incluidas las funciones de verificación, contraseña y moderación que estaban sin publicar. El estado inicial se preservó en un parche privado antes de editar. Los datos de las pruebas son ficticios y la base de QA está en memoria.
 
 ## Fallos corregidos
 
@@ -17,7 +17,7 @@ Versión preparada: `1.0.0-beta.1.11`, Android `10015`. Revisión del árbol loc
 
 ## Validación
 
-- Comprobaciones sintácticas, suite automatizada y compilaciones web/servidor: resultados finales en el estado de distribución.
+- 102 pruebas en CI, comprobaciones sintácticas y compilaciones web/servidor correctas. Android debug e iOS simulador compilan; arranque optimizado Android y registro/revocación FCM correctos en emulador. [Evidencia de beta 1.11](BETA-1.11.md).
 - `pnpm audit --prod`: cero vulnerabilidades conocidas en 103 dependencias consultadas el 21 de noviembre. No garantiza ausencia de todo riesgo.
 - Regresiones para migración de una base intermedia y reapertura, compatibilidad de clientes anteriores, correo de un solo uso, perfiles pendientes ocultos, concurrencia de contraseña, permisos de moderación, expiración y anonimización.
 - QA visual local: retorno de Google abre el registro, borrador conservado al recargar, confirmación de correo en alemán recuperable tras un 503 simulado, acceso con contraseña, panel recuperable y segunda página de denuncias.
