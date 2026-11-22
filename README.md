@@ -1,6 +1,6 @@
 # OnlyFachos
 
-**Código beta `1.0.0-beta.1.11`**. Web publicada y Android `10015` disponible para los grupos interno y Alpha. Auditoría de registro con Google, verificación de correo, sesiones, moderación y citas. Se conserva el acceso de las cuentas anteriores y se exige confirmar el correo a las nuevas cuentas con contraseña cuando hay transporte de correo. [Auditoría y validación](docs/AUDITORIA-2026-11-21.md), [estado de distribución](docs/ESTADO.md). Las compilaciones de desarrollo usan anuncios de prueba por defecto.
+**Código beta `1.0.0-beta.1.12`**. Web publicada y Android `10016` disponible en prueba interna. Actualizaciones flexibles de Google Play, prueba y diagnóstico de push por dispositivo, sesiones independientes y banner AdMob discreto. Se conserva SQLite y el acceso de las cuentas anteriores. La distribución pública sigue pendiente de aprobación de Google; la recepción push en teléfono físico requiere validación. [Cambios y pruebas](docs/BETA-1.12.md), [estado de distribución](docs/ESTADO.md). Las compilaciones de desarrollo usan anuncios de prueba por defecto.
 
 **Sin swipes. Solo conversación.** Comunidad de citas para mayores de 18 años: feed vertical, perfiles con referentes, chat directo y citas aceptadas por ambas personas. Rediseño de Rigthnder a partir de los mockups claro/oscuro aportados por el usuario. MIT.
 

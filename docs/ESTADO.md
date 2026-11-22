@@ -1,3 +1,13 @@
+# Beta 1.12 · 22 de noviembre de 2026
+
+Web **https://onlyfachos.webrom.cc** actualizada a `1.0.0-beta.1.12`, con respaldo y ensayo de migración; se conserva SQLite y sus 18 cuentas reales. Actualizaciones flexibles oficiales de Google Play, diagnóstico y prueba de push por dispositivo, cierre de sesión independiente y banner AdMob discreto. [Cambios, evidencias y límites](BETA-1.12.md).
+
+Android **10016 disponible para verificadores internos**, confirmado en Play a las 09:54 de Chile. El mismo AAB se envió a Alpha; Play confirma «Cambios en la etapa de revisión», con verificaciones rápidas en curso. No se afirma disponibilidad de 10016 en Alpha hasta la aprobación. [Actualizar beta interna](https://play.google.com/apps/internaltest/4701515858079115212). Google mantiene pendiente la solicitud de acceso a producción; no es una publicación pública. AdMob sigue con publicación limitada y revisión pendiente.
+
+109 pruebas correctas; web, servidor, Android debug, AAB optimizado e iOS simulador compilan. Dos pruebas nativas correctas de registro/revocación FCM y visualización de una notificación simulada en primer plano. El arranque release se recupera de un fallo inicial de red mediante reintento. El hosting todavía no tiene registros Android: la entrega real al teléfono y la actualización mediante una versión futura no están certificadas.
+
+## Registro anterior
+
 # Beta 1.11 · verificación del 22 de noviembre de 2026
 
 Web **https://onlyfachos.webrom.cc** actualizada a `1.0.0-beta.1.11`. Misma SQLite, respaldo coherente previo y ensayo de migración que preservó las 18 cuentas reales existentes. Corregidos Google web, activación de correo, compatibilidad con clientes anteriores, sesiones, moderación, citas vencidas y apertura de chats desde notificaciones. [Auditoría](AUDITORIA-2026-11-21.md).
