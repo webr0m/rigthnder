@@ -95,6 +95,7 @@ test('temporary private screens hide and resume one banner without refreshing ad
   f.events.size({ height: 60 });
   await f.controller.pause();
   assert.equal(f.sizes.at(-1), 0);
+  f.events.size({ height: 0 });
   await f.controller.start();
   assert.equal(f.sizes.at(-1), 60);
   assert.equal(f.calls.filter(([method]) => method === 'showBanner').length, 1);

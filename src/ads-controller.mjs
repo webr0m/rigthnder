@@ -37,8 +37,11 @@ export function createAdsController({ load, placement, height }) {
     try {
       handles.push(
         await AdMob.addListener(events.SizeChanged, (size) => {
-          if (requested) measuredHeight = Math.min(120, Math.max(0, Number(size?.height) || 0));
-          if (desired && requested && visible) height(measuredHeight);
+          const value = Math.min(120, Math.max(0, Number(size?.height) || 0));
+          // Android emits zero when hideBanner runs. Keep the last real size
+          // so resuming cannot briefly cover content while its callback arrives.
+          if (requested && value > 0) measuredHeight = value;
+          if (desired && requested && visible) height(value);
         }),
       );
       handles.push(

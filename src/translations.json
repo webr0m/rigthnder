@@ -3330,5 +3330,9 @@
   "no pudimos cargar la app. tu sesión y tus datos siguen guardados.": {
     "en": "We could not load the app. Your session and data are still saved.",
     "de": "Die App konnte nicht geladen werden. Deine Sitzung und deine Daten bleiben gespeichert."
+  },
+  "no disponible": {
+    "en": "Unavailable",
+    "de": "Nicht verfügbar"
   }
 }

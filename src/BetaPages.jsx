@@ -555,13 +555,30 @@ export function BetaSettings({
         {!user.demo && (
           <Row
             title={t('Notificaciones en este dispositivo')}
-            value={pushBusy ? t('Comprobando…') : push.enabled ? t('Activadas') : t('Desactivadas')}
+            value={
+              pushBusy
+                ? t('Comprobando…')
+                : push.enabled
+                  ? t('Activadas')
+                  : push.available
+                    ? t('Desactivadas')
+                    : t('No disponible')
+            }
             disabled={pushBusy}
             onClick={async () => {
               if (pushBusy) return;
               setPushBusy(true);
               setPushError('');
               try {
+                if (!push.available && !push.enabled) {
+                  const state = await pushStatus(user.id);
+                  setPush(state);
+                  if (!state.available)
+                    throw Error(
+                      t('Las notificaciones aún no están disponibles en este dispositivo.'),
+                    );
+                  return;
+                }
                 if (push.enabled) await disablePush();
                 else {
                   await enablePush(user.id);
@@ -608,6 +625,9 @@ export function BetaSettings({
               setPushError(e.message);
             } finally {
               setTestBusy(false);
+              pushStatus(user.id)
+                .then(setPush)
+                .catch(() => {});
             }
           }}
         >

@@ -374,7 +374,13 @@ export function mountPush(app, db, { auth, parse, push }) {
   app.post(
     '/api/push/test',
     auth,
-    rateLimit({ windowMs: 15 * 60000, limit: 3, standardHeaders: 'draft-8', legacyHeaders: false }),
+    rateLimit({
+      windowMs: 15 * 60000,
+      limit: 3,
+      keyGenerator: (req) => req.user.id,
+      standardHeaders: 'draft-8',
+      legacyHeaders: false,
+    }),
     async (req, res) => {
       if (req.user.demo)
         return res.status(400).json({ error: 'Las notificaciones requieren una cuenta real.' });
