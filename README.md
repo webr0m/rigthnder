@@ -1,6 +1,6 @@
 # OnlyFachos
 
-**Código beta `1.0.0-beta.1.14`**, Android `10018`. Web publicada, sesiones cifradas con plazos y orden de escritura, chats protegidos frente a respuestas tardías y medios cancelados al salir de una conversación. Un Android real está registrado y confirmó recepción de la prueba enviada por Firebase. La primera prueba abierta y la ficha en español, inglés y alemán están enviadas a revisión de Google; ver [validación y límites](docs/BETA-1.14.md) y [estado de distribución](docs/ESTADO.md). Las compilaciones de desarrollo usan anuncios de prueba por defecto.
+**Código beta `1.0.0-beta.1.14`**, Android `10018`. Web publicada, sesiones cifradas con plazos y orden de escritura, chats protegidos frente a respuestas tardías y medios cancelados al salir de una conversación. Un Android real está registrado y confirmó recepción de la prueba enviada por Firebase. La primera prueba abierta y su ficha en español, inglés y alemán fueron publicadas; se detectó el canal en pausa y su reactivación está enviada a revisión de Google; ver [validación y límites](docs/BETA-1.14.md) y [estado de distribución](docs/ESTADO.md). Las compilaciones de desarrollo usan anuncios de prueba por defecto.
 
 **Sin swipes. Solo conversación.** Comunidad de citas para mayores de 18 años: feed vertical, perfiles con referentes, chat directo y citas aceptadas por ambas personas. Rediseño de Rigthnder a partir de los mockups claro/oscuro aportados por el usuario. MIT.
 
