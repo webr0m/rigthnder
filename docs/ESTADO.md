@@ -1,3 +1,15 @@
+# Beta 1.14 · primera prueba abierta · 22 de noviembre de 2026
+
+Web **https://onlyfachos.webrom.cc** publicada a las 15:13 de Chile. Misma SQLite, respaldo previo, ensayo de migración correcto y 18 cuentas reales preservadas. Corregidos plazos y orden del guardado de sesión, respuestas antiguas de chats, fotos/audio tras cambiar de conversación, diálogos de citas y resultado de búsqueda de actualizaciones. [Auditoría, evidencias y límites](BETA-1.14.md).
+
+Android **10018**, `1.0.0-beta.1.14`, enviado a la **primera prueba abierta** a las 15:19 de Chile. Google Play confirma **«Cambios en la etapa de revisión»**, con verificaciones rápidas en curso. Ficha completa en español, inglés y alemán, 177 países/regiones y resto del mundo, verificadores sin límite y comentarios en `admin@webrom.cc`. La publicación administrada está desactivada; queda pendiente aprobación y propagación de Google. [Invitación prevista](https://play.google.com/apps/testing/com.rigthnder.app), todavía sin disponibilidad pública confirmada. La beta 10017 está disponible en la prueba cerrada Alpha e interna.
+
+113 pruebas correctas; compilación web/servidor y AAB de producción correctos. Android optimizado recupera un fallo de conexión con un reintento y llega al acceso en segundo arranque. Puente JS/nativo, diálogo real de permiso, registro/revocación FCM y dos pruebas instrumentadas correctos. Cero vulnerabilidades conocidas en las 103 dependencias de producción revisadas. Persiste la advertencia no bloqueante de símbolos nativos del proveedor; se incorpora ReTrace.
+
+**Push real confirmado:** un Android registrado con sesión/cuenta activas. FCM aceptó la prueba a las 10:52:29 de Chile y la app confirmó recepción medio segundo después; no hay error de envío ni avisos pendientes. No se afirma observación visual de la bandeja del teléfono. Esto reemplaza la falta de dispositivos indicada en los registros anteriores.
+
+## Registro anterior
+
 # Beta 1.13 · 22 de noviembre de 2026
 
 Web **https://onlyfachos.webrom.cc** actualizada a `1.0.0-beta.1.13`, misma SQLite, respaldo y 18 cuentas reales preservadas. Android **10017 disponible para verificadores internos** desde las 10:20 de Chile. [Actualizar beta interna](https://play.google.com/apps/internaltest/4701515858079115212).

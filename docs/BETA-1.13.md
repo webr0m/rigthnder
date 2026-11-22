@@ -28,3 +28,7 @@ Se incorporan en la app las reglas de conservación de interfaces de anotación 
 Para verificar en un teléfono: instalar 1.13/10017, iniciar sesión en una cuenta real y activar Notificaciones en Ajustes. La activación solicita una prueba al servidor; «Probar notificaciones» permite repetirla tras el enfriamiento. Se debe distinguir un permiso concedido y un token registrado de la aceptación de FCM y la recepción física del aviso. No se da por confirmada esta última sin una entrega observada.
 
 La corrección del permiso requiere instalar el nuevo Android: una actualización de la web no reemplaza el puente nativo de una app instalada. La comprobación de entrega desde el servidor a un teléfono real se registra por separado del permiso y del registro Firebase.
+
+## Verificación posterior · 22 de noviembre de 2026
+
+Tras instalar 1.13 y activar notificaciones, el hosting confirmó un Android registrado con sesión y cuenta activas. FCM aceptó la prueba a las 13:52:29.278 UTC y la app informó recepción a las 13:52:29.773 UTC. Cola vacía y sin error de envío. El diagnóstico de cero dispositivos indicado arriba corresponde al momento anterior a la activación del usuario. Ver [evidencia y límites de recepción](BETA-1.14.md#push-real-verificado). La consola también mostró 10017 disponible en Alpha y habilitó el acceso a prueba abierta; esos estados son posteriores al envío inicial aquí documentado.
