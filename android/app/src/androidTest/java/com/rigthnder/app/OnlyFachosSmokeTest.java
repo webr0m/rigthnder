@@ -43,7 +43,9 @@ public class OnlyFachosSmokeTest {
             }
             assertNotNull("Foreground push must appear in Android notifications", found);
             assertEquals("onlyfachos-activity", found.getNotification().getChannelId());
-            assertEquals(android.app.Notification.VISIBILITY_PRIVATE, notifications.getNotificationChannel("onlyfachos-activity").getLockscreenVisibility());
+            // Android owns channel lockscreen overrides; verify the notification itself.
+            assertEquals(android.app.Notification.VISIBILITY_PRIVATE, found.getNotification().visibility);
+            assertEquals(android.app.NotificationManager.IMPORTANCE_DEFAULT, notifications.getNotificationChannel("onlyfachos-activity").getImportance());
         } finally { notifications.cancelAll(); }
     }
     @Test public void nativePluginsLoadAndFirebaseCanRegister() throws Exception {
